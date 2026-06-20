@@ -235,7 +235,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 </div>
 
 <div id="page-data" class="page">
-  <div class="alert info"><div class="alert-icon">📌</div><div>Bảng hiển thị đầy đủ 61 điểm tiêm × 39 chỉ tiêu. Có thể nhập/sửa trực tiếp. Dữ liệu từ CSV Import sẽ tự điền vào đây. Nhấn <b>Lưu</b> để cập nhật dashboard.</div></div>
+  <div class="alert info"><div class="alert-icon">📌</div><div>Bảng hiển thị đầy đủ các điểm tiêm × 39 chỉ tiêu. Có thể nhập/sửa trực tiếp. Dữ liệu từ CSV Import sẽ tự điền vào đây. Nhấn <b>Lưu</b> để cập nhật dashboard.</div></div>
   <div class="card">
     <div class="ch">
       <span class="ct">Số liệu tiêm dại – <span id="data-month-lbl">Tháng 5/2026</span></span>
@@ -380,13 +380,24 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 
   <div class="two-col">
     <div class="card">
-      <div class="ch"><span class="ct">Thông tin báo cáo & chữ ký</span></div>
+      <div class="ch"><span class="ct">Thông báo cáo & chữ ký</span></div>
       <div class="cb">
         <div class="fg">
           <label>Tháng báo cáo<select id="exp-month"><option value="5" selected>Tháng 5</option><option value="6">Tháng 6</option><option value="7">Tháng 7</option></select></label>
           <label>Năm<input type="number" id="exp-year" value="2026"></label>
-          <label style="grid-column: span 2">Tên đơn vị (Dưới dòng Sở Y tế)<input type="text" id="exp-unit" value="[Nhập tên đơn vị...]"></label>
-          <label style="grid-column: span 2">Ngày làm báo cáo (Tự động hoặc sửa lại)<input type="date" id="exp-date"></label>
+          
+          <label style="grid-column: span 2">Tên đơn vị (Dưới dòng Sở Y tế)
+            <select id="exp-unit" style="padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;color:var(--text);background:#fff" onchange="checkUnitChange()">
+              <option value="">-- Click để chọn tên đơn vị của bạn --</option>
+              <option value="TRUNG TÂM KIỂM SOÁT BỆNH TẬT">TRUNG TÂM KIỂM SOÁT BỆNH TẬT</option>
+            </select>
+          </label>
+
+          <label id="custom-unit-wrap" style="grid-column: span 2; display: none;">Ghi cụ thể tên đơn vị khác
+            <input type="text" id="exp-unit-custom" placeholder="Nhập tên phòng tiêm / trạm y tế cụ thể...">
+          </label>
+
+          <label style="grid-column: span 2">Ngày làm báo cáo (Tự động hoặc sửa lại)<input type="date" id="exp-date" onchange="renderExpCheck()"></label>
         </div>
       </div>
     </div>
@@ -400,8 +411,8 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
     <div class="ch"><span class="ct">Lưu ý kỹ thuật</span></div>
     <div class="cb">
       <ul style="padding-left:18px;line-height:2;font-size:12.5px">
-        <li><b>Định dạng mới:</b> File xuất ra đã tự động thu hẹp cột và quay dọc chữ 90 độ giống ảnh gốc.</li>
-        <li><b>Màu sắc & Khung:</b> Tự động kẻ bảng, chữ màu đen nguyên bản chuẩn văn bản hành chính.</li>
+        <li><b>Danh sách đơn vị:</b> Tự động xổ xuống theo danh sách cơ sở đã được khai báo. Tự in hoa tên đơn vị khi xuất Excel.</li>
+        <li><b>Trường hợp Khác:</b> Nếu chọn "Khác (ghi cụ thể)", vui lòng điền tên cơ sở vào ô text xuất hiện bên dưới.</li>
         <li><b>In ấn (A4 Landscape):</b> Khi mở Excel bấm in sẽ tự động quay ngang giấy A4 và ép vừa chiều rộng trang.</li>
       </ul>
     </div>
@@ -414,7 +425,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
       <div class="ch"><span class="ct">🎯 Mục tiêu hệ thống</span></div>
       <div class="cb">
         <div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;line-height:1.7">
-          <div class="alert ok"><div class="alert-icon">✅</div><div>Số hóa 100% quy trình tiếp nhận, xử lý và phân tích số liệu từ 61 cơ sở tiêm chủng toàn tỉnh Hưng Yên</div></div>
+          <div class="alert ok"><div class="alert-icon">✅</div><div>Số hóa 100% quy trình tiếp nhận, xử lý và phân tích số liệu từ các cơ sở tiêm chủng toàn tỉnh Hưng Yên</div></div>
           <div class="alert ok"><div class="alert-icon">✅</div><div>Tự động hóa hoàn toàn khâu tổng hợp dữ liệu, triệt tiêu cắt ghép Excel thủ công tại tuyến tỉnh</div></div>
           <div class="alert ok"><div class="alert-icon">✅</div><div>Đảm bảo 100% đơn vị nộp trước ngày 05 hàng tháng qua hệ thống cảnh báo tự động</div></div>
         </div>
@@ -508,7 +519,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 //  DATA
 // ═══════════════════════════════════════
 const SITES=[
-"Phòng tiêm chủng - TT KSBT Hưng Yên cơ sở 1","Phòng tiêm DV - TT KSBT Hưng Yên cơ sở 2","Phòng tiêm chủng - Bệnh viện Nhi Thái Bình","TT VNVC Thái Bình","TT tiêm chủng Thái Bình Vàng CN Hưng Hà","TT tiêm chủng Thái Bình Vàng CN Quỳnh Phụ","TT tiêm chủng Thái Bình Vàng CN Thuỵ Xuân","TT tiêm chủng Thái Bình Vàng CN Ngã tư Đậu","TT tiêm chủng Thái Bình Vàng CN Tân Bình","TT tiêm chủng An Nhiên","TT tiêm chủng Potec 81 Thái Bình","TT tiêm chủng Potec Vũ Quý","TT tiêm chủng Potec 81.2 Hưng Hà","TT tiêm chủng Potec 81.3 Quỳnh Phụ","TT tiêm chủng Potec 81.4 Thái Thụy","TT tiêm chủng và TVDD Thái Bình CN Tiền Hải","TT tiêm chủng và TVDD Thái Bình CN Thái Thuỵ","TT tiêm chủng và TVDD Thái Bình CN Quỳnh Phụ","TT tiêm chủng và TVDD Thái Bình CN Đông Hưng","TT tiêm chủng và TVDD Thái Bình CN Hưng Nhân","TT tiêm chủng và TVDD Thái Bình CN Hưng Hà","TT tiêm chủng và TVDD Thái Bình CN Vũ Thư","TT tiêm chủng Long Châu 144","TT tiêm chủng số 1 Thái Bình","TT tiêm chủng Vaccine Incheon Thái Thuỵ","TT tiêm chủng Vaccine Incheon Đông Hưng","TT tiêm chủng Vaccine Incheon Vũ Thư","Phòng tiêm chủng vắc xin Đông Hưng","Trung tâm tiêm chủng vắc xin Thái Thuỵ","Trung tâm tiêm chủng VNVC Hưng Yên","Trung tâm tiêm chủng VNVC Phố Nối","Trung tâm tiêm chủng VNVC Văn Giang","Phòng tiêm chủng Potec 89 Hưng Yên","Phòng tiêm Potec 89.1 Kim Động","Phòng tiêm Potec 89.2 Yên Mỹ","Phòng tiêm chủng Potec 89.3 Khoái Châu","Phòng tiêm Potec 89.6 Tiên Lữ","Phòng tiêm Potec 89.7 Phù Cừ","Phòng tiêm chủng vắc xin Hưng Yên CS Kim Động","Phòng tiêm chủng vắc xin Hưng Yên CS Văn Lâm","Phòng tiêm chủng vắc xin Hưng Yên CS Ân Thi","Phòng tiêm dịch vụ vắc xin Go Văn Giang","Phòng tiêm chủng dịch vụ Go vaccine Đình Cao, Phù Cừ","Phòng tiêm chủng dịch vụ Go vaccine Khoái Châu","Phòng tiêm VHNcare Khoái Châu","Phòng tiêm VHN Care Phù Cừ","Công ty CPDP FPT Long Châu - CS tiêm chủng Long Châu 149","Phòng tiêm dịch vụ vắc xin - Công ty CP BVĐK Hưng Hà","Phòng tiêm chủng DR.ECO","Phòng tiêm chủng dịch vụ Phố Nối, Công ty TBYT Thế Lâm","Trung tâm tiêm chủng vaccine Osstech","Phòng tiêm chủng Hà Nội","Phòng tiêm chủng dịch vụ Thanh Nhàn","Phòng tiêm BIVAC","Phòng tiêm chủng dịch vụ Mỹ Hào","Phòng tiêm chủng vắc xin Y khoa Hà Nội cơ sở Kim Động","Phòng tiêm chủng Minh Đức","Cơ sở tiêm chủng vắc xin Happy Phù Cừ","Phòng tiêm chủng vắc xin dịch vụ Happy Yên Phú","Phòng tiêm vắc xin dịch vụ Thiện Đức","Phòng tiêm chủng vaccine House"
+"Phòng tiêm chủng - TT KSBT Hưng Yên cơ sở 1","Phòng tiêm DV - TT KSBT Hưng Yên cơ sở 2","Phòng tiêm chủng - Bệnh viện Nhi Thái Bình","TT VNVC Thái Bình","TT tiêm chủng Thái Bình Vàng CN Hưng Hà","TT tiêm chủng Thái Bình Vàng CN Quỳnh Phụ","TT tiêm chủng Thái Bình Vàng CN Thuỵ Xuân","TT tiêm chủng Thái Bình Vàng CN Ngã tư Đậu","TT tiêm chủng Thái Bình Vàng CN Tân Bình","TT tiêm chủng An Nhiên","TT tiêm chủng Potec 81 Thái Bình","TT tiêm chủng Potec Vũ Quý","TT tiêm chủng Potec 81.2 Hưng Hà","TT tiêm chủng Potec 81.3 Quỳnh Phụ","TT tiêm chủng Potec 81.4 Thái Thụy","TT tiêm chủng và TVDD Thái Bình CN Tiền Hải","TT tiêm chủng và TVDD Thái Bình CN Thái Thuỵ","TT tiêm chủng và TVDD Thái Bình CN Quỳnh Phụ","TT tiêm chủng và TVDD Thái Bình CN Đông Hưng","TT tiêm chủng và TVDD Thái Bình CN Hưng Nhân","TT tiêm chủng và TVDD Thái Bình CN Hưng Hà","TT tiêm chủng và TVDD Thái Bình CN Vũ Thư","TT tiêm chủng Long Châu 144","TT tiêm chủng số 1 Thái Bình","TT tiêm chủng Vaccine Incheon Thái Thuỵ","TT tiêm chủng Vaccine Incheon Đông Hưng","TT tiêm chủng Vaccine Incheon Vũ Thư","Phòng tiêm chủng vắc xin Đông Hưng","Trung tâm tiêm chủng vắc xin Thái Thuỵ","Trung tâm tiêm chủng VNVC Hưng Yên","Trung tâm tiêm chủng VNVC Phố Nối","Trung tâm tiêm chủng VNVC Văn Giang","Phòng tiêm chủng Potec 89 Hưng Yên","Phòng tiêm Potec 89.1 Kim Động","Phòng tiêm Potec 89.2 Yên Mỹ","Phòng tiêm chủng Potec 89.3 Khoái Châu","Phòng tiêm Potec 89.6 Tiên Lữ","Phòng tiêm Potec 89.7 Phù Cừ","Phòng tiêm chủng vắc xin Hưng Yên CS Kim Động","Phòng tiêm chủng vắc xin Hưng Yên CS Văn Lâm","Phòng tiêm chủng vắc xin Hưng Yên CS Ân Thi","Phòng tiêm dịch vụ vắc xin Go Văn Giang","Phòng tiêm chủng dịch vụ Go vaccine Đình Cao, Phù Cừ","Phòng tiêm chủng dịch vụ Go vaccine Khoái Châu","Phòng tiêm VHNcare Khoái Châu","Phòng tiêm VHN Care Phù Cừ","Công ty CPDP FPT Long Châu - CS tiêm chủng Long Châu 149","Phòng tiêm dịch vụ vắc xin - Công ty CP BVĐK Hưng Hà","Phòng tiêm chủng DR.ECO","Phòng tiêm chủng dịch vụ Phố Nối, Công ty TBYT Thế Lâm","Trung tâm tiêm chủng vaccine Osstech","Phòng tiêm chủng Hà Nội","Phòng tiêm chủng dịch vụ Thanh Nhàn","Phòng tiêm BIVAC","Phòng tiêm chủng dịch vụ Mỹ Hào","Phòng tiêm chủng vắc xin Y khoa Hà Nội cơ sở Kim Động","Phòng tiêm chủng Minh Đức","Cơ sở tiêm chủng vắc xin Happy Phù Cừ","Phòng tiêm chủng vắc xin dịch vụ Happy Yên Phú","Phòng tiêm vắc xin dịch vụ Thiện Đức","Phòng tiêm chủng vaccine House", "Khác (ghi cụ thể)"
 ];
 
 const INIT_DATA=[
@@ -572,6 +583,7 @@ const INIT_DATA=[
 [2,2,0,1,1,2,4,0,3,1,0,0,0,0,0,4,0,4,0,3,1,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 [5,2,1,2,4,0,7,0,7,0,0,0,0,0,2,5,0,7,0,7,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ];
 
@@ -589,14 +601,37 @@ SITES.forEach((_,i)=>{
 });
 const importLog=[];
 
-// Auto inject Date for Export
+// Auto inject Date & Populate dropdown for Export
 document.addEventListener("DOMContentLoaded", function() {
   const dateInput = document.getElementById('exp-date');
   if(dateInput) {
     const todayStr = new Date().toISOString().split('T')[0];
     dateInput.value = todayStr;
   }
+  
+  // Tự động load tất cả các điểm tiêm (bao gồm cả Khác) vào danh sách chọn đơn vị
+  const unitSelect = document.getElementById('exp-unit');
+  if(unitSelect) {
+    SITES.forEach(site => {
+      const opt = document.createElement('option');
+      opt.value = site.toUpperCase(); // In hoa giá trị
+      opt.textContent = site;
+      unitSelect.appendChild(opt);
+    });
+  }
 });
+
+// HÀM ĐÓNG MỞ Ô NHẬP TÊN ĐƠN VỊ TỰ GÕ KHI CHỌN "KHÁC"
+function checkUnitChange() {
+  const select = document.getElementById('exp-unit');
+  const customWrap = document.getElementById('custom-unit-wrap');
+  if(select.value === "KHÁC (GHI CỤ THỂ)") {
+    customWrap.style.display = "block";
+  } else {
+    customWrap.style.display = "none";
+  }
+  renderExpCheck();
+}
 
 // ═══════ HELPERS ═══════
 const n=v=>parseInt(v)||0;
@@ -766,7 +801,7 @@ function markOne(i){
   toast('✅ Đã đánh dấu: '+SITES[i].slice(0,28)+'...','ok');
 }
 function markAllDone(){
-  if(!confirm('Đánh dấu tất cả 61 đơn vị là đã nộp?')) return;
+  if(!confirm(`Đánh dấu tất cả ${SITES.length} đơn vị là đã nộp?`)) return;
   SITES.forEach((_,i)=>{if(!submitDates[i])submitDates[i]=new Date();});
   renderProg(); renderDash(); toast('✅ Đã đánh dấu tất cả đơn vị','ok');
 }
@@ -858,14 +893,21 @@ function applyManual(){
   toast('✅ Đã cập nhật: '+SITES[parseInt(idx)].slice(0,30)+'...','ok');
 }
 
-// ═══════ EXPORT (MÀU ĐEN) ═══════
+// ═══════ EXPORT (ĐÃ FIX LỖI GỘP CỘT CHỮ KÝ) ═══════
 function renderExpCheck(){
   const sub=Object.keys(submitDates).length;
   const tot=colSum(0)+colSum(1);
+  const selectedUnit = document.getElementById('exp-unit')?.value;
+  let unitValid = !!selectedUnit;
+  
+  if (selectedUnit === "KHÁC (GHI CỤ THỂ)") {
+    unitValid = !!document.getElementById('exp-unit-custom')?.value.trim();
+  }
+
   const chks=[
     {ok:sub===SITES.length,msg:`${sub}/${SITES.length} đơn vị đã nộp số liệu`},
     {ok:tot>0,msg:`Tổng số người tiêm: ${tot.toLocaleString()}`},
-    {ok:!!document.getElementById('exp-unit')?.value,msg:'Tên đơn vị đã được nhập'},
+    {ok:unitValid,msg:selectedUnit === "KHÁC (GHI CỤ THỂ)" ? 'Tên đơn vị khác cụ thể đã điền' : 'Tên đơn vị đã được chọn'},
     {ok:!!document.getElementById('exp-date')?.value,msg:'Ngày ký đã được chọn'},
     {ok:true,msg:'Font Times New Roman – Chữ đen chuẩn hành chính & dọc 90 độ'},
     {ok:true,msg:'Kẻ viền tự động - A4 nằm ngang'},
@@ -878,6 +920,22 @@ function renderExpCheck(){
 }
 
 async function exportXLSX(){
+  let unit=document.getElementById('exp-unit').value;
+  if(!unit) {
+    toast('❌ Vui lòng chọn tên đơn vị báo cáo trước khi xuất!', 'err');
+    return;
+  }
+  
+  // NẾU CHỌN TRƯỜNG KHÁC, LẤY GIÁ TRỊ CỤ THỂ Ở Ô INPUT TEXT
+  if(unit === "KHÁC (GHI CỤ THỂ)") {
+    const customUnit = document.getElementById('exp-unit-custom').value.trim();
+    if(!customUnit) {
+      toast('❌ Vui lòng gõ cụ thể tên đơn vị của bạn!', 'err');
+      return;
+    }
+    unit = customUnit.toUpperCase();
+  }
+
   const btn=document.getElementById('export-btn');
   const sp=document.getElementById('exp-spin');
   btn.disabled=true; sp.style.display='inline-block';
@@ -885,7 +943,6 @@ async function exportXLSX(){
   try{
     const m=document.getElementById('exp-month').value;
     const y=document.getElementById('exp-year').value;
-    const unit=document.getElementById('exp-unit').value;
     const sd=document.getElementById('exp-date').value;
     const sdObj=sd?new Date(sd):new Date();
     
@@ -900,44 +957,56 @@ async function exportXLSX(){
 }
 
 function buildXLSX(month,year,unit,signDate){
-  // Khởi tạo workbook mới
   const wb = XLSX.utils.book_new();
   
-  // Xây dựng mảng dữ liệu (AOA) khớp y hệt ảnh mẫu
   const H1=['TT','Điểm tiêm','Giới','','Tuổi','','','','Thời gian từ lúc bị cắn - tiêm','','Loại động vật','','','','Số người có vị trí vết thương','','','','Số người có mức độ vết thương','','','Tình trạng động vật','','','','Số người','','Số người dùng HTKD','Số người có phản ứng phụ tại chỗ','','','','Số người có phản ứng phụ toàn thân','','','','','','BN tử vong','','Số người tiêm dự phòng'];
   const H2=['','','Nam','Nữ','< 15 tuổi','15 - 24 tuổi','24 - 49 tuổi','≥ 50 tuổi','≤ 10 ngày','> 10 ngày','Chó','Mèo','Dơi','Khác','Đầu mặt cổ','Thân','Tay','Chân','Độ I','Độ II','Độ III','Bình thường','Ốm\nChạy rông + mất tích','','Lên cơn dại','Tiêm bắp','Tiêm trong da','','Đau','Quầng đỏ','Tụ máu','Phù nề/nốt cứng','Sốt','Khó chịu','Ngứa mẩn đỏ','Đau cơ, khớp','Rối loạn tiêu hoá','Khác','Có tiêm','Không tiêm',''];
   
   const aoa=[];
-  aoa.push([]); // row 0 trống
-  aoa.push(['SỞ Y TẾ HƯNG YÊN','','','','','','','BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI']); // row 1
-  aoa.push([unit.toUpperCase(),'','','','','','',`Tháng ${month} năm ${year}`]); // row 2
-  aoa.push([]); // row 3 trống
-  aoa.push(H1); // row 4 (Tiêu đề trên)
-  aoa.push(H2); // row 5 (Tiêu đề dưới - sẽ quay dọc)
+  aoa.push([]); 
+  aoa.push(['SỞ Y TẾ HƯNG YÊN','','','','','','','BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI']); 
+  aoa.push([unit,'','','','','','',`Tháng ${month} năm ${year}`]); 
+  aoa.push([]); 
+  aoa.push(H1); 
+  aoa.push(H2); 
   
-  // Điền data
   tableData.forEach((row,i)=>aoa.push([i+1,SITES[i],...row]));
   
-  // Tính tổng
   const tots=Array.from({length:39},(_,j)=>colSum(j));
   aoa.push(['Cộng','', ...tots]);
   
   const tableEndRow = aoa.length - 1;
 
-  // Phần chữ ký
-  aoa.push([]);
-  aoa.push(['','','','','','','','','','','','','','','','','','','','','','','','','','','',`Hưng Yên, ngày ${signDate}`]);
-  aoa.push(['','NGƯỜI LÀM BÁO CÁO','','','','','','','','','','','','','','LÃNH ĐẠO KHOA','','','','','','','','','','','','LÃNH ĐẠO ĐƠN VỊ']);
-  aoa.push(['','(Ký, ghi rõ họ tên)','','','','','','','','','','','','','','(Ký, ghi rõ họ tên)','','','','','','','','','','','','(Ký, tên, đóng dấu)']);
+  // CHÈN PHẦN CHỮ KÝ VÀO ĐÚNG CÁC CỘT (Cột 1, Cột 15, Cột 28)
+  aoa.push([]); // tableEndRow + 1
+  
+  let rowDate = Array(41).fill('');
+  rowDate[28] = `Hưng Yên, ngày ${signDate}`;
+  aoa.push(rowDate); // tableEndRow + 2
+
+  let rowSigTitle = Array(41).fill('');
+  rowSigTitle[1] = 'NGƯỜI LÀM BÁO CÁO';
+  rowSigTitle[15] = 'LÃNH ĐẠO KHOA';
+  rowSigTitle[28] = 'LÃNH ĐẠO ĐƠN VỊ';
+  aoa.push(rowSigTitle); // tableEndRow + 3
+
+  let rowSigSub = Array(41).fill('');
+  rowSigSub[1] = '(Ký, ghi rõ họ tên)';
+  rowSigSub[15] = '(Ký, ghi rõ họ tên)';
+  rowSigSub[28] = '(Ký, tên, đóng dấu)';
+  aoa.push(rowSigSub); // tableEndRow + 4
+
   aoa.push([]);aoa.push([]);aoa.push([]);aoa.push([]);
 
-  // Tạo sheet
   const ws = XLSX.utils.aoa_to_sheet(aoa);
   
-  // ---- 1. GỘP CỘT (MERGE CELLS) ----
+  // GỘP CỘT (CẢ BẢNG VÀ CHỮ KÝ)
   ws['!merges']=[
+    // Tiêu đề
     {s:{r:1,c:0},e:{r:1,c:6}},{s:{r:2,c:0},e:{r:2,c:6}},
     {s:{r:1,c:7},e:{r:1,c:40}},{s:{r:2,c:7},e:{r:2,c:40}},
+    
+    // Header bảng
     {s:{r:4,c:0},e:{r:5,c:0}}, // TT
     {s:{r:4,c:1},e:{r:5,c:1}}, // Điểm tiêm
     {s:{r:4,c:2},e:{r:4,c:3}}, // Giới
@@ -954,22 +1023,30 @@ function buildXLSX(month,year,unit,signDate){
     {s:{r:4,c:32},e:{r:4,c:37}}, // PU toàn thân
     {s:{r:4,c:38},e:{r:4,c:39}}, // Tử vong
     {s:{r:4,c:40},e:{r:5,c:40}}, // Dự phòng (dọc)
-    {s:{r:tableEndRow,c:0},e:{r:tableEndRow,c:1}} // Cộng
+    {s:{r:tableEndRow,c:0},e:{r:tableEndRow,c:1}}, // Cộng
+    
+    // GỘP CỘT PHẦN CHỮ KÝ (FIX LỖI CHỮ BỊ DỌC)
+    {s:{r:tableEndRow + 2, c: 28}, e:{r:tableEndRow + 2, c: 40}}, // Ngày tháng
+    
+    {s:{r:tableEndRow + 3, c: 1}, e:{r:tableEndRow + 3, c: 10}}, // Chữ ký 1
+    {s:{r:tableEndRow + 3, c: 15}, e:{r:tableEndRow + 3, c: 24}}, // Chữ ký 2
+    {s:{r:tableEndRow + 3, c: 28}, e:{r:tableEndRow + 3, c: 40}}, // Chữ ký 3
+    
+    {s:{r:tableEndRow + 4, c: 1}, e:{r:tableEndRow + 4, c: 10}}, // Sub Chữ ký 1
+    {s:{r:tableEndRow + 4, c: 15}, e:{r:tableEndRow + 4, c: 24}}, // Sub Chữ ký 2
+    {s:{r:tableEndRow + 4, c: 28}, e:{r:tableEndRow + 4, c: 40}}  // Sub Chữ ký 3
   ];
 
-  // ---- 2. CHIỀU RỘNG CỘT (CỰC HẸP ĐỂ VỪA A4) ----
-  const colWidths = [{wch: 3.5}, {wch: 22}]; // TT, Điểm tiêm
-  for(let i=2; i<=40; i++) colWidths.push({wch: 3.6}); // Các cột số liệu ép hẹp lại
-  colWidths[27] = {wch: 4.5}; // HTKD nhích ra chút
-  colWidths[40] = {wch: 4.5}; // Dự phòng
+  const colWidths = [{wch: 3.5}, {wch: 22}]; 
+  for(let i=2; i<=40; i++) colWidths.push({wch: 3.6}); 
+  colWidths[27] = {wch: 4.5}; 
+  colWidths[40] = {wch: 4.5}; 
   ws['!cols'] = colWidths;
 
-  // ---- 3. CHIỀU CAO HÀNG (CHO CHỮ ĐỨNG LÊN) ----
   ws['!rows'] = [];
-  ws['!rows'][4] = {hpt: 45}; // Hàng tiêu đề 1
-  ws['!rows'][5] = {hpt: 130}; // Hàng tiêu đề 2 cao 130pt để chứa chữ dọc
+  ws['!rows'][4] = {hpt: 45}; 
+  ws['!rows'][5] = {hpt: 130}; 
 
-  // ---- 4. ĐỊNH DẠNG TEXT, VIỀN (CHỮ ĐEN) ----
   const borderThin = {
     top: {style: "thin", color: {auto: 1}}, bottom: {style: "thin", color: {auto: 1}},
     left: {style: "thin", color: {auto: 1}}, right: {style: "thin", color: {auto: 1}}
@@ -979,47 +1056,38 @@ function buildXLSX(month,year,unit,signDate){
   for(let R = 0; R <= range.e.r; ++R) {
     for(let C = 0; C <= range.e.c; ++C) {
       const cell_ref = XLSX.utils.encode_cell({c:C, r:R});
-      if(!ws[cell_ref]) ws[cell_ref] = { t: "s", v: "" }; // Tạo rỗng nếu null để kẻ viền
+      if(!ws[cell_ref]) ws[cell_ref] = { t: "s", v: "" }; 
       
       ws[cell_ref].s = {
         font: { name: "Times New Roman", sz: 10 },
         alignment: { vertical: "center", horizontal: "center", wrapText: true }
       };
 
-      // Kẻ viền (Từ dòng tiêu đề đến dòng Cộng)
       if (R >= 4 && R <= tableEndRow) {
         ws[cell_ref].s.border = borderThin;
       }
 
-      // In đậm cho tên Sở Y Tế (R=1, 2)
       if (R === 1 || R === 2) {
         ws[cell_ref].s.font = { name: "Times New Roman", sz: 11, bold: true };
         if (C === 0 || C >= 7) ws[cell_ref].s.alignment.horizontal = "center";
       }
 
-      // Định dạng Tiêu đề bảng (In đậm)
       if (R === 4 || R === 5) {
         ws[cell_ref].s.font = { name: "Times New Roman", sz: 10, bold: true };
-        
-        // CHỮ ĐỨNG LÊN 90 ĐỘ (Từ cột Giới tính trở đi)
         if (R === 5 && C >= 2) {
             ws[cell_ref].s.alignment.textRotation = 90;
         }
-        // Cột HTKD (27) và Dự phòng (40) bị gộp từ r=4, nên phải gắn textRotation ngay tại r=4
         if (R === 4 && (C === 27 || C === 40)) {
             ws[cell_ref].s.alignment.textRotation = 90;
         }
       }
 
-      // Dòng CỘNG
       if (R === tableEndRow) ws[cell_ref].s.font.bold = true;
 
-      // Căn trái tên Điểm Tiêm
       if (R > 5 && R < tableEndRow && C === 1) {
          ws[cell_ref].s.alignment.horizontal = "left";
       }
 
-      // Định dạng chữ ký
       if (R > tableEndRow + 1) {
          ws[cell_ref].s.font.sz = 11;
          if (R === tableEndRow + 3) ws[cell_ref].s.font.bold = true; 
@@ -1028,13 +1096,9 @@ function buildXLSX(month,year,unit,signDate){
     }
   }
 
-  // ---- 5. SETUP IN A4 NẰM NGANG & VỪA TRANG ----
-  // paperSize 9 = A4. orientation = landscape (nằm ngang)
-  // fitToWidth: 1 ép bảng vừa khít chiều rộng giấy
   ws['!pageSetup'] = { orientation: 'landscape', paperSize: 9, fitToWidth: 1, fitToHeight: 0 };
   ws['!margins'] = { left: 0.2, right: 0.2, top: 0.5, bottom: 0.5, header: 0.3, footer: 0.3 };
 
-  // Xuất file
   XLSX.utils.book_append_sheet(wb, ws, `Tháng ${month} năm ${year}`);
   const out = XLSX.write(wb, {bookType:'xlsx', type:'array'});
   const blob = new Blob([out], {type:'application/octet-stream'});
