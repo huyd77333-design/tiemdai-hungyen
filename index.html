@@ -115,6 +115,91 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;width:100%;flex:1}
 /* FOOTER */
 footer{background:#1a252f;color:rgba(255,255,255,.6);text-align:center;padding:12px 20px;font-size:11.5px;border-top:1px solid rgba(255,255,255,.05)}
 footer strong{color:#e8a020}
+
+/* =====================================================
+   TỐI ƯU HÓA GIAO DIỆN IN VÀ XUẤT BẢN KHỔ A4 NGANG
+   ===================================================== */
+@media print {
+    body {
+        background: #fff;
+        color: #000;
+        font-size: 11px;
+    }
+    header, .tabs, .month-sel, .srch, .btn, footer {
+        display: none !important;
+    }
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    .page {
+        display: block !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        page-break-inside: avoid;
+    }
+    .dt-wrap {
+        overflow: visible !important;
+        max-height: none !important;
+    }
+    .dt {
+        width: 100% !important;
+    }
+    .dt th {
+        background: #f2f2f2 !important;
+        color: #000 !important;
+        border: 0.5px solid #000 !important;
+    }
+    .dt th.g {
+        background: #e6e6e6 !important;
+    }
+    .dt td {
+        border: 0.5px solid #000 !important;
+        padding: 4px 2px !important;
+    }
+    .dt td.tt {
+        background: #f9f9f9 !important;
+    }
+    .dt td.nm {
+        background: #fff !important;
+    }
+    .dt input[type=number] {
+        background: transparent !important;
+        border: none !important;
+        color: #000 !important;
+    }
+    
+    /* Xoay dọc tiêu đề 90 độ khi in */
+    .rotate-col {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        text-align: center;
+        height: 110px;
+        white-space: nowrap;
+        vertical-align: middle;
+        padding: 0 !important;
+    }
+}
+
+@page {
+    size: A4 landscape;
+    margin: 8mm;
+}
+
+.rotate-col {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: center;
+    height: 110px;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0 !important;
+}
 </style>
 </head>
 <body>
@@ -177,19 +262,50 @@ footer strong{color:#e8a020}
             <th class="g" colspan="3">Mức độ</th>
             <th class="g" colspan="4">Tình trạng ĐV</th>
             <th class="g" colspan="2">Số người tiêm</th>
-            <th rowspan="2">HTKD</th>
+            <th rowspan="2" class="rotate-col">HTKD</th>
             <th class="g" colspan="4">PU tại chỗ</th>
             <th class="g" colspan="6">PU toàn thân</th>
             <th class="g" colspan="2">Tử vong</th>
-            <th rowspan="2">Dự phòng</th>
+            <th rowspan="2" class="rotate-col">Dự phòng</th>
           </tr>
           <tr>
-            <th>Nam</th><th>Nữ</th><th>&lt;15</th><th>15-24</th><th>24-49</th><th>≥50</th>
-            <th>≤10n</th><th>&gt;10n</th><th>Chó</th><th>Mèo</th><th>Dơi</th><th>Khác</th>
-            <th>Đầu/cổ</th><th>Thân</th><th>Tay</th><th>Chân</th><th>ĐI</th><th>ĐII</th><th>ĐIII</th>
-            <th>BT</th><th>Ốm</th><th>Chạy rông</th><th>Dại</th><th>Bắp</th><th>Trong da</th>
-            <th>Đau</th><th>Đỏ</th><th>Tụ máu</th><th>Phù nề</th><th>Sốt</th><th>Khó chịu</th><th>Ngứa</th><th>Đau cơ</th><th>RLtiêu hóa</th><th>Khác</th>
-            <th>Có tiêm</th><th>Không tiêm</th>
+            <th class="rotate-col">Nam</th>
+            <th class="rotate-col">Nữ</th>
+            <th class="rotate-col">&lt;15 tuổi</th>
+            <th class="rotate-col">15-24 tuổi</th>
+            <th class="rotate-col">24-49 tuổi</th>
+            <th class="rotate-col">≥50 tuổi</th>
+            <th class="rotate-col">≤10 ngày</th>
+            <th class="rotate-col">&gt;10 ngày</th>
+            <th class="rotate-col">Chó</th>
+            <th class="rotate-col">Mèo</th>
+            <th class="rotate-col">Dơi</th>
+            <th class="rotate-col">Khác</th>
+            <th class="rotate-col">Đầu/cổ</th>
+            <th class="rotate-col">Thân</th>
+            <th class="rotate-col">Tay</th>
+            <th class="rotate-col">Chân</th>
+            <th class="rotate-col">Độ I</th>
+            <th class="rotate-col">Độ II</th>
+            <th class="rotate-col">Độ III</th>
+            <th class="rotate-col">Bình thường</th>
+            <th class="rotate-col">Ốm</th>
+            <th class="rotate-col">Chạy rông</th>
+            <th class="rotate-col">Lên cơn dại</th>
+            <th class="rotate-col">Tiêm bắp</th>
+            <th class="rotate-col">Trong da</th>
+            <th class="rotate-col">Đau</th>
+            <th class="rotate-col">Quầng đỏ</th>
+            <th class="rotate-col">Tụ máu</th>
+            <th class="rotate-col">Phù nề/Nốt cứng</th>
+            <th class="rotate-col">Sốt</th>
+            <th class="rotate-col">Khó chịu</th>
+            <th class="rotate-col">Ngứa mẩn đỏ</th>
+            <th class="rotate-col">Đau cơ,khớp</th>
+            <th class="rotate-col">Rối loạn tiêu hoá</th>
+            <th class="rotate-col">Khác</th>
+            <th class="rotate-col">Có tiêm</th>
+            <th class="rotate-col">Không tiêm</th>
           </tr>
         </thead>
         <tbody id="dt-body"></tbody>
@@ -246,6 +362,31 @@ footer strong{color:#e8a020}
       <span id="exp-spin" style="display:none" class="spin"></span> 📥 Tải Báo Cáo Excel
     </button>
   </div>
+  
+  <div class="card" style="padding:20px; margin-top:16px; background:#fff; page-break-inside: avoid;">
+      <div style="display: flex; justify-content: space-between; text-align: center; font-family: 'Times New Roman', Times, serif; margin-top: 20px;">
+          <div style="width: 30%;">
+              <strong>NGƯỜI LÀM BÁO CÁO</strong><br>
+              <em style="font-size: 12px;">(Ký, họ tên)</em>
+              <br><br><br><br><br>
+          </div>
+          <div style="width: 30%;">
+              <strong>BỘ PHẬN PHỤ TRÁCH/ KHOA/ PHÒNG</strong><br>
+              <em style="font-size: 12px;">(Ký, họ tên)</em>
+              <br><br><br><br><br>
+          </div>
+          <div style="width: 30%;">
+              <strong>LÃNH ĐẠO ĐƠN VỊ</strong><br>
+              <em style="font-size: 12px;">(Ký, đóng dấu, họ tên)</em>
+              <br><br><br><br><br>
+          </div>
+      </div>
+      
+      <div style="text-align: right; font-family: 'Times New Roman', Times, serif; font-size: 14px; font-style: italic; margin-top: 15px; padding-right: 20px;">
+          <span id="autogen-date">Hưng Yên, ngày 20 tháng 06 năm 2026</span>
+      </div>
+  </div>
+
   <div class="card">
     <div class="ch"><span class="ct">Cấu hình tiêu đề báo cáo năm hành chính</span></div>
     <div class="cb">
@@ -282,7 +423,7 @@ footer strong{color:#e8a020}
 </main>
 
 <footer>
-  Hệ thống quản lý báo cáo Sở Y Tế Hưng Yên | Khi cần hỗ trợ, vui lòng gọi điện Admin: <strong>02273836722</strong>
+  Sistema de Gestion | Sở Y Tế Hưng Yên | Khi cần hỗ trợ, vui lòng gọi điện Admin: <strong>02273836722</strong>
 </footer>
 
 <div id="toast"></div>
@@ -344,6 +485,13 @@ function initTable() {
   buildManualFormInputs();
   calcTotalRow();
   updateProgressTab();
+  
+  // =====================================================
+  // TỰ ĐỘNG ĐIỀN NGÀY THÁNG NĂM HIỆN TẠI KHI KHỞI TẠO
+  // =====================================================
+  const now = new Date();
+  const dateStr = `Hưng Yên, ngày ${String(now.getDate()).padStart(2, '0')} tháng ${String(now.getMonth() + 1).padStart(2, '0')} năm ${now.getFullYear()}`;
+  document.getElementById("autogen-date").innerText = dateStr;
 }
 
 function buildManualFormInputs() {
@@ -497,12 +645,13 @@ function exportXLSX() {
   const y = document.getElementById("exp-year").value;
   
   let data = [
-    ["BÁO CÁO KẾT QUẢ TIÊM VẮC XIN PHÒNG DẠI NĂM " + y],
-    ["Tháng báo cáo: Tháng " + m + " / Năm " + y],
+    ["SỞ Y TẾ TỈNH HƯNG YÊN"],
+    ["TRUNG TÂM KIỂM SOÁT BỆNH TẬT"],
+    ["BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI"],
+    ["Tháng " + m + " năm " + y],
     [],
-    ["TT", "Tên đơn vị", "Giới", "", "Tuổi", "", "", "", "Thời gian đến tiêm", "", "Loại động vật cắn", "", "", "", "Vị trí vết cắn", "", "", "", "Mức độ thương tổn", "", "", "Tình trạng động vật", "", "", "", "Số người tiêm vắc xin phòng dại", "", "Huyết thanh kháng dại", "Phản ứng sau tiêm chủng", "", "", "", "", "", "", "", "", "", "Tử vong do dại", "", "Dự phòng"],
-    ["", "", "Nam", "Nữ", "<15", "15-24", "25-49", "≥50", "≤10 ngày", ">10 ngày", "Chó", "Mèo", "Dơi", "Khác", "Đầu, Cổ", "Thân", "Tay", "Chân", "Độ I", "Độ II", "Độ III", "Bình thường", "Ốm", "Chạy rông", "Dại", "Bắp", "Trong da", "", "Tại chỗ", "", "", "", "Toàn thân", "", "", "", "", "", "Có tiêm", "Không tiêm", ""],
-    ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Đau", "Đỏ", "Tụ máu", "Phù nề", "Sốt", "Khó chịu", "Ngứa", "Đau cơ", "RL tiêu hóa", "Khác", "", "", ""]
+    ["TT", "Điểm tiêm", "Giới", "", "Tuổi", "", "", "", "Thời gian từ lúc bị cắn - tiêm", "", "Loại động vật", "", "", "", "Số người có vị trí vết thương", "", "", "", "Số người có mức độ vết thương", "", "", "Tình trạng động vật", "", "", "", "Số người", "", "Số người có phản ứng phụ HTKD", "Số người có phản ứng phụ tại chỗ", "", "", "", "Số người có phản ứng toàn thân", "", "", "", "", "", "BN tử vong", "Số người tiêm dự phòng", "", ""],
+    ["", "", "Nam", "Nữ", "< 15 tuổi", "15 - 24 tuổi", "24 - 49 tuổi", ">= 50 tuổi", "≤ 10 ngày", "> 10 ngày", "Chó", "Mèo", "Dơi", "Khác", "Đầu mặt cổ", "Thân", "Tay", "Chân", "Độ I", "Độ II", "Độ III", "Bình thường", "Ốm", "Chạy rông + mất tích", "Lên cơn dại", "Tiêm bắp", "Tiêm trong da", "", "Đau", "Quầng đỏ", "Tụ máu", "Phù nề/nốt cứng", "Sốt", "Khó chịu", "Ngứa mẩn đỏ", "Đau cơ,khớp", "Rối loạn tiêu hoá", "Khác", "", "Có tiêm", "Không tiêm", "Số người tiêm dự phòng"]
   ];
 
   document.querySelectorAll("#dt-body tr").forEach(tr => {
@@ -514,7 +663,7 @@ function exportXLSX() {
     data.push(row);
   });
 
-  let footRow = ["", "TỔNG CỘNG"];
+  let footRow = ["", "Cộng"];
   document.querySelectorAll("#dt-foot tr td").forEach((td, idx) => {
     if(idx > 0) footRow.push(parseInt(td.innerText) || 0);
   });
@@ -523,40 +672,82 @@ function exportXLSX() {
   const ws = XLSX.utils.aoa_to_sheet(data);
   
   ws["!merges"] = [
-    {s:{r:0,c:0}, e:{r:0,c:40}}, {s:{r:1,c:0}, e:{r:1,c:40}},
-    {s:{r:4,c:0}, e:{r:6,c:0}}, {s:{r:4,c:1}, e:{r:6,c:1}},
-    {s:{r:4,c:2}, e:{r:4,c:3}}, {s:{r:4,c:4}, e:{r:4,c:7}},
-    {s:{r:4,c:8}, e:{r:4,c:9}}, {s:{r:4,c:10}, e:{r:4,c:13}},
-    {s:{r:4,c:14}, e:{r:4,c:17}}, {s:{r:4,c:18}, e:{r:4,c:20}},
-    {s:{r:4,c:21}, e:{r:4,c:24}}, {s:{r:4,c:25}, e:{r:4,c:26}},
-    {s:{r:4,c:27}, e:{r:6,c:27}}, {s:{r:4,c:28}, e:{r:4,c:35}},
-    {s:{r:4,c:36}, e:{r:4,c:37}}, {s:{r:4,c:38}, e:{r:6,c:38}},
-    {s:{r:5,c:28}, e:{r:5,c:31}}, {s:{r:5,c:32}, e:{r:5,c:35}}
+    {s:{r:0,c:0}, e:{r:0,c:41}}, 
+    {s:{r:1,c:0}, e:{r:1,c:41}},
+    {s:{r:2,c:0}, e:{r:2,c:41}},
+    {s:{r:3,c:0}, e:{r:3,c:41}},
+    {s:{r:5,c:2}, e:{r:5,c:3}}, {s:{r:5,c:4}, e:{r:5,c:7}},
+    {s:{r:5,c:8}, e:{r:5,c:9}}, {s:{r:5,c:10}, e:{r:5,c:13}},
+    {s:{r:5,c:14}, e:{r:5,c:17}}, {s:{r:5,c:18}, e:{r:5,c:20}},
+    {s:{r:5,c:21}, e:{r:5,c:24}}, {s:{r:5,c:25}, e:{r:5,c:26}},
+    {s:{r:5,c:28}, e:{r:5,c:31}}, {s:{r:5,c:32}, e:{r:5,c:37}},
+    {s:{r:5,c:39}, e:{r:5,c:41}},
+    {s:{r:5,c:0}, e:{r:6,c:0}}, {s:{r:5,c:1}, e:{r:6,c:1}},
+    {s:{r:5,c:27}, e:{r:6,c:27}}, {s:{r:5,c:38}, e:{r:6,c:38}}
   ];
 
-  const borderStyle = {top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
+  const borderStyle = {top:{style:"thin", color:"B0C4DE"}, bottom:{style:"thin", color:"B0C4DE"}, left:{style:"thin", color:"B0C4DE"}, right:{style:"thin", color:"B0C4DE"}};
+  
+  ws['!rows'] = [
+    {h: 20}, {h: 20}, {h: 30}, {h: 22}, {h: 10},
+    {h: 40}, {h: 60}
+  ];
+
   for(let cell in ws) {
     if(cell[0] === '!') continue;
     ws[cell].s = {
-      font: {name: "Times New Roman", size: 11},
-      alignment: {vertical: "center", horizontal: "center", wrapText: true},
+      font: {name: "Times New Roman", size: 11, bold: false},
+      alignment: {vertical: "center", horizontal: "right", wrapText: true},
       border: borderStyle
     };
     
     let colIdx = XLSX.utils.decode_cell(cell).c;
     let rowIdx = XLSX.utils.decode_cell(cell).r;
-    if(rowIdx >= 4 && rowIdx <= 6 && colIdx > 1) {
-      ws[cell].s.alignment.textRotation = 90; 
-      ws[cell].s.fill = {fgColor: {rgb: "F2F2F2"}};
+    
+    if(rowIdx < 4) {
+      ws[cell].s.alignment.horizontal = "center";
+      if(rowIdx === 2) ws[cell].s.font = {name: "Times New Roman", size: 16, bold: true};
+      if(rowIdx === 3) ws[cell].s.font = {name: "Times New Roman", size: 12, italic: true};
+    }
+
+    if(rowIdx === 5 || rowIdx === 6) {
+      ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
+      ws[cell].s.fill = {fgColor: {rgb: "E6EEF4"}, fill_type: "solid"};
+      ws[cell].s.alignment.horizontal = "center";
+      if(rowIdx === 6 && colIdx > 1) {
+         ws[cell].s.alignment.textRotation = 90;
+      }
+    }
+
+    if(rowIdx >= 7) {
+      if(colIdx === 0) {
+        ws[cell].s.alignment.horizontal = "center";
+      } else if(colIdx === 1) {
+        ws[cell].s.alignment.horizontal = "left";
+      } else {
+        ws[cell].s.number_format = "#,##0";
+      }
+      
+      // Dòng tổng cộng
+      if(rowIdx === (data.length - 1)) {
+        ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
+        ws[cell].s.fill = {fgColor: {rgb: "F5F5F5"}, fill_type: "solid"};
+        ws[cell].s.border = {
+           top: {style: 'thin', color: '000000'},
+           bottom: {style: 'double', color: '000000'},
+           left: {style: 'thin', color: 'D3D3D3'},
+           right: {style: 'thin', color: 'D3D3D3'}
+        };
+      }
     }
   }
 
   ws['!pageSetup'] = {orientation: 'landscape', paperSize: 9};
 
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Báo cáo Tiêm Dại");
+  XLSX.utils.book_append_sheet(wb, ws, "Báo cáo tiêm vắc xin dại");
   XLSX.writeFile(wb, `BaoCao_TiemDai_Thang${m}_${y}.xlsx`);
-  showToast("Đã tải xuống file báo cáo Excel mẫu chuẩn!", "ok");
+  showToast("Đã kết xuất báo cáo Excel chuẩn định dạng!", "ok");
 }
 
 window.onload = function() {
