@@ -928,46 +928,41 @@ async function exportXLSX(){
 }
 
 function buildXLSX(month, year, reporter, khoa, director, signDate) {
-    // 1. Chuẩn bị dữ liệu bao gồm cả các dòng tiêu đề và ký tên
+    // 1. Khởi tạo mảng dữ liệu với cấu trúc 2 chiều
     const aoa = [
         ['SỞ Y TẾ HƯNG YÊN'],
-        [''], // Dòng này để trống cho đơn vị tự gõ
+        [''], // Dòng trống cho đơn vị tự điền
         ['BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI'],
         [`Tháng ${month} năm ${year}`],
         [],
         ['TT', 'Điểm tiêm', 'Nam', 'Nữ', '<15', '15-24', '24-49', '≥50', '≤10d', '>10d', 'Chó', 'Mèo', 'Dơi', 'Khác', 'Đầu', 'Thân', 'Tay', 'Chân', 'Độ I', 'Độ II', 'Độ III', 'Bình thường', 'Ốm', 'Chạy rông', 'Lên cơn', 'Bắp', 'Da', 'HTKD', 'Đau', 'Đỏ', 'Tụ máu', 'Phù', 'Sốt', 'Khó chịu', 'Ngứa', 'Đau cơ', 'Tiêu hóa', 'Khác', 'Có tiêm', 'Không tiêm', 'Tử vong']
     ];
 
-    // Thêm dữ liệu từ tableData
-    tableData.forEach((row, i) => aoa.push([i + 1, SITES[i], ...row]));
+    // 2. Thêm dữ liệu từ biến tableData của bạn
+    if (typeof tableData !== 'undefined') {
+        tableData.forEach((row, i) => {
+            aoa.push([i + 1, SITES[i] || '', ...row]);
+        });
+    }
 
-    // Thêm dòng Cộng
+    // 3. Dòng Cộng
     const tots = Array.from({ length: 39 }, (_, j) => colSum(j));
     aoa.push(['Cộng', '', ...tots]);
 
-    // Thêm dòng Ký tên (3 cột)
-    aoa.push([]);
+    // 4. Các dòng chữ ký
+    aoa.push([], [], []);
     aoa.push(['', 'LÃNH ĐẠO ĐƠN VỊ', 'PHỤ TRÁCH BỘ PHẬN', 'NGƯỜI LÀM BÁO CÁO']);
     aoa.push(['', '(Ký, ghi rõ họ tên)', '(Ký, ghi rõ họ tên)', '(Ký, ghi rõ họ tên)']);
+    aoa.push(['', director || '', khoa || '', reporter || '']);
 
-    // 2. Tạo Sheet
-    const ws = XLSX.utils.aoa_to_sheet(aoa);
-
-    // 3. Ép kiểu chữ Times New Roman và xoay 90 độ
-    // Lưu ý: SheetJS mặc định không hỗ trợ Style mạnh, 
-    // nhưng đây là cách tối ưu nhất để dữ liệu hiển thị sạch sẽ
-    ws['!cols'] = [{ wch: 5 }, { wch: 20 }]; // Ép cột nhỏ lại
-    for (let i = 2; i < 41; i++) {
-        ws['!cols'].push({ wch: 4 }); // Cột dữ liệu hẹp = 4
-    }
-
-    // Thiết lập khổ A4 Ngang
-    ws['!pageSetup'] = { orientation: 'landscape', paperSize: 9 };
-
+    // 5. Tạo workbook và xuất file
     const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    
+    // Thiết lập khổ giấy A4 Ngang
+    ws['!pageSetup'] = { orientation: 'landscape', paperSize: 9 };
+    
     XLSX.utils.book_append_sheet(wb, ws, "BaoCao");
-
-    // 4. Xuất file
     XLSX.writeFile(wb, `BC_TiemDai_Thang${month}_${year}.xlsx`);
 }
 
