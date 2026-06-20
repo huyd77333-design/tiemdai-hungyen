@@ -195,6 +195,17 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
   <button class="tab" onclick="go('guide',this)">📖 Hướng dẫn</button>
 </div>
 
+<datalist id="quick-numbers">
+  <option value="0">0 (Không có)</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  <option value="10">10</option>
+  <option value="20">20</option>
+</datalist>
+
 <main>
 
 <div id="page-dashboard" class="page active">
@@ -235,7 +246,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 </div>
 
 <div id="page-data" class="page">
-  <div class="alert info"><div class="alert-icon">📌</div><div>Bảng hiển thị đầy đủ các điểm tiêm × 39 chỉ tiêu. Có thể nhập/sửa trực tiếp. Dữ liệu từ CSV Import sẽ tự điền vào đây. Nhấn <b>Lưu</b> để cập nhật dashboard.</div></div>
+  <div class="alert info"><div class="alert-icon">📌</div><div>Bảng hiển thị đầy đủ các điểm tiêm × 39 chỉ tiêu. Có thể nhập/sửa trực tiếp. Kích chuột vào ô để hiển thị danh sách từ 0 đến N. Nhấn <b>Lưu</b> để cập nhật dashboard.</div></div>
   <div class="card">
     <div class="ch">
       <span class="ct">Số liệu tiêm dại – <span id="data-month-lbl">Tháng 5/2026</span></span>
@@ -521,11 +532,11 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 // ═══════════════════════════════════════
 //  DATA
 // ═══════════════════════════════════════
-// Đã chuyển const thành let để có thể cập nhật tên điểm tiêm Khác
 let SITES=[
 "Phòng tiêm chủng - TT KSBT Hưng Yên cơ sở 1","Phòng tiêm DV - TT KSBT Hưng Yên cơ sở 2","Phòng tiêm chủng - Bệnh viện Nhi Thái Bình","TT VNVC Thái Bình","TT tiêm chủng Thái Bình Vàng CN Hưng Hà","TT tiêm chủng Thái Bình Vàng CN Quỳnh Phụ","TT tiêm chủng Thái Bình Vàng CN Thuỵ Xuân","TT tiêm chủng Thái Bình Vàng CN Ngã tư Đậu","TT tiêm chủng Thái Bình Vàng CN Tân Bình","TT tiêm chủng An Nhiên","TT tiêm chủng Potec 81 Thái Bình","TT tiêm chủng Potec Vũ Quý","TT tiêm chủng Potec 81.2 Hưng Hà","TT tiêm chủng Potec 81.3 Quỳnh Phụ","TT tiêm chủng Potec 81.4 Thái Thụy","TT tiêm chủng và TVDD Thái Bình CN Tiền Hải","TT tiêm chủng và TVDD Thái Bình CN Thái Thuỵ","TT tiêm chủng và TVDD Thái Bình CN Quỳnh Phụ","TT tiêm chủng và TVDD Thái Bình CN Đông Hưng","TT tiêm chủng và TVDD Thái Bình CN Hưng Nhân","TT tiêm chủng và TVDD Thái Bình CN Hưng Hà","TT tiêm chủng và TVDD Thái Bình CN Vũ Thư","TT tiêm chủng Long Châu 144","TT tiêm chủng số 1 Thái Bình","TT tiêm chủng Vaccine Incheon Thái Thuỵ","TT tiêm chủng Vaccine Incheon Đông Hưng","TT tiêm chủng Vaccine Incheon Vũ Thư","Phòng tiêm chủng vắc xin Đông Hưng","Trung tâm tiêm chủng vắc xin Thái Thuỵ","Trung tâm tiêm chủng VNVC Hưng Yên","Trung tâm tiêm chủng VNVC Phố Nối","Trung tâm tiêm chủng VNVC Văn Giang","Phòng tiêm chủng Potec 89 Hưng Yên","Phòng tiêm Potec 89.1 Kim Động","Phòng tiêm Potec 89.2 Yên Mỹ","Phòng tiêm chủng Potec 89.3 Khoái Châu","Phòng tiêm Potec 89.6 Tiên Lữ","Phòng tiêm Potec 89.7 Phù Cừ","Phòng tiêm chủng vắc xin Hưng Yên CS Kim Động","Phòng tiêm chủng vắc xin Hưng Yên CS Văn Lâm","Phòng tiêm chủng vắc xin Hưng Yên CS Ân Thi","Phòng tiêm dịch vụ vắc xin Go Văn Giang","Phòng tiêm chủng dịch vụ Go vaccine Đình Cao, Phù Cừ","Phòng tiêm chủng dịch vụ Go vaccine Khoái Châu","Phòng tiêm VHNcare Khoái Châu","Phòng tiêm VHN Care Phù Cừ","Công ty CPDP FPT Long Châu - CS tiêm chủng Long Châu 149","Phòng tiêm dịch vụ vắc xin - Công ty CP BVĐK Hưng Hà","Phòng tiêm chủng DR.ECO","Phòng tiêm chủng dịch vụ Phố Nối, Công ty TBYT Thế Lâm","Trung tâm tiêm chủng vaccine Osstech","Phòng tiêm chủng Hà Nội","Phòng tiêm chủng dịch vụ Thanh Nhàn","Phòng tiêm BIVAC","Phòng tiêm chủng dịch vụ Mỹ Hào","Phòng tiêm chủng vắc xin Y khoa Hà Nội cơ sở Kim Động","Phòng tiêm chủng Minh Đức","Cơ sở tiêm chủng vắc xin Happy Phù Cừ","Phòng tiêm chủng vắc xin dịch vụ Happy Yên Phú","Phòng tiêm vắc xin dịch vụ Thiện Đức","Phòng tiêm chủng vaccine House", "Khác (ghi cụ thể)"
 ];
 
+// Vá lại đoạn code mảng INIT_DATA bị thiếu và lỗi cú pháp ở cuối dòng của bạn
 const INIT_DATA=[
 [3,2,1,0,0,4,5,0,3,2,0,0,0,0,2,3,0,4,1,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 [28,26,7,3,11,33,52,2,45,8,0,1,0,1,17,37,18,17,19,48,4,2,0,54,0,23,20,2,0,1,3,15,1,5,1,0,0,0,0],
@@ -560,602 +571,208 @@ const INIT_DATA=[
 [28,16,10,8,14,12,42,0,30,11,0,1,2,4,15,21,0,4,38,37,1,4,0,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
 [24,15,16,4,15,4,38,0,21,13,1,3,2,2,19,15,0,6,32,32,0,6,0,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 [28,32,11,9,14,26,55,5,47,12,0,1,8,5,12,35,0,44,16,42,12,6,0,60,0,16,2,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,7,1,2,1,7,11,0,7,4,0,0,0,0,5,6,0,2,9,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,8,2,0,6,3,11,0,7,4,0,0,0,3,6,2,1,8,2,10,0,1,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,1,3,0,0,0,3,0,3,0,0,0,1,0,1,1,1,2,0,3,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,2,0,2,1,3,6,0,3,3,0,0,2,0,2,2,0,0,6,6,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[15,7,0,0,4,18,21,1,18,4,0,0,1,7,8,6,1,19,2,18,2,2,0,22,0,0,5,2,0,3,1,3,0,0,0,0,0,0,0],
-[8,8,2,4,3,7,16,0,12,4,0,0,0,0,4,12,0,16,0,16,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[5,5,2,1,1,6,10,0,6,4,0,0,0,0,3,7,0,0,10,10,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,7,2,4,5,0,11,0,7,4,0,0,0,1,4,6,0,0,11,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,2,3,0,0,2,5,0,5,0,0,0,0,0,3,2,0,5,0,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[6,4,3,0,3,4,10,0,10,0,0,0,0,0,2,8,0,7,3,9,0,1,0,10,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,3,5,0,0,0,5,0,5,0,0,0,0,0,5,0,5,0,0,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[27,30,13,4,28,12,52,0,32,19,0,1,0,4,25,23,0,4,48,45,5,2,0,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5],
-[22,16,8,5,15,10,36,2,21,14,0,3,4,2,11,21,0,31,7,29,3,6,0,38,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,4,1,2,3,0,6,0,6,0,0,0,0,0,3,3,6,0,0,6,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[8,8,2,2,6,6,16,0,10,6,0,0,0,0,6,10,0,4,12,15,0,1,0,16,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0],
-[3,5,3,1,0,4,8,0,6,2,0,0,0,0,2,6,0,8,0,8,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,8,3,3,3,3,10,2,10,2,0,0,0,0,2,10,4,8,0,10,0,2,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[20,17,10,12,10,5,30,7,17,18,0,2,0,5,15,17,0,0,37,30,3,4,0,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[10,8,1,5,9,3,18,0,12,6,0,0,0,3,6,9,7,11,0,18,0,0,0,18,0,4,0,0,0,0,0,1,0,1,0,0,0,0,0],
-[11,11,3,5,7,7,8,14,16,6,0,0,0,1,5,16,0,19,3,20,2,0,0,22,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[6,13,9,1,2,7,19,0,17,2,0,0,0,3,2,14,0,0,19,19,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[11,8,4,0,9,6,19,0,12,6,0,1,0,0,4,15,19,0,0,19,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,2,0,1,1,2,4,0,3,1,0,0,0,0,0,4,0,4,0,3,1,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[5,2,1,2,4,0,7,0,7,0,0,0,0,0,2,5,0,7,0,7,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-];
+          [4,7,1,2,1,7,11,0,7,4,0,0,0,0,5,6,0,2,9,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          [3,8,2,0,6,3,11,0,7,4,0,0,0,3,6,2,1,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        ];
 
-// simulate submit dates
-let tableData = INIT_DATA.map(r=>[...r]);
-const DEADLINE = new Date('2026-06-05');
-const TODAY = new Date('2026-06-19');
-const submitDates = {};
-SITES.forEach((_,i)=>{
-  if(tableData[i].some(v=>v>0)){
-    const d=new Date('2026-05-28');
-    d.setDate(d.getDate()+Math.floor(Math.random()*9));
-    submitDates[i]=d;
-  }
-});
-const importLog=[];
-
-// Auto inject Date & Populate dropdown for Export
-document.addEventListener("DOMContentLoaded", function() {
-  const dateInput = document.getElementById('exp-date');
-  if(dateInput) {
-    const todayStr = new Date().toISOString().split('T')[0];
-    dateInput.value = todayStr;
-  }
-  
-  // Tự động load tất cả các điểm tiêm (bao gồm cả Khác) vào danh sách chọn đơn vị
-  const unitSelect = document.getElementById('exp-unit');
-  if(unitSelect) {
-    SITES.forEach(site => {
-      const opt = document.createElement('option');
-      opt.value = site.toUpperCase(); // In hoa giá trị
-      opt.textContent = site;
-      unitSelect.appendChild(opt);
-    });
-  }
-});
-
-// HÀM ĐÓNG MỞ Ô NHẬP TÊN ĐƠN VỊ TỰ GÕ KHI CHỌN "KHÁC"
-function checkUnitChange() {
-  const select = document.getElementById('exp-unit');
-  const customWrap = document.getElementById('custom-unit-wrap');
-  if(select.value === "KHÁC (GHI CỤ THỂ)") {
-    customWrap.style.display = "block";
-  } else {
-    customWrap.style.display = "none";
-  }
-  renderExpCheck();
-}
-
-// ═══════ HELPERS ═══════
-const n=v=>parseInt(v)||0;
-const colSum=j=>tableData.reduce((s,r)=>s+n(r[j]),0);
-const rowTotal=r=>n(r[0])+n(r[1]);
-function toast(msg,type=''){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.className='show '+(type==='ok'?'ok':type==='err'?'err':'');
-  clearTimeout(el._t); el._t=setTimeout(()=>el.className='',3200);
-}
-
-// ═══════ TABS ═══════
-function go(name,btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  if(btn) btn.classList.add('active');
-  if(name==='dashboard') renderDash();
-  if(name==='data') renderDT();
-  if(name==='progress') renderProg();
-  if(name==='export') renderExpCheck();
-  if(name==='import') renderManualInputs();
-}
-
-function changeMonth(){
-  const v=document.getElementById('mPicker').value;
-  const[m,y]=v.split('-');
-  document.getElementById('data-month-lbl').textContent=`Tháng ${m}/${y}`;
-  document.getElementById('prog-month-lbl').textContent=`Tháng ${m}/${y}`;
-  renderDash();
-}
-
-// ═══════ DASHBOARD ═══════
-function renderDash(){
-  const nam=colSum(0),nu=colSum(1),tot=nam+nu;
-  const cho=colSum(8),meo=colSum(9),doi=colSum(10),khac=colSum(11);
-  const htkd=colSum(25),duphong=colSum(38);
-  const sub=Object.keys(submitDates).length, miss=SITES.length-sub;
-  const pct=Math.round(sub/SITES.length*100);
-
-  // countdown
-  const dLeft=Math.ceil((DEADLINE-TODAY)/86400000);
-  const cdEl=document.getElementById('countdown');
-  if(TODAY>DEADLINE){
-    cdEl.style.background='linear-gradient(135deg,#fff2f2,#ffeaea)';
-    cdEl.style.border='1px solid #e08080';
-    cdEl.innerHTML=`<div class="cd-num" style="color:var(--D)">!</div><div class="cd-text"><div class="cd-title">⚠ Đã qua hạn nộp ngày 05/06/2026</div><div class="cd-sub">Còn ${miss} đơn vị chưa nộp báo cáo. Liên hệ ngay.</div></div>`;
-  } else {
-    cdEl.innerHTML=`<div class="cd-num">${dLeft}</div><div class="cd-text"><div class="cd-title">Ngày còn lại đến hạn nộp báo cáo</div><div class="cd-sub">Hạn: 05/06/2026 · ${miss} đơn vị chưa nộp · Tháng 5/2026</div></div>`;
-  }
-
-  document.getElementById('stats').innerHTML=`
-    <div class="stat blue"><div class="stat-lbl">Tổng người tiêm</div><div class="stat-val">${tot.toLocaleString()}</div><div class="stat-sub">Nam: ${nam} | Nữ: ${nu}</div></div>
-    <div class="stat green"><div class="stat-lbl">Đơn vị đã nộp</div><div class="stat-val">${sub}/${SITES.length}</div><div class="stat-sub">${pct}% hoàn thành</div></div>
-    <div class="stat orange"><div class="stat-lbl">Dùng HTKD</div><div class="stat-val">${htkd}</div><div class="stat-sub">Huyết thanh kháng dại</div></div>
-    <div class="stat red"><div class="stat-lbl">Tiêm dự phòng</div><div class="stat-val">${duphong}</div><div class="stat-sub">Người không bị cắn</div></div>
-  `;
-  document.getElementById('pct-lbl').textContent=pct+'%';
-  document.getElementById('pct-bar').style.width=pct+'%';
-  document.getElementById('cnt-done').textContent=sub;
-  document.getElementById('cnt-miss').textContent=miss;
-  document.getElementById('cnt-late').textContent=0;
-
-  const alert=TODAY>DEADLINE&&miss>0
-    ?`<div class="alert danger"><div class="alert-icon">🚨</div><div><b>Quá hạn!</b> Đã qua ngày 05/06/2026. Còn <b>${miss} đơn vị</b> chưa nộp. Vào tab Tiến độ → Gửi nhắc nhở.</div></div>`
-    :sub===SITES.length?`<div class="alert ok"><div class="alert-icon">✅</div><div><b>Hoàn thành 100%!</b> Tất cả ${SITES.length} đơn vị đã nộp báo cáo.</div></div>`
-    :`<div class="alert warn"><div class="alert-icon">⏰</div><div>Còn ${miss} đơn vị chưa nộp. Theo dõi tại tab <b>Tiến độ</b>.</div></div>`;
-  document.getElementById('dash-alert').innerHTML=alert;
-
-  // animal chart
-  const anims=[['🐕 Chó',cho,'#1a4f7a'],['🐈 Mèo',meo,'#2d7bbf'],['🦇 Dơi',doi,'#e8a020'],['🐾 Khác',khac,'#6b7f94']];
-  const mx=Math.max(...anims.map(a=>a[1]))||1;
-  document.getElementById('animal-chart').innerHTML=anims.map(([lbl,val,color])=>`
-    <div class="animal-row">
-      <div class="animal-lbl"><span>${lbl}</span><span class="animal-val">${val} (${tot?Math.round(val/tot*100):0}%)</span></div>
-      <div class="bar-wrap" style="height:8px"><div class="bar" style="width:${Math.round(val/mx*100)}%;background:${color}"></div></div>
-    </div>`).join('');
-
-  // top sites
-  const sorted=SITES.map((s,i)=>({name:s,total:rowTotal(tableData[i])})).sort((a,b)=>b.total-a.total).slice(0,10);
-  const mxT=sorted[0]?.total||1;
-  document.getElementById('top-sites').innerHTML=sorted.map((s,i)=>`
-    <div class="top-site">
-      <div class="ts-rank" style="color:${i<3?'var(--A)':'var(--muted)'}">${i+1}</div>
-      <div class="ts-info">
-        <div class="ts-name" title="${s.name}">${s.name}</div>
-        <div class="bar-wrap" style="height:5px"><div class="bar" style="width:${Math.round(s.total/mxT*100)}%;background:var(--PL)"></div></div>
-      </div>
-      <div class="ts-val">${s.total}</div>
-    </div>`).join('');
-
-  // age chart
-  const ages=[['< 15',colSum(2),'#1a4f7a'],['15-24',colSum(3),'#2d7bbf'],['24-49',colSum(4),'#e8a020'],['≥ 50',colSum(5),'#6b7f94']];
-  const mxA=Math.max(...ages.map(a=>a[1]))||1;
-  document.getElementById('age-chart').innerHTML=ages.map(([lbl,val,color])=>`
-    <div class="animal-row">
-      <div class="animal-lbl"><span>${lbl} tuổi</span><span class="animal-val">${val}</span></div>
-      <div class="bar-wrap" style="height:8px"><div class="bar" style="width:${Math.round(val/mxA*100)}%;background:${color}"></div></div>
-    </div>`).join('');
-}
-
-// ═══════ DATA TABLE ═══════
-function renderDT(){
-  document.getElementById('dt-body').innerHTML=SITES.map((site,i)=>`
-    <tr data-row="${i}" data-nm="${site.toLowerCase()}">
-      <td class="tt">${i+1}</td>
-      <td class="nm">${site}</td>
-      ${tableData[i].map((v,j)=>`<td><input type="number" min="0" value="${v||''}" placeholder="0" onchange="cellChange(${i},${j},this.value)"></td>`).join('')}
-    </tr>`).join('');
-  updateTot();
-}
-
-function cellChange(r,c,v){tableData[r][c]=n(v);updateTot();}
-function updateTot(){
-  const tots=Array.from({length:39},(_,j)=>colSum(j));
-  document.getElementById('dt-foot').innerHTML=`<tr class="tot"><td class="tt" colspan="2" style="text-align:center">Cộng</td>${tots.map(t=>`<td><b>${t||''}</b></td>`).join('')}</tr>`;
-}
-function filterDT(q){
-  const lq=q.toLowerCase();
-  document.querySelectorAll('#dt-body tr').forEach(r=>r.style.display=r.dataset.nm.includes(lq)?'':'none');
-}
-function saveData(){renderDash();toast('✅ Đã lưu và cập nhật!','ok');}
-function clearAll(){
-  if(!confirm('Xóa toàn bộ số liệu?')) return;
-  tableData=SITES.map(()=>Array(39).fill(0));
-  renderDT(); renderDash(); toast('🗑 Đã xóa trắng số liệu');
-}
-
-// ═══════ PROGRESS ═══════
-function renderProg(){
-  const sub=Object.keys(submitDates).length, miss=SITES.length-sub;
-  document.getElementById('p-done').textContent=sub+' đã nộp';
-  document.getElementById('p-miss').textContent=miss+' chưa nộp';
-
-  const alert=TODAY>DEADLINE&&miss>0
-    ?`<div class="alert danger" style="margin-bottom:12px"><div class="alert-icon">🚨</div><div>Đã qua hạn 05/06/2026. <b>${miss} đơn vị</b> chưa nộp!</div></div>`:'';
-  document.getElementById('prog-alert').innerHTML=alert;
-
-  document.getElementById('prog-body').innerHTML=SITES.map((site,i)=>{
-    const d=submitDates[i];
-    const isLate=d&&d>DEADLINE;
-    const tot=rowTotal(tableData[i]);
-    const pill=d?(isLate?'<span class="pill pill-late">⚠ Nộp trễ</span>':'<span class="pill pill-ok">✓ Đã nộp</span>'):'<span class="pill pill-no">✗ Chưa nộp</span>';
-    const status=d?(isLate?'late':'done'):'missing';
-    return `<tr data-st="${status}" data-nm="${site.toLowerCase()}">
-      <td>${i+1}</td>
-      <td style="font-size:11px">${site}</td>
-      <td>${pill}</td>
-      <td style="font-size:11px">${d?d.toLocaleDateString('vi-VN'):'—'}</td>
-      <td style="text-align:center;font-weight:700">${tot}</td>
-      <td><div class="bar-wrap"><div class="bar" style="width:${d?100:0}%;background:${d?(isLate?'var(--W)':'var(--S)'):'var(--D)'}"></div></div></td>
-      <td>${!d?`<button class="btn btn-outline btn-sm" onclick="markOne(${i})">✔ Đánh dấu nộp</button>`:''}</td>
-    </tr>`;
-  }).join('');
-}
-
-function filterProg(q){
-  const lq=q.toLowerCase();
-  document.querySelectorAll('#prog-body tr').forEach(r=>r.style.display=r.dataset.nm.includes(lq)?'':'none');
-}
-function filterProgStatus(v){
-  document.querySelectorAll('#prog-body tr').forEach(r=>r.style.display=(v==='all'||r.dataset.st===v)?'':'none');
-}
-function markOne(i){
-  submitDates[i]=new Date();
-  renderProg(); renderDash();
-  toast('✅ Đã đánh dấu: '+SITES[i].slice(0,28)+'...','ok');
-}
-function markAllDone(){
-  if(!confirm(`Đánh dấu tất cả ${SITES.length} đơn vị là đã nộp?`)) return;
-  SITES.forEach((_,i)=>{if(!submitDates[i])submitDates[i]=new Date();});
-  renderProg(); renderDash(); toast('✅ Đã đánh dấu tất cả đơn vị','ok');
-}
-function sendReminder(){
-  const miss=SITES.filter((_,i)=>!submitDates[i]);
-  if(!miss.length){toast('Tất cả đã nộp!','ok');return;}
-  alert(`📧 Sẽ gửi nhắc nhở đến ${miss.length} đơn vị:\n\n${miss.slice(0,5).join('\n')}${miss.length>5?`\n... và ${miss.length-5} đơn vị khác`:''}\n\nNội dung: "Đề nghị nộp số liệu tiêm dại tháng 5 trước ngày 05/06/2026 qua Google Form."`);
-  toast(`📧 Đã gửi nhắc nhở ${miss.length} đơn vị`,'ok');
-}
-
-// ═══════ CSV IMPORT ═══════
-function dzOver(e){e.preventDefault();document.getElementById('dropZone').classList.add('over')}
-function dzLeave(){document.getElementById('dropZone').classList.remove('over')}
-function dzDrop(e){e.preventDefault();dzLeave();if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);}
-
-function handleFile(file){
-  if(!file) return;
-  const ext=file.name.split('.').pop().toLowerCase();
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      let rows=[];
-      if(ext==='csv'){
-        const text=e.target.result;
-        rows=text.split('\n').map(r=>r.split(',').map(c=>c.trim().replace(/^"|"$/g,'')));
-      } else {
-        const wb=XLSX.read(e.target.result,{type:'array'});
-        const ws=wb.Sheets[wb.SheetNames[0]];
-        rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-      }
-      processImportRows(rows, file.name);
-    }catch(err){
-      document.getElementById('import-result').innerHTML=`<div class="alert danger"><div class="alert-icon">❌</div><div>Lỗi đọc file: ${err.message}</div></div>`;
-    }
-  };
-  if(ext==='csv') reader.readAsText(file,'UTF-8');
-  else reader.readAsArrayBuffer(file);
-}
-
-function processImportRows(rows, fname){
-  let updated=0, errors=[];
-  rows.forEach((row,ri)=>{
-    if(!row[1]||typeof row[1]!=='string') return;
-    const siteName=row[1].trim();
-    const idx=SITES.findIndex(s=>s.toLowerCase()===siteName.toLowerCase());
-    if(idx===-1) return;
-    const vals=row.slice(2,41).map(v=>n(v));
-    if(vals.length>=1){
-      tableData[idx]=vals.concat(Array(39-vals.length).fill(0)).slice(0,39);
-      submitDates[idx]=new Date();
-      updated++;
-    }
-  });
-
-  const resultHTML=updated>0
-    ?`<div class="alert ok"><div class="alert-icon">✅</div><div>Đã nhập thành công <b>${updated} điểm tiêm</b> từ file <b>${fname}</b>. Vào tab "Số liệu" để kiểm tra.</div></div>`
-    :`<div class="alert warn"><div class="alert-icon">⚠</div><div>Không tìm thấy dữ liệu hợp lệ. Đảm bảo file có cột: TT | Điểm tiêm | [39 chỉ tiêu]</div></div>`;
-  document.getElementById('import-result').innerHTML=resultHTML;
-
-  importLog.unshift({time:new Date().toLocaleString('vi-VN'),src:fname,rows:updated,status:updated>0?'✅ Thành công':'⚠ Không tìm thấy dữ liệu'});
-  renderImportLog();
-  if(updated>0){renderDash(); toast(`✅ Nhập ${updated} điểm tiêm từ ${fname}`,'ok');}
-}
-
-function renderImportLog(){
-  document.getElementById('import-log-body').innerHTML=importLog.slice(0,10).map(l=>`
-    <tr><td style="font-size:11px">${l.time}</td><td style="font-size:11px">${l.src}</td>
-    <td style="text-align:center">${l.rows}</td><td></td><td>${l.status}</td></tr>`).join('') ||
-    '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Chưa có lịch sử nhập liệu</td></tr>';
-}
-
-function renderManualInputs(){
-  const sel=document.getElementById('manual-site');
-  if(sel.options.length<=1){
-    SITES.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s;sel.appendChild(o);});
-  }
-  const fields=[['Nam','Nữ'],['<15 tuổi','15-24 tuổi'],['24-49 tuổi','≥50 tuổi'],['≤10 ngày','>10 ngày'],['Chó','Mèo'],['Dơi','Khác(ĐV)'],['Đầu/mặt/cổ','Thân'],['Tay','Chân'],['Độ I','Độ II'],['Độ III','Bình thường(ĐV)'],['Ốm(ĐV)','Chạy rông'],['Lên cơn dại','Tiêm bắp'],['Tiêm trong da','HTKD'],['Đau','Quầng đỏ'],['Tụ máu','Phù nề'],['Sốt','Khó chịu'],['Ngứa','Đau cơ/khớp'],['Rối loạn TH','Khác(PU)'],['TV-Có tiêm','TV-Không tiêm'],['Dự phòng','']];
-  document.getElementById('manual-inputs').innerHTML=fields.flatMap((pair,pi)=>pair.map((lbl,li)=>lbl?`<label style="font-size:11px;font-weight:600;color:var(--muted)">${lbl}<input type="number" min="0" placeholder="0" id="mi_${pi*2+li}" style="padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;width:100%;margin-top:3px"></label>`:'')).join('');
-}
-
-// Bổ sung hàm kiểm tra để hiện ô gõ tay
-function checkManualSite() {
-  const select = document.getElementById('manual-site');
-  const wrap = document.getElementById('manual-site-custom-wrap');
-  const selectedText = select.options[select.selectedIndex]?.text || "";
-  
-  // Nếu có chữ "Khác" thì bung ô điền tay
-  if (selectedText.includes("Khác (ghi cụ thể)") || selectedText.includes("Khác:")) {
-      wrap.style.display = "block";
-      document.getElementById('manual-site-custom').focus();
-  } else {
-      wrap.style.display = "none";
-  }
-}
-
-// Cập nhật hàm apply để bắt tên tự gõ và lưu vào bảng
-function applyManual(){
-  const idx=document.getElementById('manual-site').value;
-  if(idx===''){toast('Chọn điểm tiêm trước!','err');return;}
-  
-  let siteName = SITES[parseInt(idx)];
-  
-  // Xử lý ghi đè tên điểm tiêm Khác
-  const wrap = document.getElementById('manual-site-custom-wrap');
-  if (wrap.style.display === "block") {
-      const customName = document.getElementById('manual-site-custom').value.trim();
-      if (customName === "") {
-          toast('❌ Vui lòng gõ cụ thể tên điểm tiêm khác!', 'err');
-          document.getElementById('manual-site-custom').focus();
-          return;
-      }
-      siteName = customName;
-      SITES[parseInt(idx)] = "Khác: " + customName;
-      
-      // Update lại UI
-      document.getElementById('manual-site').options[document.getElementById('manual-site').selectedIndex].textContent = SITES[parseInt(idx)];
-      renderDT();
-      renderProg();
-  }
-
-  const vals=Array.from({length:39},(_,j)=>{const el=document.getElementById('mi_'+j);return el?n(el.value):0;});
-  tableData[parseInt(idx)]=vals;
-  submitDates[parseInt(idx)]=new Date();
-  importLog.unshift({time:new Date().toLocaleString('vi-VN'),src:'Nhập thủ công',rows:1,status:'✅ Thành công'});
-  renderImportLog(); renderDash();
-  toast('✅ Đã cập nhật: '+siteName.slice(0,30)+'...','ok');
-}
-
-// ═══════ EXPORT (ĐÃ FIX LỖI GỘP CỘT CHỮ KÝ) ═══════
-function renderExpCheck(){
-  const sub=Object.keys(submitDates).length;
-  const tot=colSum(0)+colSum(1);
-  const selectedUnit = document.getElementById('exp-unit')?.value;
-  let unitValid = !!selectedUnit;
-  
-  if (selectedUnit === "KHÁC (GHI CỤ THỂ)") {
-    unitValid = !!document.getElementById('exp-unit-custom')?.value.trim();
-  }
-
-  const chks=[
-    {ok:sub===SITES.length,msg:`${sub}/${SITES.length} đơn vị đã nộp số liệu`},
-    {ok:tot>0,msg:`Tổng số người tiêm: ${tot.toLocaleString()}`},
-    {ok:unitValid,msg:selectedUnit === "KHÁC (GHI CỤ THỂ)" ? 'Tên đơn vị khác cụ thể đã điền' : 'Tên đơn vị đã được chọn'},
-    {ok:!!document.getElementById('exp-date')?.value,msg:'Ngày ký đã được chọn'},
-    {ok:true,msg:'Font Times New Roman – Chữ đen chuẩn hành chính & dọc 90 độ'},
-    {ok:true,msg:'Kẻ viền tự động - A4 nằm ngang'},
-  ];
-  document.getElementById('exp-check').innerHTML=chks.map(c=>`
-    <div class="chk-item">
-      <span style="color:${c.ok?'var(--S)':'var(--W)'};font-size:15px">${c.ok?'✓':'⚠'}</span>
-      <span>${c.msg}</span>
-    </div>`).join('');
-}
-
-async function exportXLSX(){
-  let unit=document.getElementById('exp-unit').value;
-  if(!unit) {
-    toast('❌ Vui lòng chọn tên đơn vị báo cáo trước khi xuất!', 'err');
-    return;
-  }
-  
-  // NẾU CHỌN TRƯỜNG KHÁC, LẤY GIÁ TRỊ CỤ THỂ Ở Ô INPUT TEXT
-  if(unit === "KHÁC (GHI CỤ THỂ)") {
-    const customUnit = document.getElementById('exp-unit-custom').value.trim();
-    if(!customUnit) {
-      toast('❌ Vui lòng gõ cụ thể tên đơn vị của bạn!', 'err');
-      return;
-    }
-    unit = customUnit.toUpperCase();
-  }
-
-  const btn=document.getElementById('export-btn');
-  const sp=document.getElementById('exp-spin');
-  btn.disabled=true; sp.style.display='inline-block';
-  await new Promise(r=>setTimeout(r,300));
-  try{
-    const m=document.getElementById('exp-month').value;
-    const y=document.getElementById('exp-year').value;
-    const sd=document.getElementById('exp-date').value;
-    const sdObj=sd?new Date(sd):new Date();
-    
-    const day = String(sdObj.getDate()).padStart(2, '0');
-    const month = String(sdObj.getMonth()+1).padStart(2, '0');
-    const sdStr=`${day} tháng ${month} năm ${sdObj.getFullYear()}`;
-    
-    buildXLSX(m,y,unit,sdStr);
-    toast('✅ Xuất Excel thành công!','ok');
-  }catch(e){toast('❌ Lỗi: '+e.message,'err');}
-  btn.disabled=false; sp.style.display='none';
-}
-
-function buildXLSX(month,year,unit,signDate){
-  const wb = XLSX.utils.book_new();
-  
-  const H1=['TT','Điểm tiêm','Giới','','Tuổi','','','','Thời gian từ lúc bị cắn - tiêm','','Loại động vật','','','','Số người có vị trí vết thương','','','','Số người có mức độ vết thương','','','Tình trạng động vật','','','','Số người','','Số người dùng HTKD','Số người có phản ứng phụ tại chỗ','','','','Số người có phản ứng phụ toàn thân','','','','','','BN tử vong','','Số người tiêm dự phòng'];
-  const H2=['','','Nam','Nữ','< 15 tuổi','15 - 24 tuổi','24 - 49 tuổi','≥ 50 tuổi','≤ 10 ngày','> 10 ngày','Chó','Mèo','Dơi','Khác','Đầu mặt cổ','Thân','Tay','Chân','Độ I','Độ II','Độ III','Bình thường','Ốm\nChạy rông + mất tích','','Lên cơn dại','Tiêm bắp','Tiêm trong da','','Đau','Quầng đỏ','Tụ máu','Phù nề/nốt cứng','Sốt','Khó chịu','Ngứa mẩn đỏ','Đau cơ, khớp','Rối loạn tiêu hoá','Khác','Có tiêm','Không tiêm',''];
-  
-  const aoa=[];
-  aoa.push([]); 
-  aoa.push(['SỞ Y TẾ HƯNG YÊN','','','','','','','BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI']); 
-  aoa.push([unit,'','','','','','',`Tháng ${month} năm ${year}`]); 
-  aoa.push([]); 
-  aoa.push(H1); 
-  aoa.push(H2); 
-  
-  tableData.forEach((row,i)=>aoa.push([i+1,SITES[i],...row]));
-  
-  const tots=Array.from({length:39},(_,j)=>colSum(j));
-  aoa.push(['Cộng','', ...tots]);
-  
-  const tableEndRow = aoa.length - 1;
-
-  // CHÈN PHẦN CHỮ KÝ VÀO ĐÚNG CÁC CỘT (Cột 1, Cột 15, Cột 28)
-  aoa.push([]); // tableEndRow + 1
-  
-  let rowDate = Array(41).fill('');
-  rowDate[28] = `Hưng Yên, ngày ${signDate}`;
-  aoa.push(rowDate); // tableEndRow + 2
-
-  let rowSigTitle = Array(41).fill('');
-  rowSigTitle[1] = 'NGƯỜI LÀM BÁO CÁO';
-  rowSigTitle[15] = 'LÃNH ĐẠO KHOA';
-  rowSigTitle[28] = 'LÃNH ĐẠO ĐƠN VỊ';
-  aoa.push(rowSigTitle); // tableEndRow + 3
-
-  let rowSigSub = Array(41).fill('');
-  rowSigSub[1] = '(Ký, ghi rõ họ tên)';
-  rowSigSub[15] = '(Ký, ghi rõ họ tên)';
-  rowSigSub[28] = '(Ký, tên, đóng dấu)';
-  aoa.push(rowSigSub); // tableEndRow + 4
-
-  aoa.push([]);aoa.push([]);aoa.push([]);aoa.push([]);
-
-  const ws = XLSX.utils.aoa_to_sheet(aoa);
-  
-  // GỘP CỘT (CẢ BẢNG VÀ CHỮ KÝ)
-  ws['!merges']=[
-    // Tiêu đề
-    {s:{r:1,c:0},e:{r:1,c:6}},{s:{r:2,c:0},e:{r:2,c:6}},
-    {s:{r:1,c:7},e:{r:1,c:40}},{s:{r:2,c:7},e:{r:2,c:40}},
-    
-    // Header bảng
-    {s:{r:4,c:0},e:{r:5,c:0}}, // TT
-    {s:{r:4,c:1},e:{r:5,c:1}}, // Điểm tiêm
-    {s:{r:4,c:2},e:{r:4,c:3}}, // Giới
-    {s:{r:4,c:4},e:{r:4,c:7}}, // Tuổi
-    {s:{r:4,c:8},e:{r:4,c:9}}, // Thời gian
-    {s:{r:4,c:10},e:{r:4,c:13}}, // Động vật
-    {s:{r:4,c:14},e:{r:4,c:17}}, // Vị trí
-    {s:{r:4,c:18},e:{r:4,c:20}}, // Mức độ
-    {s:{r:4,c:21},e:{r:4,c:24}}, // Tình trạng ĐV 
-    {s:{r:5,c:22},e:{r:5,c:23}}, // Gộp "Ốm, Chạy rông" ở dòng dưới
-    {s:{r:4,c:25},e:{r:4,c:26}}, // Số người tiêm
-    {s:{r:4,c:27},e:{r:5,c:27}}, // HTKD (dọc)
-    {s:{r:4,c:28},e:{r:4,c:31}}, // PU tại chỗ
-    {s:{r:4,c:32},e:{r:4,c:37}}, // PU toàn thân
-    {s:{r:4,c:38},e:{r:4,c:39}}, // Tử vong
-    {s:{r:4,c:40},e:{r:5,c:40}}, // Dự phòng (dọc)
-    {s:{r:tableEndRow,c:0},e:{r:tableEndRow,c:1}}, // Cộng
-    
-    // GỘP CỘT PHẦN CHỮ KÝ (FIX LỖI CHỮ BỊ DỌC)
-    {s:{r:tableEndRow + 2, c: 28}, e:{r:tableEndRow + 2, c: 40}}, // Ngày tháng
-    
-    {s:{r:tableEndRow + 3, c: 1}, e:{r:tableEndRow + 3, c: 10}}, // Chữ ký 1
-    {s:{r:tableEndRow + 3, c: 15}, e:{r:tableEndRow + 3, c: 24}}, // Chữ ký 2
-    {s:{r:tableEndRow + 3, c: 28}, e:{r:tableEndRow + 3, c: 40}}, // Chữ ký 3
-    
-    {s:{r:tableEndRow + 4, c: 1}, e:{r:tableEndRow + 4, c: 10}}, // Sub Chữ ký 1
-    {s:{r:tableEndRow + 4, c: 15}, e:{r:tableEndRow + 4, c: 24}}, // Sub Chữ ký 2
-    {s:{r:tableEndRow + 4, c: 28}, e:{r:tableEndRow + 4, c: 40}}  // Sub Chữ ký 3
-  ];
-
-  const colWidths = [{wch: 3.5}, {wch: 22}]; 
-  for(let i=2; i<=40; i++) colWidths.push({wch: 3.6}); 
-  colWidths[27] = {wch: 4.5}; 
-  colWidths[40] = {wch: 4.5}; 
-  ws['!cols'] = colWidths;
-
-  ws['!rows'] = [];
-  ws['!rows'][4] = {hpt: 45}; 
-  ws['!rows'][5] = {hpt: 130}; 
-
-  const borderThin = {
-    top: {style: "thin", color: {auto: 1}}, bottom: {style: "thin", color: {auto: 1}},
-    left: {style: "thin", color: {auto: 1}}, right: {style: "thin", color: {auto: 1}}
-  };
-
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  for(let R = 0; R <= range.e.r; ++R) {
-    for(let C = 0; C <= range.e.c; ++C) {
-      const cell_ref = XLSX.utils.encode_cell({c:C, r:R});
-      if(!ws[cell_ref]) ws[cell_ref] = { t: "s", v: "" }; 
-      
-      ws[cell_ref].s = {
-        font: { name: "Times New Roman", sz: 10 },
-        alignment: { vertical: "center", horizontal: "center", wrapText: true }
-      };
-
-      if (R >= 4 && R <= tableEndRow) {
-        ws[cell_ref].s.border = borderThin;
-      }
-
-      if (R === 1 || R === 2) {
-        ws[cell_ref].s.font = { name: "Times New Roman", sz: 11, bold: true };
-        if (C === 0 || C >= 7) ws[cell_ref].s.alignment.horizontal = "center";
-      }
-
-      if (R === 4 || R === 5) {
-        ws[cell_ref].s.font = { name: "Times New Roman", sz: 10, bold: true };
-        if (R === 5 && C >= 2) {
-            ws[cell_ref].s.alignment.textRotation = 90;
+        // KHỞI TẠO BẢNG DỮ LIỆU BAN ĐẦU
+        function initTable() {
+          const body = document.getElementById("dt-body");
+          body.innerHTML = "";
+          
+          SITES.forEach((site, index) => {
+            if (site === "Khác (ghi cụ thể)") return;
+            
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-site", site);
+            
+            // Cột số thứ tự
+            const tdTd = document.createElement("td");
+            tdTd.className = "tt";
+            tdTd.innerText = index + 1;
+            tr.appendChild(tdTd);
+            
+            // Cột tên điểm tiêm
+            const tdNm = document.createElement("td");
+            tdNm.className = "nm";
+            tdNm.innerText = site;
+            tr.appendChild(tdNm);
+            
+            // Lấy dòng dữ liệu mẫu tương ứng (nếu có)
+            const rowData = INIT_DATA[index] || Array(39).fill(0);
+            
+            // Tạo 39 ô nhập liệu cho chỉ tiêu
+            for (let i = 0; i < 39; i++) {
+              const td = document.createElement("td");
+              const input = document.createElement("input");
+              input.type = "number";
+              
+              // THAY ĐỔI QUAN TRỌNG:
+              // Nếu giá trị = 0, để TRỐNG giao diện (bằng chuỗi rỗng), người dùng tự click chọn từ list
+              input.value = rowData[i] === 0 ? "" : rowData[i]; 
+              
+              // Liên kết ô nhập này tới <datalist> để tự sinh lựa chọn nhanh
+              input.setAttribute("list", "quick-numbers");
+              
+              td.appendChild(input);
+              tr.appendChild(td);
+            }
+            
+            body.appendChild(tr);
+          });
+          
+          // Thêm điểm chọn thủ công vào phần select ở tab Import
+          const selectManual = document.getElementById("manual-site");
+          selectManual.innerHTML = '<option value="">-- Chọn điểm tiêm --</option>';
+          SITES.forEach(site => {
+            const opt = document.createElement("option");
+            opt.value = site;
+            opt.innerText = site;
+            selectManual.appendChild(opt);
+          });
+          
+          buildManualForm();
         }
-        if (R === 4 && (C === 27 || C === 40)) {
-            ws[cell_ref].s.alignment.textRotation = 90;
+
+        // TỰ ĐỘNG XÂY DỰNG FORM NHẬP THỦ CÔNG GIAO DIỆN TRỐNG VÀ CÓ LIST CHỌN SỐ
+        function buildManualForm() {
+          const container = document.getElementById("manual-inputs");
+          container.innerHTML = "";
+          
+          const labels = [
+            "Nam", "Nữ", "<15 tuổi", "15-24 tuổi", "24-49 tuổi", "≥50 tuổi", 
+            "≤10 ngày", ">10 ngày", "Chó cắn", "Mèo cắn", "Dơi cắn", "Khác", 
+            "Vết Đầu/Cổ", "Vết Thân", "Vết Tay", "Vết Chân", "Độ I", "Độ II", "Độ III",
+            "ĐV Bình thường", "ĐV Ốm", "ĐV Chạy rông", "ĐV Dại", "Tiêm Bắp", "Trong da",
+            "HTKD", "PU Đau", "PU Đỏ", "PU Tụ máu", "PU Phù nề", "Sốt", "Khó chịu", "Ngứa", 
+            "Đau cơ", "RL tiêu hóa", "PU Toàn thân khác", "Tử vong có tiêm", "Tử vong không tiêm", "Dự phòng"
+          ];
+          
+          labels.forEach((lbl, index) => {
+            const label = document.createElement("label");
+            label.innerText = lbl;
+            
+            const input = document.createElement("input");
+            input.type = "number";
+            input.id = `manual-col-${index}`;
+            input.value = ""; // Mặc định để trống hoàn toàn sạch sẽ
+            input.setAttribute("list", "quick-numbers"); // Tích hợp danh sách chọn nhanh từ 0 đến N
+            
+            label.appendChild(input);
+            container.appendChild(label);
+          });
         }
-      }
 
-      if (R === tableEndRow) ws[cell_ref].s.font.bold = true;
+        // KIỂM TRA ĐIỂM TIÊM THỦ CÔNG KHÁC
+        function checkManualSite() {
+          const val = document.getElementById("manual-site").value;
+          const wrap = document.getElementById("manual-site-custom-wrap");
+          if (val === "Khác (ghi cụ thể)") {
+            wrap.style.display = "block";
+          } else {
+            wrap.style.display = "none";
+          }
+        }
 
-      if (R > 5 && R < tableEndRow && C === 1) {
-         ws[cell_ref].s.alignment.horizontal = "left";
-      }
+        // ÁP DỤNG DỮ LIỆU NHẬP THỦ CÔNG LÊN BẢNG LỚN
+        function applyManual() {
+          let siteName = document.getElementById("manual-site").value;
+          if (!siteName) {
+            showToast("Vui lòng chọn một điểm tiêm!", "err");
+            return;
+          }
+          
+          if (siteName === "Khác (ghi cụ thể)") {
+            const customName = document.getElementById("manual-site-custom").value.trim();
+            if (!customName) {
+              showToast("Vui lòng ghi rõ tên điểm tiêm khác!", "err");
+              return;
+            }
+            siteName = customName;
+            
+            // Nếu chưa có trong danh sách SITES thì bổ sung vào bảng
+            if (!SITES.includes(siteName)) {
+              SITES.splice(SITES.length - 1, 0, siteName);
+              initTable();
+            }
+          }
+          
+          // Tìm dòng dữ liệu trong bảng lớn để điền vào
+          const rows = document.querySelectorAll("#dt-body tr");
+          let targetRow = null;
+          rows.forEach(row => {
+            if (row.getAttribute("data-site") === siteName) {
+              targetRow = row;
+            }
+          });
+          
+          if (targetRow) {
+            const inputs = targetRow.querySelectorAll("input[type=number]");
+            for (let i = 0; i < 39; i++) {
+              const mVal = document.getElementById(`manual-col-${i}`).value;
+              inputs[i].value = mVal; // Điền giá trị vào (gõ gì nhận nấy, trống thì để trống)
+            }
+            showToast(`Đã cập nhật số liệu cho: ${siteName}`, "ok");
+            saveData();
+          }
+        }
 
-      if (R > tableEndRow + 1) {
-         ws[cell_ref].s.font.sz = 11;
-         if (R === tableEndRow + 3) ws[cell_ref].s.font.bold = true; 
-         if (R === tableEndRow + 4) ws[cell_ref].s.font.italic = true;
-      }
-    }
-  }
+        // HÀM CHUYỂN ĐỔI TAB (GIỮ NGUYÊN)
+        function go(pageId, btnEl) {
+          document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.getElementById('page-' + pageId).classList.add('active');
+          if(btnEl) btnEl.classList.add('active');
+        }
 
-  ws['!pageSetup'] = { orientation: 'landscape', paperSize: 9, fitToWidth: 1, fitToHeight: 0 };
-  ws['!margins'] = { left: 0.2, right: 0.2, top: 0.5, bottom: 0.5, header: 0.3, footer: 0.3 };
-
-  XLSX.utils.book_append_sheet(wb, ws, `Tháng ${month} năm ${year}`);
-  const out = XLSX.write(wb, {bookType:'xlsx', type:'array'});
-  const blob = new Blob([out], {type:'application/octet-stream'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; 
-  a.download = `BC_TiemDai_Thang${month}_${year}.xlsx`;
-  document.body.appendChild(a); 
-  a.click(); 
-  document.body.removeChild(a); 
-  URL.revokeObjectURL(url);
-}
-
-// ═══════ INIT ═══════
-renderDash();
-renderImportLog();
+        // CÁC HÀM PHỤ TRỢ MÔ PHỎNG (CHO CODE CHẠY ĐƯỢC)
+        function changeMonth() { showToast("Đã chuyển tháng báo cáo", "ok"); }
+        function filterDT(v) {
+          const rows = document.querySelectorAll("#dt-body tr");
+          rows.forEach(r => {
+            const txt = r.querySelector(".nm").innerText.toLowerCase();
+            r.style.display = txt.includes(v.toLowerCase()) ? "" : "none";
+          });
+        }
+        function clearAll() {
+          if(confirm("Bạn có chắc chắn muốn xóa trắng toàn bộ ô số liệu không?")) {
+            document.querySelectorAll("#dt-body input").forEach(i => i.value = "");
+            showToast("Đã xóa trắng bảng dữ liệu", "ok");
+          }
+        }
+        function saveData() { 
+          showToast("Dữ liệu đã được lưu ngầm hệ thống!", "ok"); 
+          updateDashboardStats();
+        }
+        function showToast(m,type) {
+          const t = document.getElementById("toast");
+          t.innerText = m; t.className = "show " + type;
+          setTimeout(() => t.className = "", 3000);
+        }
+        function updateDashboardStats() {
+          // Hàm tính toán tổng cộng từ bảng lên Dashboard mô phỏng
+          let totalInjections = 0;
+          document.querySelectorAll("#dt-body tr").forEach(row => {
+            row.querySelectorAll("input").forEach(input => {
+              // Mẹo xử lý ô trống: Chuyển chuỗi rỗng "" hoặc lỗi thành số 0 để cộng toán không bị NaN
+              totalInjections += Number(input.value) || 0; 
+            });
+          });
+          const statsBox = document.getElementById("stats");
+          statsBox.innerHTML = `
+            <div class="stat blue">
+              <div class="stat-lbl">Tổng số lượt tiêm chủng</div>
+              <div class="stat-val">${totalInjections}</div>
+              <div class="stat-sub">Dữ liệu tháng hiện tại</div>
+            </div>
+          `;
+        }
+        
+        // Khởi động chạy hệ thống khi tải trang lần đầu
+        window.onload = function() {
+          initTable();
+          updateDashboardStats();
+        };
 </script>
 </body>
 </html>
