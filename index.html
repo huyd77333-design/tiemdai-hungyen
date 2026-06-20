@@ -363,30 +363,6 @@ footer strong{color:#e8a020}
     </button>
   </div>
   
-  <div class="card" style="padding:20px; margin-top:16px; background:#fff; page-break-inside: avoid;">
-      <div style="display: flex; justify-content: space-between; text-align: center; font-family: 'Times New Roman', Times, serif; margin-top: 20px;">
-          <div style="width: 30%;">
-              <strong>NGƯỜI LÀM BÁO CÁO</strong><br>
-              <em style="font-size: 12px;">(Ký, họ tên)</em>
-              <br><br><br><br><br>
-          </div>
-          <div style="width: 30%;">
-              <strong>BỘ PHẬN PHỤ TRÁCH/ KHOA/ PHÒNG</strong><br>
-              <em style="font-size: 12px;">(Ký, họ tên)</em>
-              <br><br><br><br><br>
-          </div>
-          <div style="width: 30%;">
-              <strong>LÃNH ĐẠO ĐƠN VỊ</strong><br>
-              <em style="font-size: 12px;">(Ký, đóng dấu, họ tên)</em>
-              <br><br><br><br><br>
-          </div>
-      </div>
-      
-      <div style="text-align: right; font-family: 'Times New Roman', Times, serif; font-size: 14px; font-style: italic; margin-top: 15px; padding-right: 20px;">
-          <span id="autogen-date">Hưng Yên, ngày 20 tháng 06 năm 2026</span>
-      </div>
-  </div>
-
   <div class="card">
     <div class="ch"><span class="ct">Cấu hình tiêu đề báo cáo năm hành chính</span></div>
     <div class="cb">
@@ -485,13 +461,6 @@ function initTable() {
   buildManualFormInputs();
   calcTotalRow();
   updateProgressTab();
-  
-  // =====================================================
-  // TỰ ĐỘNG ĐIỀN NGÀY THÁNG NĂM HIỆN TẠI KHI KHỞI TẠO
-  // =====================================================
-  const now = new Date();
-  const dateStr = `Hưng Yên, ngày ${String(now.getDate()).padStart(2, '0')} tháng ${String(now.getMonth() + 1).padStart(2, '0')} năm ${now.getFullYear()}`;
-  document.getElementById("autogen-date").innerText = dateStr;
 }
 
 function buildManualFormInputs() {
@@ -669,6 +638,15 @@ function exportXLSX() {
   });
   data.push(footRow);
 
+  // Bổ sung thêm khối chữ ký chuẩn dự thảo ở cuối bảng
+  data.push([]); 
+  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "NGƯỜI LÀM BÁO CÁO", "", "", "LÃNH ĐẠO ĐƠN VỊ"]);
+  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "(Ký, họ tên)", "", "", "(Ký, đóng dấu, họ tên)"]);
+  data.push([]);data.push([]);data.push([]);
+  
+  const now = new Date();
+  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", `Hưng Yên, ngày ${String(now.getDate()).padStart(2, '0')} tháng ${String(now.getMonth() + 1).padStart(2, '0')} năm ${now.getFullYear()}`]);
+
   const ws = XLSX.utils.aoa_to_sheet(data);
   
   ws["!merges"] = [
@@ -683,14 +661,39 @@ function exportXLSX() {
     {s:{r:5,c:28}, e:{r:5,c:31}}, {s:{r:5,c:32}, e:{r:5,c:37}},
     {s:{r:5,c:39}, e:{r:5,c:41}},
     {s:{r:5,c:0}, e:{r:6,c:0}}, {s:{r:5,c:1}, e:{r:6,c:1}},
-    {s:{r:5,c:27}, e:{r:6,c:27}}, {s:{r:5,c:38}, e:{r:6,c:38}}
+    {s:{r:5,c:27}, e:{r:6,c:27}}, {s:{r:5,c:38}, e:{r:6,c:38}},
+    // Gộp chú thích chữ ký
+    {s:{r:data.length-7, c:37}, e:{r:data.length-7, c:39}},
+    {s:{r:data.length-7, c:40}, e:{r:data.length-7, c:41}},
+    {s:{r:data.length-6, c:37}, e:{r:data.length-6, c:39}},
+    {s:{r:data.length-6, c:40}, e:{r:data.length-6, c:41}},
+    {s:{r:data.length-1, c:37}, e:{r:data.length-1, c:41}}
   ];
 
   const borderStyle = {top:{style:"thin", color:"B0C4DE"}, bottom:{style:"thin", color:"B0C4DE"}, left:{style:"thin", color:"B0C4DE"}, right:{style:"thin", color:"B0C4DE"}};
   
+  // Thu hẹp chiều rộng các cột để vừa khít giấy A4 nằm ngang
+  ws['!cols'] = [
+    {wch: 6},  // TT
+    {wch: 28}, // Điểm tiêm
+    {wch: 6}, {wch: 6}, 
+    {wch: 7}, {wch: 7}, {wch: 7}, {wch: 7}, 
+    {wch: 7}, {wch: 7}, 
+    {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, 
+    {wch: 8}, {wch: 6}, {wch: 6}, {wch: 6}, 
+    {wch: 6}, {wch: 6}, {wch: 6}, 
+    {wch: 6}, {wch: 6}, {wch: 8}, {wch: 6}, 
+    {wch: 7}, {wch: 7}, 
+    {wch: 6}, 
+    {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, 
+    {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, 
+    {wch: 6}, {wch: 6}, 
+    {wch: 8}, 
+  ];
+
   ws['!rows'] = [
     {h: 20}, {h: 20}, {h: 30}, {h: 22}, {h: 10},
-    {h: 40}, {h: 60}
+    {h: 40}, {h: 70}
   ];
 
   for(let cell in ws) {
@@ -729,7 +732,7 @@ function exportXLSX() {
       }
       
       // Dòng tổng cộng
-      if(rowIdx === (data.length - 1)) {
+      if(rowIdx === (data.length - 8)) {
         ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
         ws[cell].s.fill = {fgColor: {rgb: "F5F5F5"}, fill_type: "solid"};
         ws[cell].s.border = {
@@ -738,6 +741,16 @@ function exportXLSX() {
            left: {style: 'thin', color: 'D3D3D3'},
            right: {style: 'thin', color: 'D3D3D3'}
         };
+      }
+      
+      // Định dạng khoảng trắng phần chữ ký
+      if(rowIdx > (data.length - 8)) {
+         ws[cell].s.border = {};
+         ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
+         if(rowIdx === (data.length - 6) || rowIdx === (data.length - 1)) {
+           ws[cell].s.font = {name: "Times New Roman", size: 11, bold: false, italic: true};
+           if(rowIdx === (data.length - 1)) ws[cell].s.alignment.horizontal = "right";
+         }
       }
     }
   }
