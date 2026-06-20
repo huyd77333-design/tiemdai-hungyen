@@ -1,284 +1,402 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hệ Thống Báo Cáo Tiêm Dại – Sở Y Tế Hưng Yên</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{\n  --blue:#1a5276;--blue-light:#2980b9;--blue-soft:#eaf4fb;--blue-mid:#d6eaf8;\n  --green:#1e8449;--green-soft:#eafaf1;\n  --gray:#f5f7fa;--gray2:#e8ecf0;--gray3:#b0bcc8;--gray4:#6c7a8a;\n  --text:#1a202c;--text2:#4a5568;--white:#fff;\n  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.08);\n}
-body{font-family:'Segoe UI',Arial,sans-serif;background:var(--gray);color:var(--text);min-height:100vh}
-
-/* HEADER BAR */
-.topbar{background:var(--blue);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:between;height:60px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
-.topbar-brand{font-size:18px;font-weight:bold;display:flex;flex-direction:column;}
-.topbar-sub{font-size:12px;opacity:0.8;font-weight:normal;}
-.topbar-version{font-size:12px;background:rgba(255,255,255,0.2);padding:4px 8px;border-radius:15px;}
-
-/* MAIN CONTAINER */
-.app-container{display:flex;min-height:calc(100vh - 60px);}
-
-/* SIDEBAR */
-.sidebar{width:260px;background:var(--white);border-right:1px solid var(--gray2);padding:20px 0;display:flex;flex-direction:column;justify-content:between;}
-.menu-group{display:flex;flex-direction:column;gap:4px;}
-.menu-title{font-size:11px;text-transform:uppercase;color:var(--gray4);font-weight:bold;padding:10px 24px;letter-spacing:1px;}
-.menu-item{padding:12px 24px;font-size:14px;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:between;transition:all 0.2s;}
-.menu-item:hover{background:var(--blue-soft);color:var(--blue);}
-.menu-item.active{background:var(--blue-soft);color:var(--blue);font-weight:bold;border-left:4px solid var(--blue);}
-.badge{background:var(--blue-mid);color:var(--blue);font-size:11px;padding:2px 6px;border-radius:10px;font-weight:bold;}
-.sidebar-footer{padding:20px 24px;font-size:12px;color:var(--gray4);border-top:1px solid var(--gray2);line-height:1.6;}
-
-/* MAIN NỘI DUNG */
-.main-content{flex:1;padding:32px;overflow-y:auto;}
-.page-section{display:none;}
-.page-section.active{display:block;}
-
-h1{font-size:24px;color:var(--blue);margin-bottom:8px;}
-.sub-title{font-size:14px;color:var(--gray4);margin-bottom:24px;}
-
-/* CARD & LAYOUT */
-.card{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:24px;}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-
-/* FORM CONTROLS */
-.form-group{margin-bottom:16px;}
-.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2);}
-.form-control{width:100%;padding:10px 12px;border:1px solid var(--gray3);border-radius:6px;font-size:14px;outline:none;transition:border 0.2s;}
-.form-control:focus{border-color:var(--blue-light);}
-
-/* BUTTON */
-.btn-primary{background:var(--green);color:#white;border:none;padding:12px 24px;font-size:15px;font-weight:bold;border-radius:6px;cursor:pointer;width:100%;color:#fff;transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.btn-primary:hover{background:#176c3a;}
-
-/* TABLE STYLE */
-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px;}
-th, td{padding:12px;text-align:left;border-bottom:1px solid var(--gray2);}
-th{background:var(--gray);color:var(--text2);font-weight:600;}
-.input-table{width:80px;padding:6px;border:1px solid var(--gray3);border-radius:4px;text-align:center;}
-.status-badge{padding:4px 8px;border-radius:12px;font-size:12px;font-weight:500;}
-.status-success{background:var(--green-soft);color:var(--green);}
-.status-danger{background:#fdf2f2;color:#c81e1e;}
-
-/* TOAST */
-.toast{position:fixed;bottom:24px;right:24px;background:#333;color:#fff;padding:12px 24px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:none;z-index:999;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý & Báo Cáo Tiêm Dại – Hưng Yên</title>
+    
+    <!-- Nhúng thư viện ExcelJS ổn định để xuất file -->
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .header-title {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .sub-title {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin-bottom: 25px;
+        }
+        
+        /* Form nhập liệu */
+        .form-group-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .form-control {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: #0056b3;
+        }
+        
+        /* Nút bấm */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-add { background-color: #007bff; color: white; }
+        .btn-add:hover { background-color: #0056b3; }
+        .btn-export { background-color: #28a745; color: white; }
+        .btn-export:hover { background-color: #218838; }
+        
+        /* Bảng dữ liệu hiển thị */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background-color: #e9ecef;
+            font-weight: bold;
+            color: #495057;
+            text-align: center;
+        }
+        .text-center { text-align: center; }
+        .no-data {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+        }
+    </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-brand">
-    <span>Hệ Thống Báo Cáo Tiêm Vắc Xin Phòng Dại</span>
-    <span class="topbar-sub">Sở Y Tế Tỉnh Hưng Yên</span>
-  </div>
-  <div class="topbar-version">v2.1 - Cập nhật 06/2026</div>
-</div>
-
-<div class="app-container">
-  <div class="sidebar">
-    <div class="menu-group">
-      <div class="menu-title">Chức năng chính</div>
-      <div class="menu-item" onclick="navigate('page-tongquan', this)">Tổng quan</div>
-      <div class="menu-item" onclick="navigate('page-nhaplieu', this)">Nhập số liệu <span class="badge">61</span></div>
-      <div class="menu-item active" onclick="navigate('page-xuatexcel', this)">Xuất báo cáo Excel</div>
-    </div>
-    <div class="sidebar-footer">
-      Hỗ trợ kỹ thuật:<br>
-      <strong>02273 836 722</strong><br>
-      Sở Y Tế Hưng Yên
-    </div>
-  </div>
-
-  <div class="main-content">
-    
-    <div id="page-tongquan" class="page-section">
-      <h1>Tổng Quan Hệ Thống</h1>
-      <p class="sub-title">Số liệu tổng hợp tiến độ tiêm chủng toàn tỉnh.</p>
-      <div class="card">
-        <h3>Chào mừng bạn đến với Hệ thống quản lý tiêm chủng vắc xin Dại</h3>
-        <p style="margin-top: 10px; color: var(--text2);">Vui lòng chọn mục <strong>Nhập số liệu</strong> để điền báo cáo hoặc chọn <strong>Xuất báo cáo Excel</strong> để tải file biểu mẫu Bộ Y Tế.</p>
-      </div>
-    </div>
-
-    <div id="page-nhaplieu" class="page-section">
-      <h1>Nhập Số Liệu Tiêm Chủng</h1>
-      <p class="sub-title">Nhập số lượng người tiêm cho từng điểm tiêm chủng trên địa bàn tỉnh.</p>
-      
-      <div class="card">
-        <h3 style="margin-bottom: 12px; color: var(--blue);">Bảng số liệu 61 điểm tiêm</h3>
-        <p style="font-size: 13px; color: var(--gray4); margin-bottom: 16px;">Bạn có thể trực tiếp đánh máy thay đổi số lượng người tiêm ở cột dưới đây:</p>
+    <div class="container">
+        <h2 class="header-title">Hệ Thống Quản Lý & Báo Cáo Tiêm Dại Hưng Yên</h2>
+        <p class="sub-title">Nhập liệu danh sách đối tượng và xuất báo cáo theo định dạng chuẩn</p>
         
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 60px;">TT</th>
-              <th>Tên điểm tiêm chủng</th>
-              <th style="width: 150px; text-align: center;">Số người tiêm</th>
-              <th>Trạng thái</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-nhap-lieu">
-            </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div id="page-xuatexcel" class="page-section active">
-      <h1>Xuất Báo Cáo Excel</h1>
-      <p class="sub-title">Tạo file Excel chuẩn theo biểu mẫu Bộ Y Tế — A4 nằm ngang, vừa khít, có đánh số trang</p>
-      
-      <div class="grid-2">
-        <div class="card">
-          <h3 style="margin-bottom: 16px; color: var(--blue);">Cấu hình thông tin báo cáo</h3>
-          <div class="form-group">
-            <label>Sở chủ quản *</label>
-            <input type="text" id="soChuQuan" class="form-control" value="SỞ Y TẾ TỈNH HƯNG YÊN">
-          </div>
-          <div class="form-group">
-            <label>Đơn vị báo cáo *</label>
-            <input type="text" id="donViBaoCao" class="form-control" value="TRUNG TÂM KIỂM SOÁT BỆNH TẬT TỈNH">
-          </div>
-          <div class="grid-2" style="gap:12px; margin-bottom:0;">
+        <!-- FORM NHẬP LIỆU (ĐÃ XOÁ BỎ HOÀN TOÀN READONLY) -->
+        <div class="form-group-container">
             <div class="form-group">
-              <label>Tháng báo cáo *</label>
-              <select id="thangBaoCao" class="form-control">
-                <option value="5" selected>Tháng 5</option>
-                <option value="6">Tháng 6</option>
-              </select>
+                <label for="hoTen">Họ và tên:</label>
+                <input type="text" id="hoTen" class="form-control" placeholder="Nguyễn Văn A">
             </div>
             <div class="form-group">
-              <label>Năm báo cáo *</label>
-              <input type="number" id="namBaoCao" class="form-control" value="2026">
+                <label for="tuoi">Tuổi:</label>
+                <input type="number" id="tuoi" class="form-control" placeholder="Ví dụ: 30">
             </div>
-          </div>
-          <button class="btn-primary" onclick="exportToExcel()">
-            📥 Tải Báo Cáo Excel (.xlsx)
-          </button>
+            <div class="form-group">
+                <label for="diaChi">Địa chỉ:</label>
+                <input type="text" id="diaChi" class="form-control" placeholder="Xã, Huyện, Hưng Yên">
+            </div>
+            <div class="form-group">
+                <label for="ngayTiem">Ngày tiêm:</label>
+                <input type="date" id="ngayTiem" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="loaiVacXin">Loại vắc xin:</label>
+                <input type="text" id="loaiVacXin" class="form-control" placeholder="Verorab / Abhayrab">
+            </div>
+            <div class="form-group">
+                <label for="muiTiem">Mũi tiêm:</label>
+                <input type="text" id="muiTiem" class="form-control" placeholder="Mũi 1, Mũi 2...">
+            </div>
+            <div class="form-group">
+                <label for="huyetThanh">Huyết thanh:</label>
+                <select id="huyetThanh" class="form-control">
+                    <option value="Không">Không</option>
+                    <option value="Có">Có</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ghiChu">Ghi chú:</label>
+                <input type="text" id="ghiChu" class="form-control" placeholder="Nếu có">
+            </div>
         </div>
-
-        <div class="card" style="background: var(--blue-soft); border: 1px solid var(--blue-mid);">
-          <h3 style="color: var(--blue); margin-bottom: 12px;">File xuất ra bao gồm:</h3>
-          <ul style="margin-left: 20px; color: var(--text2); line-height: 2;">
-            <li>Tiêu đề 2 phần chuẩn hành chính</li>
-            <li>A4 nằm ngang – vừa khít 1 trang</li>
-            <li>3 chữ ký cân đối dưới cùng</li>
-            <li>Đánh số trang tự động (Trang X/Y)</li>
-            <li>Hàng CỘNG tổng tự động (SUM)</li>
-          </ul>
+        
+        <!-- KHU VỰC NÚT BẤM CHỨC NĂNG -->
+        <div class="btn-group">
+            <button class="btn-add" onclick="themDoiTuong()">Thêm Đối Tượng</button>
+            <button class="btn-export" onclick="xuatExcel()">Xuất Báo Cáo Excel</button>
         </div>
-      </div>
+        
+        <!-- BẢNG HIỂN THỊ DANH SÁCH TẠM THỜI -->
+        <h3>Danh sách đối tượng vừa nhập</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">STT</th>
+                        <th>Họ và tên</th>
+                        <th style="width: 70px;">Tuổi</th>
+                        <th>Địa chỉ</th>
+                        <th>Ngày tiêm</th>
+                        <th>Loại vắc xin</th>
+                        <th>Mũi tiêm</th>
+                        <th>Huyết thanh</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody id="danhSachTable">
+                    <tr>
+                        <td colspan="9" class="no-data">Chưa có dữ liệu nào được thêm. Hãy nhập liệu ở trên!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-  </div>
-</div>
+    <!-- TOÀN BỘ SCRIPT XỬ LÝ LOGIC CHẠY TRANG WEB -->
+    <script>
+        // Mảng lưu trữ dữ liệu đối tượng tiêm chủng
+        let database = [];
 
-<div id="toast" class="toast"></div>
+        // 1. Hàm tự động điền ngày hôm nay vào ô ngày tiêm khi mở trang
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('ngayTiem').value = today;
+        };
 
-<script>
-// Dữ liệu giả lập 61 đơn vị tiêm chủng
-const danhSachDonVi = [
-  { id: 1, name: "TT KSBT Hưng Yên cơ sở 1", value: 5, status: "Đã báo cáo" },
-  { id: 2, name: "TT KSBT Hưng Yên cơ sở 2", value: 54, status: "Đã báo cáo" },
-  { id: 3, name: "VNVC Hưng Yên", value: 41, status: "Đã báo cáo" },
-  { id: 4, name: "Long Châu 1", value: 458, status: "Đã báo cáo" },
-  { id: 5, name: "Potec 89 Hưng Yên", value: 60, status: "Đã báo cáo" },
-  { id: 6, name: "Go Vaccine Đình Cao, Phù Cừ", value: 0, status: "Chưa báo cáo" },
-  { id: 7, name: "Go Vaccine Khoái Châu", value: 0, status: "Chưa báo cáo" },
-  { id: 8, name: "Phòng tiêm Thiện Đức", value: 0, status: "Chờ xác nhận" }
-];
+        // 2. Hàm thêm đối tượng vào bảng hiển thị và lưu vào database
+        function themDoiTuong() {
+            const hoTen = document.getElementById('hoTen').value.trim();
+            const tuoi = document.getElementById('tuoi').value.trim();
+            const diaChi = document.getElementById('diaChi').value.trim();
+            let ngayTiem = document.getElementById('ngayTiem').value;
+            const loaiVacXin = document.getElementById('loaiVacXin').value.trim();
+            const muiTiem = document.getElementById('muiTiem').value.trim();
+            const huyetThanh = document.getElementById('huyetThanh').value;
+            const ghiChu = document.getElementById('ghiChu').value.trim();
 
-// Hàm khởi tạo đổ danh sách đơn vị vào bảng nhập liệu
-function initTable() {
-  const tbody = document.getElementById('tbody-nhap-lieu');
-  tbody.innerHTML = "";
-  
-  danhSachDonVi.forEach((dv, index) => {
-    let statusClass = dv.status === "Đã báo cáo" ? "status-success" : "status-danger";
-    tbody.innerHTML += `
-      <tr>
-        <td>${index + 1}</td>
-        <td><strong>${dv.name}</strong></td>
-        <td style="text-align: center;">
-          <input type="number" class="input-table" value="${dv.value}" onchange="updateValue(${dv.id}, this.value)">
-        </td>
-        <td><span class="status-badge ${statusClass}">${dv.status}</span></td>
-      </tr>
-    `;
-  });
-}
+            // Kiểm tra validate cơ bản
+            if (!hoTen || !tuoi) {
+                alert("Vui lòng điền ít nhất thông tin Họ tên và Tuổi!");
+                return;
+            }
 
-// Hàm cập nhật số liệu khi đánh máy gõ số vào ô
-function updateValue(id, value) {
-  const item = danhSachDonVi.find(dv => dv.id === id);
-  if(item) {
-    item.value = parseInt(value) || 0;
-    if(item.value > 0) {
-      item.status = "Đã báo cáo";
-    }
-    showToast(`✍️ Đã cập nhật ${item.name}: ${item.value} người`);
-    initTable(); // Tải lại bảng để cập nhật màu trạng thái
-  }
-}
+            // Định dạng lại ngày hiển thị DD/MM/YYYY cho đẹp mắt
+            let ngayHienThi = ngayTiem;
+            if (ngayTiem) {
+                const parts = ngayTiem.split('-');
+                ngayHienThi = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
 
-// Hàm xử lý chuyển đổi giữa các trang (Chức năng cốt lõi SPA)
-function navigate(pageId, element) {
-  // Ẩn tất cả các trang
-  document.querySelectorAll('.page-section').forEach(page => page.classList.remove('active'));
-  // Gỡ bỏ class active ở menu cũ
-  document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-  
-  // Hiển thị trang được chọn và active menu tương ứng
-  document.getElementById(pageId).classList.add('active');
-  element.classList.add('active');
-}
+            // Đẩy dữ liệu vào mảng lưu trữ
+            database.push({
+                stt: database.length + 1,
+                hoTen,
+                tuoi: parseInt(tuoi),
+                diaChi,
+                ngayTiem: ngayHienThi,
+                loaiVacXin,
+                muiTiem,
+                huyetThanh,
+                ghiChu
+            });
 
-// Hàm thông báo Toast nhỏ
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.innerText = msg;
-  toast.style.display = 'block';
-  setTimeout(() => { toast.style.display = 'none'; }, 3000);
-}
+            // Cập nhật lại giao diện bảng HTML
+            renderTable();
 
-// Hàm xử lý Xuất file Excel (Kết nối trực tiếp từ số liệu bảng nhập)
-async function exportToExcel() {
-  showToast("⏳ Đang khởi tạo file Excel...");
-  const wb = new ExcelJS.Workbook();
-  const ws = wb.addWorksheet('Báo Cáo Dại');
-  
-  const soChuQuan = document.getElementById('soChuQuan').value;
-  const donVi = document.getElementById('donViBaoCao').value;
-  const thang = document.getElementById('thangBaoCao').value;
-  const nam = document.getElementById('namBaoCao').value;
+            // Xóa sạch form cũ để người dùng nhập tiếp người mới (giữ lại ngày tiêm và loại vắc xin)
+            document.getElementById('hoTen').value = '';
+            document.getElementById('tuoi').value = '';
+            document.getElementById('diaChi').value = '';
+            document.getElementById('ghiChu').value = '';
+            document.getElementById('hoTen').focus();
+        }
 
-  // Thiết lập tiêu đề báo cáo hành chính cơ bản
-  ws.getCell('A1').value = soChuQuan;
-  ws.getCell('A2').value = donVi;
-  ws.getCell('A4').value = `BÁO CÁO TIẾN ĐỘ TIÊM VẮC XIN PHÒNG DẠI - THÁNG ${thang}/${nam}`;
-  
-  // Tiêu đề bảng
-  ws.getRow(6).values = ["STT", "Tên Điểm Tiêm", "Số Người Tiêm", "Trạng Thái"];
-  
-  // Đổ dữ liệu từ mảng danh sách đơn vị (bao gồm các số bạn đã gõ chỉnh sửa) vào Excel
-  let currentRow = 7;
-  danhSachDonVi.forEach((dv, idx) => {
-    ws.getRow(currentRow).values = [idx + 1, dv.name, dv.value, dv.status];
-    currentRow++;
-  });
+        // Hàm vẽ lại bảng dữ liệu trên web
+        function renderTable() {
+            const tbody = document.getElementById('danhSachTable');
+            if (database.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="no-data">Chưa có dữ liệu nào được thêm. Hãy nhập liệu ở trên!</td></tr>`;
+                return;
+            }
 
-  // Tải file xuống máy tính
-  const buf = await wb.xlsx.writeBuffer();
-  const blob = new Blob([buf], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `BC_TiemVXPhongDai_Thang${thang}_${nam}.xlsx`;
-  a.click();
-  showToast("✅ Đã xuất báo cáo Excel thành công!");
-}
+            let html = '';
+            database.forEach((item, index) => {
+                html += `
+                    <tr>
+                        <td class="text-center">${index + 1}</td>
+                        <td>${item.hoTen}</td>
+                        <td class="text-center">${item.tuoi}</td>
+                        <td>${item.diaChi}</td>
+                        <td class="text-center">${item.ngayTiem}</td>
+                        <td>${item.loaiVacXin}</td>
+                        <td>${item.muiTiem}</td>
+                        <td class="text-center">${item.huyetThanh}</td>
+                        <td>${item.ghiChu}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
 
-// Chạy khởi tạo bảng khi vừa load trang
-initTable();
-</script>
+        // 3. Hàm xử lý xuất toàn bộ mảng dữ liệu sang File Excel chuẩn Sở Y Tế
+        async function xuatExcel() {
+            if (database.length === 0) {
+                alert("Bảng hiện tại chưa có dữ liệu. Hãy thêm ít nhất 1 đối tượng trước khi xuất Excel!");
+                return;
+            }
 
+            try {
+                const workbook = new ExcelJS.Workbook();
+                const worksheet = workbook.addWorksheet('Báo cáo');
+
+                // --- 1. Tiêu đề Đơn vị và Quốc hiệu ---
+                const rowInst = worksheet.addRow(['SỞ Y TẾ HƯNG YÊN', '', 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM']);
+                const rowSubInst = worksheet.addRow(['TRUNG TÂM KIỂM SOÁT BỆNH TẬT', '', 'Độc lập - Tự do - Hạnh phúc']);
+                
+                worksheet.mergeCells('A1:B1');
+                worksheet.mergeCells('A2:B2');
+                worksheet.mergeCells('C1:I1');
+                worksheet.mergeCells('C2:I2');
+
+                [rowInst, rowSubInst].forEach(row => {
+                    row.eachCell(cell => {
+                        cell.font = { name: 'Times New Roman', size: 11, bold: true };
+                        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                    });
+                });
+
+                // --- 2. Tiêu đề văn bản chính ---
+                worksheet.addRow([]); // Dòng trống
+                const rowTitle = worksheet.addRow(['BÁO CÁO ĐỐI TƯỢNG TIÊM VẮC XIN, HUYẾT THANH KHÁNG DẠI']);
+                worksheet.mergeCells('A4:I4');
+                rowTitle.getCell(1).font = { name: 'Times New Roman', size: 16, bold: true };
+                rowTitle.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+
+                // Lấy tháng năm hiện tại làm tiêu đề phụ
+                const currentMonth = new Date().getMonth() + 1;
+                const currentYear = new Date().getFullYear();
+                const rowSubTitle = worksheet.addRow([`Tháng ${currentMonth < 10 ? '0'+currentMonth : currentMonth} Năm ${currentYear}`]);
+                worksheet.mergeCells('A5:I5');
+                rowSubTitle.getCell(1).font = { name: 'Times New Roman', size: 11, italic: true };
+                rowSubTitle.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+
+                worksheet.addRow([]); // Dòng trống
+
+                // --- 3. Tạo Tiêu đề các cột cho Bảng ---
+                const headers = ['STT', 'Họ và tên', 'Tuổi', 'Địa chỉ', 'Ngày tiêm', 'Loại vắc xin', 'Mũi tiêm', 'Huyết thanh', 'Ghi chú'];
+                const rowHeader = worksheet.addRow(headers);
+                rowHeader.eachCell(cell => {
+                    cell.font = { name: 'Times New Roman', size: 11, bold: true };
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FFE0E0E0' }
+                    };
+                    cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+                    cell.border = {
+                        top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+                    };
+                });
+
+                // --- 4. Đổ dữ liệu người dùng đã nhập từ Web vào Excel ---
+                database.forEach((item, index) => {
+                    const rowData = [
+                        index + 1,
+                        item.hoTen,
+                        item.tuoi,
+                        item.diaChi,
+                        item.ngayTiem,
+                        item.loaiVacXin,
+                        item.muiTiem,
+                        item.huyetThanh,
+                        item.ghiChu
+                    ];
+                    const row = worksheet.addRow(rowData);
+                    row.eachCell((cell, colNumber) => {
+                        cell.font = { name: 'Times New Roman', size: 11 };
+                        cell.border = {
+                            top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+                        };
+                        // Căn lề số thứ tự, tuổi, ngày tiêm ở giữa, còn lại ở trái
+                        if ([1, 3, 5, 7, 8].includes(colNumber)) {
+                            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                        } else {
+                            cell.alignment = { horizontal: 'left', vertical: 'middle' };
+                        }
+                    });
+                });
+
+                // Cấu hình tự động căn chỉnh khoảng cách rộng/hẹp cột hợp lý
+                worksheet.columns.forEach(column => {
+                    let maxLength = 12;
+                    column.eachCell({ includeEmpty: true }, cell => {
+                        const columnLength = cell.value ? cell.value.toString().length : 0;
+                        if (columnLength > maxLength) maxLength = columnLength;
+                    });
+                    column.width = maxLength + 4;
+                });
+
+                // --- 5. Đóng gói file và bắt đầu tải xuống ---
+                const buffer = await workbook.xlsx.writeBuffer();
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const link = document.createElement('a');
+                
+                const formattedDate = new Date().toISOString().slice(0,10);
+                const fileName = `BaoCao_TiemDai_HungYen_${formattedDate}.xlsx`;
+                
+                link.href = URL.createObjectURL(blob);
+                link.download = fileName;
+                link.click();
+                
+                alert(`Xuất file thành công: ${fileName}`);
+            } catch (error) {
+                console.error(error);
+                alert("Lỗi xuất Excel: Không thể tạo file. Vui lòng thử lại!");
+            }
+        }
+    </script>
 </body>
 </html>
