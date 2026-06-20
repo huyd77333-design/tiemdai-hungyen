@@ -2,979 +2,682 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Hệ Thống Báo Cáo Tiêm Dại – Hưng Yên 2026</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hệ Thống Báo Cáo Tiêm Dại – Sở Y Tế Hưng Yên</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap');
-:root{
-  --P:#1a4f7a;--PL:#2d7bbf;--PD:#12375a;
-  --A:#e8a020;--AD:#c07010;
-  --S:#1a7a4f;--W:#d4800a;--D:#c0392b;
-  --bg:#eef2f7;--card:#fff;--border:#d0dae6;
-  --text:#1c2b3a;--muted:#6b7f94;
-  --r:10px;
-}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
+:root{
+  --blue:#1a5276;--blue-light:#2980b9;--blue-soft:#eaf4fb;--blue-mid:#d6eaf8;
+  --green:#1e8449;--green-soft:#eafaf1;
+  --gray:#f5f7fa;--gray2:#e8ecf0;--gray3:#b0bcc8;--gray4:#6c7a8a;
+  --text:#1a202c;--text2:#4a5568;--white:#fff;
+  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--gray);color:var(--text);min-height:100vh}
 
-/* NAV */
-header{background:var(--PD);height:58px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.25)}
-.logo{background:var(--A);color:#fff;font-weight:800;font-size:11px;padding:4px 8px;border-radius:5px;letter-spacing:.5px;white-space:nowrap}
-header h1{color:#fff;font-size:14px;font-weight:700;line-height:1.3;flex:1}
-header h1 small{color:#a0c4e0;font-weight:400;font-size:11px;display:block}
-.month-sel{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;padding:5px 10px;border-radius:6px;font-family:inherit;font-size:12px;cursor:pointer}
-.month-sel option{color:var(--text);background:#fff}
+/* ── HEADER BAR ── */
+.topbar{background:var(--blue);color:#fff;padding:0 32px;display:flex;align-items:center;gap:16px;height:56px;box-shadow:0 2px 8px rgba(0,0,0,0.18)}
+.topbar-logo{width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.topbar-logo svg{width:22px;height:22px}
+.topbar h1{font-size:15px;font-weight:600;letter-spacing:.01em}
+.topbar .sub{font-size:12px;opacity:.75;margin-top:1px}
+.topbar-right{margin-left:auto;font-size:12px;opacity:.7;text-align:right}
 
-/* TABS */
-.tabs{background:var(--P);display:flex;padding:0 20px;overflow-x:auto;gap:2px}
-.tab{background:none;border:none;color:rgba(255,255,255,.6);padding:9px 16px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap}
-.tab.active{color:#fff;border-bottom-color:var(--A)}
-.tab:hover{color:#fff}
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:300px 1fr;gap:0;min-height:calc(100vh - 56px)}
 
-/* MAIN */
-main{padding:18px 20px;max-width:1500px;margin:0 auto}
-.page{display:none}.page.active{display:block}
+/* ── SIDEBAR ── */
+.sidebar{background:var(--white);border-right:1px solid var(--gray2);padding:24px 20px;display:flex;flex-direction:column;gap:6px}
+.sidebar-section{font-size:11px;font-weight:600;color:var(--gray3);letter-spacing:.08em;text-transform:uppercase;padding:16px 0 6px;border-top:1px solid var(--gray2);margin-top:10px}
+.sidebar-section:first-child{border-top:none;margin-top:0;padding-top:0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13.5px;color:var(--text2);transition:all .15s}
+.nav-item:hover{background:var(--gray);color:var(--blue)}
+.nav-item.active{background:var(--blue-soft);color:var(--blue);font-weight:600}
+.nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.badge-pill{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:600;padding:2px 7px;border-radius:12px}
+.badge-green{background:#27ae60}
 
-/* CARDS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;overflow:hidden}
-.ch{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.ct{font-size:13px;font-weight:700}
-.cb{padding:14px 16px}
+/* ── MAIN CONTENT ── */
+.main{padding:28px 32px;overflow-y:auto}
+.page-title{font-size:22px;font-weight:700;color:var(--blue);margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--gray4);margin-bottom:24px}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.stat.blue::before{background:var(--PL)}.stat.green::before{background:var(--S)}
-.stat.orange::before{background:var(--A)}.stat.red::before{background:var(--D)}
-.stat-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-.stat-val{font-size:26px;font-weight:800;margin:4px 0 2px;color:var(--text);line-height:1}
-.stat-sub{font-size:11px;color:var(--muted)}
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:16px 18px;border:1px solid var(--gray2);transition:box-shadow .15s}
+.stat-card:hover{box-shadow:var(--shadow)}
+.stat-label{font-size:11.5px;color:var(--gray4);font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.stat-val{font-size:26px;font-weight:700;color:var(--blue)}
+.stat-val.green{color:var(--green)}
+.stat-val.amber{color:#b7770d}
+.stat-note{font-size:11px;color:var(--gray3);margin-top:4px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-blue{background:var(--blue)}
+.dot-green{background:#27ae60}
+.dot-amber{background:#f39c12}
+.dot-red{background:#e74c3c}
 
-/* ALERTS */
-.alert{border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;font-size:12.5px;line-height:1.5}
-.alert.warn{background:#fff8ec;border:1px solid #f0c060;border-left:4px solid var(--A)}
-.alert.danger{background:#fff2f2;border:1px solid #e08080;border-left:4px solid var(--D)}
-.alert.ok{background:#f0faf4;border:1px solid #80c09a;border-left:4px solid var(--S)}
-.alert.info{background:#f0f6ff;border:1px solid #c0d8f0;border-left:4px solid var(--PL)}
-.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+/* ── FORM CARD ── */
+.form-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--gray2);overflow:hidden;margin-bottom:24px}
+.form-card-head{background:var(--blue);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600}
+.form-card-head svg{width:18px;height:18px;flex-shrink:0}
+.form-card-body{padding:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid-3{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:12.5px;font-weight:600;color:var(--text2)}
+.form-label span{color:#c0392b;margin-left:2px}
+input[type=text],input[type=number],select{
+  width:100%;padding:9px 12px;border:1.5px solid var(--gray2);border-radius:7px;
+  font-size:13.5px;color:var(--text);background:var(--white);
+  transition:border-color .15s;font-family:inherit;
+}
+input:focus,select:focus{outline:none;border-color:var(--blue-light)}
+input:hover,select:hover{border-color:var(--gray3)}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236c7a8a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
 
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:.18s;white-space:nowrap;text-decoration:none}
-.btn-primary{background:var(--P);color:#fff}.btn-primary:hover{background:var(--PL)}
-.btn-accent{background:var(--A);color:#fff}.btn-accent:hover{background:var(--AD)}
-.btn-success{background:var(--S);color:#fff}
-.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--P);color:var(--P)}
-.btn-danger{background:var(--D);color:#fff}
-.btn-sm{padding:4px 10px;font-size:11px}
-.btn-lg{padding:11px 22px;font-size:14px}
+/* ── DIVIDER ── */
+.divider{border:none;border-top:1px solid var(--gray2);margin:4px 0 16px}
 
-/* PILLS */
-.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700}
-.pill-ok{background:#e0f5ea;color:#1a7a4f}
-.pill-no{background:#ffeaea;color:#c0392b}
-.pill-late{background:#fff3e0;color:#d4800a}
+/* ── BTN ── */
+.btn-export{display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 24px;background:linear-gradient(135deg,#1a5276,#2980b9);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:600;cursor:pointer;width:100%;transition:all .15s;font-family:inherit;letter-spacing:.01em}
+.btn-export:hover{background:linear-gradient(135deg,#154360,#1f618d);transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,82,118,.35)}
+.btn-export:active{transform:translateY(0)}
+.btn-export svg{width:20px;height:20px}
+.btn-export.loading{opacity:.7;cursor:not-allowed;transform:none}
 
-/* PROGRESS BAR */
-.bar-wrap{background:#e0e7ef;border-radius:6px;height:6px;overflow:hidden}
-.bar{height:100%;border-radius:6px;transition:width .4s}
+/* ── CHECKLIST ── */
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.check-item{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text2);padding:8px 10px;background:var(--green-soft);border-radius:7px;border:1px solid #d5f5e3}
+.check-item svg{width:15px;height:15px;flex-shrink:0;margin-top:1px;color:#1e8449}
 
-/* TABLES */
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--border)}
-.tbl td{padding:7px 10px;border-bottom:1px solid #eef1f5;vertical-align:middle}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:#f8faff}
+/* ── PROGRESS ── */
+.prog-wrap{background:var(--gray2);border-radius:99px;height:8px;overflow:hidden;margin-top:6px}
+.prog-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#1a5276,#2980b9);transition:width .4s}
+.prog-label{display:flex;justify-content:space-between;font-size:11.5px;color:var(--gray4);margin-top:4px}
 
-/* DATA TABLE */
-.dt-wrap{overflow-x:auto;max-height:65vh}
-.dt{width:max-content;min-width:100%;border-collapse:collapse;font-size:11px}
-.dt th{background:var(--PD);color:#fff;padding:6px 7px;text-align:center;font-size:10px;font-weight:600;white-space:nowrap;border:1px solid rgba(255,255,255,.2);position:sticky;top:0;z-index:5}
-.dt th.g{background:var(--P)}
-.dt td{border:1px solid #d8e2ec;padding:3px 4px;text-align:center;vertical-align:middle}
-.dt td.tt{position:sticky;left:0;background:#f2f5f9;font-weight:700;z-index:3;width:36px}
-.dt td.nm{text-align:left;min-width:190px;max-width:210px;padding:3px 7px;position:sticky;left:36px;background:#fff;z-index:3;font-size:10.5px;line-height:1.3;white-space:normal}
-.dt tr:hover td{background:#f5f9ff}
-.dt tr:hover td.tt{background:#e8eef5}
-.dt tr:hover td.nm{background:#f5f9ff}
-.dt input[type=number]{width:38px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:var(--text);padding:1px;outline:none}
-.dt input[type=number]:focus{background:#e8f4ff;border-radius:3px}
-.dt .tot td{background:#e8eef7!important;font-weight:800;border-top:2px solid var(--P)}
+/* ── TABLE đơn vị ── */
+.unit-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+.unit-table th{background:var(--gray);font-size:11px;font-weight:600;color:var(--gray4);text-transform:uppercase;letter-spacing:.05em;padding:7px 12px;text-align:left;border-bottom:1px solid var(--gray2)}
+.unit-table td{padding:8px 12px;border-bottom:1px solid var(--gray2);color:var(--text2);vertical-align:middle}
+.unit-table tr:last-child td{border-bottom:none}
+.unit-table tr:hover td{background:var(--gray)}
+.status-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px}
+.status-done{background:#d5f5e3;color:#196f3d}
+.status-pending{background:#fdebd0;color:#935116}
+.status-miss{background:#fadbd8;color:#922b21}
 
-/* SEARCH */
-.srch{padding:7px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;color:var(--text);background:#fff;transition:.18s}
-.srch:focus{outline:none;border-color:var(--PL)}
-
-/* EXPORT BOX */
-.export-hero{background:linear-gradient(135deg,var(--PD) 0%,var(--PL) 100%);border-radius:12px;padding:22px;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:18px}
-.export-hero-text h3{font-size:16px;font-weight:800;margin-bottom:4px}
-.export-hero-text p{font-size:12px;opacity:.8}
-
-/* FORM GRID */
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.fg label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-.fg select,.fg input[type=text],.fg input[type=number],.fg input[type=date]{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;color:var(--text);background:#fff}
-.fg select:focus,.fg input:focus{outline:none;border-color:var(--PL)}
-
-/* CSV IMPORT */
-.drop-zone{border:2.5px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:.2s;background:#fafbfc}
-.drop-zone:hover,.drop-zone.over{border-color:var(--PL);background:#f0f6ff}
-.drop-zone .dz-icon{font-size:36px;margin-bottom:8px}
-.drop-zone .dz-title{font-size:14px;font-weight:700;color:var(--P);margin-bottom:4px}
-.drop-zone .dz-sub{font-size:12px;color:var(--muted)}
-
-/* TWO COL */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:760px){.two-col{grid-template-columns:1fr}.fg{grid-template-columns:1fr}.export-hero{flex-direction:column}.export-hero .btn-accent{margin-left:0}}
-
-/* GUIDE */
-.step-list{display:flex;flex-direction:column;gap:10px}
-.step-item{display:flex;gap:12px;align-items:flex-start}
-.step-num{width:28px;height:28px;border-radius:50%;background:var(--P);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;margin-top:1px}
-.step-body{flex:1}
-.step-ttl{font-weight:700;font-size:13px;margin-bottom:3px}
-.step-desc{font-size:12px;color:var(--muted);line-height:1.6}
-.code{background:#1e2a35;color:#a8d8f0;border-radius:6px;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px;line-height:1.6;overflow-x:auto;margin:6px 0}
-
-/* TOAST */
-#toast{position:fixed;bottom:20px;right:20px;background:var(--P);color:#fff;padding:11px 16px;border-radius:8px;font-size:12px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);transform:translateY(70px);opacity:0;transition:.3s;max-width:300px}
-#toast.show{transform:translateY(0);opacity:1}
-#toast.ok{background:var(--S)}#toast.err{background:var(--D)}
-
-/* SPINNER */
-.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
-@keyframes sp{to{transform:rotate(360deg)}}
-
-/* CHECKLIST */
-.chk-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #eef;font-size:12px}
-.chk-item:last-child{border-bottom:none}
-
-/* DEADLINE COUNTDOWN */
-.countdown{background:linear-gradient(135deg,#fff8ec,#fff3d4);border:1px solid #f0c060;border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:14px}
-.cd-num{font-size:36px;font-weight:800;color:var(--A);line-height:1;min-width:50px;text-align:center}
-.cd-text{flex:1}
-.cd-title{font-size:14px;font-weight:700;margin-bottom:2px}
-.cd-sub{font-size:12px;color:var(--muted)}
-
-/* TOP SITES BARS */
-.top-site{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.ts-rank{width:22px;text-align:right;font-weight:800;font-size:12px}
-.ts-info{flex:1;min-width:0}
-.ts-name{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-.ts-val{font-size:14px;font-weight:800;min-width:34px;text-align:right;color:var(--P)}
-
-/* ANIMAL CHART */
-.animal-row{margin-bottom:10px}
-.animal-lbl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
-.animal-val{font-weight:700}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;right:28px;background:#1e8449;color:#fff;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:500;display:none;align-items:center;gap:10px;box-shadow:0 4px 18px rgba(0,0,0,0.2);z-index:999;max-width:340px}
+.toast svg{width:20px;height:20px;flex-shrink:0}
+.toast.show{display:flex}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">SYT HY</div>
-  <h1>Báo Cáo Tiêm Vắc Xin Phòng Dại
-    <small>Sở Y Tế Tỉnh Hưng Yên – Trung Tâm Kiểm Soát Bệnh Tật</small>
-  </h1>
-  <select class="month-sel" id="mPicker" onchange="changeMonth()">
-    <option value="4-2026">Tháng 4/2026</option>
-    <option value="5-2026" selected>Tháng 5/2026</option>
-    <option value="6-2026">Tháng 6/2026</option>
-    <option value="7-2026">Tháng 7/2026</option>
-    <option value="8-2026">Tháng 8/2026</option>
-  </select>
-</header>
-
-<div class="tabs">
-  <button class="tab active" onclick="go('dashboard',this)">📊 Tổng quan</button>
-  <button class="tab" onclick="go('data',this)">📋 Số liệu</button>
-  <button class="tab" onclick="go('progress',this)">🔔 Tiến độ</button>
-  <button class="tab" onclick="go('import',this)">📥 Nhập CSV</button>
-  <button class="tab" onclick="go('export',this)">💾 Xuất Excel</button>
-  <button class="tab" onclick="go('guide',this)">📖 Hướng dẫn</button>
-</div>
-
-<main>
-
-<!-- ═══════ DASHBOARD ═══════ -->
-<div id="page-dashboard" class="page active">
-  <div id="dash-alert"></div>
-
-  <!-- Countdown -->
-  <div class="countdown" id="countdown"></div>
-
-  <div class="stats" id="stats"></div>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">Tiến độ nộp báo cáo</span><span id="pct-lbl" style="font-size:20px;font-weight:800;color:var(--P)">0%</span></div>
-      <div class="cb">
-        <div class="bar-wrap" style="height:10px;margin-bottom:10px"><div class="bar" id="pct-bar" style="width:0%;background:var(--S)"></div></div>
-        <div style="display:flex;gap:16px;font-size:11px;color:var(--muted);flex-wrap:wrap">
-          <span>🟢 Đã nộp: <b id="cnt-done">0</b></span>
-          <span>🔴 Chưa nộp: <b id="cnt-miss">0</b></span>
-          <span>🟡 Nộp trễ: <b id="cnt-late">0</b></span>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="ch"><span class="ct">Phân bổ loại động vật cắn</span></div>
-      <div class="cb" id="animal-chart"></div>
-    </div>
+<div class="topbar">
+  <div class="topbar-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#1a5276" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+    </svg>
   </div>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">Top 10 điểm tiêm</span></div>
-      <div class="cb" id="top-sites"></div>
-    </div>
-    <div class="card">
-      <div class="ch"><span class="ct">Thống kê theo nhóm tuổi</span></div>
-      <div class="cb" id="age-chart"></div>
-    </div>
+  <div>
+    <div class="topbar h1" style="font-size:15px;font-weight:600">Hệ Thống Báo Cáo Tiêm Vắc Xin Phòng Dại</div>
+    <div class="sub">Sở Y Tế Tỉnh Hưng Yên</div>
+  </div>
+  <div class="topbar-right">
+    <div id="clock" style="font-size:13px;font-weight:500"></div>
+    <div style="margin-top:1px">v2.1 – Cập nhật 06/2026</div>
   </div>
 </div>
 
-<!-- ═══════ DATA ═══════ -->
-<div id="page-data" class="page">
-  <div class="alert info"><div class="alert-icon">📌</div><div>Bảng hiển thị đầy đủ 61 điểm tiêm × 39 chỉ tiêu. Có thể nhập/sửa trực tiếp. Dữ liệu từ CSV Import sẽ tự điền vào đây. Nhấn <b>Lưu</b> để cập nhật dashboard.</div></div>
-  <div class="card">
-    <div class="ch">
-      <span class="ct">Số liệu tiêm dại – <span id="data-month-lbl">Tháng 5/2026</span></span>
-      <div style="display:flex;gap:7px;flex-wrap:wrap">
-        <input type="text" class="srch" placeholder="🔍 Tìm điểm tiêm..." oninput="filterDT(this.value)" style="font-size:11px;padding:5px 9px">
-        <button class="btn btn-primary btn-sm" onclick="saveData()">💾 Lưu</button>
-        <button class="btn btn-outline btn-sm" onclick="clearAll()">🗑 Xóa trắng</button>
-        <button class="btn btn-accent btn-sm" onclick="go('export',document.querySelectorAll('.tab')[4])">📥 Xuất Excel</button>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-section" style="border-top:none;margin-top:0;padding-top:0">Chức năng chính</div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Tổng quan
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Nhập số liệu
+      <span class="badge-pill">61</span>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Tiến độ báo cáo
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Nhập từ CSV / Excel
+    </div>
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Xuất báo cáo Excel
+      <span class="badge-pill badge-green">Mới</span>
+    </div>
+
+    <div class="sidebar-section">Cài đặt</div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M16.9 7.1A7 7 0 1012 5"/></svg>
+      Quản lý điểm tiêm
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Cài đặt hệ thống
+    </div>
+
+    <div style="margin-top:auto;padding-top:20px;border-top:1px solid var(--gray2)">
+      <div style="font-size:11px;color:var(--gray3);text-align:center;line-height:1.7">
+        Hỗ trợ kỹ thuật:<br>
+        <strong style="color:var(--blue)">02273 836 722</strong><br>
+        Sở Y Tế Hưng Yên
       </div>
     </div>
-    <div class="dt-wrap">
-      <table class="dt">
-        <thead>
-          <tr>
-            <th rowspan="2" style="position:sticky;left:0;z-index:7;background:var(--PD)">TT</th>
-            <th rowspan="2" style="min-width:190px;position:sticky;left:36px;z-index:7;background:var(--PD);text-align:left">Điểm tiêm</th>
-            <th class="g" colspan="2">Giới</th>
-            <th class="g" colspan="4">Tuổi</th>
-            <th class="g" colspan="2">Thời gian</th>
-            <th class="g" colspan="4">Loại ĐV</th>
-            <th class="g" colspan="4">Vị trí vết thương</th>
-            <th class="g" colspan="3">Mức độ</th>
-            <th class="g" colspan="4">Tình trạng ĐV</th>
-            <th class="g" colspan="2">Số người tiêm</th>
-            <th rowspan="2">HTKD</th>
-            <th class="g" colspan="4">PU tại chỗ</th>
-            <th class="g" colspan="6">PU toàn thân</th>
-            <th class="g" colspan="2">Tử vong</th>
-            <th rowspan="2">Dự phòng</th>
-          </tr>
-          <tr>
-            <th>Nam</th><th>Nữ</th>
-            <th>&lt;15</th><th>15-24</th><th>24-49</th><th>≥50</th>
-            <th>≤10n</th><th>&gt;10n</th>
-            <th>Chó</th><th>Mèo</th><th>Dơi</th><th>Khác</th>
-            <th>Đầu/cổ</th><th>Thân</th><th>Tay</th><th>Chân</th>
-            <th>ĐI</th><th>ĐII</th><th>ĐIII</th>
-            <th>BT</th><th>Ốm</th><th>Chạy rông</th><th>Dại</th>
-            <th>Bắp</th><th>Trong da</th>
-            <th>Đau</th><th>Đỏ</th><th>Tụ máu</th><th>Phù nề</th>
-            <th>Sốt</th><th>Khó chịu</th><th>Ngứa</th><th>Đau cơ</th><th>RLtiêu hóa</th><th>Khác</th>
-            <th>Có tiêm</th><th>Không tiêm</th>
-          </tr>
-        </thead>
-        <tbody id="dt-body"></tbody>
-        <tfoot id="dt-foot"></tfoot>
-      </table>
-    </div>
-  </div>
-</div>
+  </aside>
 
-<!-- ═══════ PROGRESS ═══════ -->
-<div id="page-progress" class="page">
-  <div id="prog-alert"></div>
-  <div class="card">
-    <div class="ch">
-      <span class="ct">Tiến độ nộp báo cáo – <span id="prog-month-lbl">Tháng 5/2026</span></span>
-      <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
-        <span class="pill pill-ok" id="p-done">0 đã nộp</span>
-        <span class="pill pill-no" id="p-miss">0 chưa nộp</span>
-        <button class="btn btn-primary btn-sm" onclick="sendReminder()">📧 Nhắc nhở</button>
-        <button class="btn btn-outline btn-sm" onclick="markAllDone()">✅ Đánh dấu tất cả</button>
+  <main class="main">
+    <div class="page-title">Xuất báo cáo Excel</div>
+    <div class="page-sub">Tạo file Excel chuẩn theo biểu mẫu Bộ Y Tế — A4 nằm ngang, vừa khít, có đánh số trang</div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label"><span class="dot dot-blue"></span>Tổng điểm tiêm</div>
+        <div class="stat-val">61</div>
+        <div class="stat-note">Toàn tỉnh Hưng Yên</div>
       </div>
-    </div>
-    <div class="cb" style="padding-bottom:0">
-      <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap">
-        <input type="text" class="srch" placeholder="🔍 Tìm..." oninput="filterProg(this.value)" style="font-size:11px;padding:5px 9px">
-        <select class="srch" style="font-size:11px;padding:5px 9px" onchange="filterProgStatus(this.value)">
-          <option value="all">Tất cả</option>
-          <option value="done">Đã nộp</option>
-          <option value="missing">Chưa nộp</option>
-          <option value="late">Nộp trễ</option>
-        </select>
+      <div class="stat-card">
+        <div class="stat-label"><span class="dot dot-green"></span>Đã có số liệu</div>
+        <div class="stat-val green">53</div>
+        <div class="stat-note">87% đơn vị</div>
       </div>
-    </div>
-    <table class="tbl" id="prog-tbl">
-      <thead><tr>
-        <th>TT</th><th>Điểm tiêm</th><th>Trạng thái</th><th>Ngày nộp</th>
-        <th>Tổng người tiêm</th><th style="min-width:90px">Tiến độ</th><th>Thao tác</th>
-      </tr></thead>
-      <tbody id="prog-body"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ═══════ CSV IMPORT ═══════ -->
-<div id="page-import" class="page">
-  <div class="alert info"><div class="alert-icon">🔗</div><div><b>Kết nối với Google Apps Script:</b> Sau khi cài Apps Script, xuất CSV từ Google Sheet → tải về → kéo thả vào đây. Hệ thống tự nhận dạng và điền vào bảng số liệu.</div></div>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">Nhập từ file CSV / Excel</span></div>
-      <div class="cb">
-        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="dzOver(event)" ondragleave="dzLeave()" ondrop="dzDrop(event)">
-          <div class="dz-icon">📂</div>
-          <div class="dz-title">Kéo thả file vào đây</div>
-          <div class="dz-sub">Hoặc nhấn để chọn file .csv / .xlsx từ máy tính<br>File xuất từ Google Sheet hoặc Apps Script</div>
-        </div>
-        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFile(this.files[0])">
-        <div id="import-result" style="margin-top:12px"></div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="dot dot-amber"></span>Chưa báo cáo</div>
+        <div class="stat-val amber">8</div>
+        <div class="stat-note">Cần nhắc nhở</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="dot dot-blue"></span>Tổng người tiêm</div>
+        <div class="stat-val">953</div>
+        <div class="stat-note">Tháng hiện tại</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="ch"><span class="ct">Nhập dữ liệu thủ công theo điểm tiêm</span></div>
-      <div class="cb">
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div class="fg" style="grid-template-columns:1fr">
-            <label>Chọn điểm tiêm
-              <select id="manual-site" style="font-size:12px;padding:7px">
-                <option value="">-- Chọn điểm tiêm --</option>
-              </select>
-            </label>
+    <div class="form-card">
+      <div class="form-card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Cấu hình thông tin báo cáo
+      </div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sở chủ quản <span>*</span></label>
+            <input type="text" id="inputSoChuQuan" value="Sở Y Tế Tỉnh Hưng Yên">
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="manual-inputs"></div>
-          <button class="btn btn-primary" onclick="applyManual()" style="align-self:flex-start">✅ Cập nhật số liệu điểm này</button>
+          <div class="form-group">
+            <label class="form-label">Đơn vị báo cáo <span>*</span></label>
+            <input type="text" id="inputDonVi" value="Trung tâm Kiểm soát bệnh tật Hưng Yên">
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="ch"><span class="ct">Lịch sử nhập liệu</span></div>
-    <div class="cb">
-      <table class="tbl" id="import-log">
-        <thead><tr><th>Thời gian</th><th>Nguồn</th><th>Số dòng</th><th>Điểm tiêm</th><th>Trạng thái</th></tr></thead>
-        <tbody id="import-log-body"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
+        <hr class="divider">
 
-<!-- ═══════ EXPORT ═══════ -->
-<div id="page-export" class="page">
-  <div class="export-hero">
-    <div style="font-size:40px">📊</div>
-    <div class="export-hero-text">
-      <h3>Xuất Báo Cáo Excel Chuẩn Mẫu</h3>
-      <p>Font Times New Roman · Merge cells đúng chuẩn · Hàng Cộng SUM tự động · Chữ ký 3 cột</p>
-    </div>
-    <button class="btn btn-accent btn-lg" onclick="exportXLSX()" id="export-btn">
-      <span id="exp-spin" style="display:none" class="spin"></span> 📥 Tải xuống Excel
-    </button>
-  </div>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">Thông tin chữ ký & báo cáo</span></div>
-      <div class="cb">
-        <div class="fg">
-          <label>Tháng báo cáo<select id="exp-month"><option value="5" selected>Tháng 5</option><option value="6">Tháng 6</option><option value="7">Tháng 7</option></select></label>
-          <label>Năm<input type="number" id="exp-year" value="2026"></label>
-          <label>Người báo cáo<input type="text" id="exp-reporter" value="Đinh Thị Ngọc Thủy"></label>
-          <label>Trưởng Khoa PCBTN<input type="text" id="exp-khoa" value="Đặng Quang Huy"></label>
-          <label>Giám đốc<input type="text" id="exp-director" value="Phạm Nam Thái"></label>
-          <label>Ngày ký<input type="date" id="exp-date" value="2026-06-12"></label>
+        <div class="form-grid form-grid-3">
+          <div class="form-group">
+            <label class="form-label">Tháng báo cáo <span>*</span></label>
+            <select id="selThang">
+              <option value="1">Tháng 1</option><option value="2">Tháng 2</option>
+              <option value="3">Tháng 3</option><option value="4">Tháng 4</option>
+              <option value="5" selected>Tháng 5</option><option value="6">Tháng 6</option>
+              <option value="7">Tháng 7</option><option value="8">Tháng 8</option>
+              <option value="9">Tháng 9</option><option value="10">Tháng 10</option>
+              <option value="11">Tháng 11</option><option value="12">Tháng 12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Năm báo cáo <span>*</span></label>
+            <input type="number" id="inputNam" value="2026" min="2020" max="2040">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ngày ký báo cáo</label>
+            <input type="text" id="inputNgayKy" placeholder="VD: 12/06/2026">
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="ch"><span class="ct">Kiểm tra trước khi xuất</span></div>
-      <div class="cb" id="exp-check"></div>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="ch"><span class="ct">Lưu ý kỹ thuật</span></div>
-    <div class="cb">
-      <ul style="padding-left:18px;line-height:2;font-size:12.5px">
-        <li><b>Font:</b> Times New Roman toàn bộ file (13pt nội dung, 14pt tiêu đề)</li>
-        <li><b>Tiêu đề:</b> "SỞ Y TẾ TỈNH HƯNG YÊN" + "BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI"</li>
-        <li><b>Cột hàng Cộng:</b> Công thức =SUM(), không phải giá trị cứng</li>
-        <li><b>Merge cells:</b> Đúng vị trí header 3 tầng theo mẫu gốc</li>
-        <li><b>Chữ ký:</b> Người báo cáo / Trưởng Khoa PCBTN / Giám đốc</li>
-        <li><b>Tương thích:</b> Excel 2010+, LibreOffice, Google Sheets</li>
-      </ul>
-    </div>
-  </div>
-</div>
+        <hr class="divider">
 
-<!-- ═══════ GUIDE ═══════ -->
-<div id="page-guide" class="page">
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">🎯 Mục tiêu hệ thống</span></div>
-      <div class="cb">
-        <div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;line-height:1.7">
-          <div class="alert ok"><div class="alert-icon">✅</div><div>Số hóa 100% quy trình tiếp nhận, xử lý và phân tích số liệu từ 61 cơ sở tiêm chủng toàn tỉnh Hưng Yên</div></div>
-          <div class="alert ok"><div class="alert-icon">✅</div><div>Tự động hóa hoàn toàn khâu tổng hợp dữ liệu, triệt tiêu cắt ghép Excel thủ công tại tuyến tỉnh</div></div>
-          <div class="alert ok"><div class="alert-icon">✅</div><div>Đảm bảo 100% đơn vị nộp trước ngày 05 hàng tháng qua hệ thống cảnh báo tự động</div></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Số văn bản</label>
+            <input type="text" id="inputSoVB" placeholder="VD: 25/BC-YT">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kính gửi</label>
+            <input type="text" id="inputKinhGui" value="Cục Y tế dự phòng – Bộ Y tế">
+          </div>
         </div>
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="ch"><span class="ct">🔄 Quy trình 4 bước</span></div>
-      <div class="cb">
-        <div class="step-list">
-          <div class="step-item">
-            <div class="step-num">1</div>
-            <div class="step-body">
-              <div class="step-ttl">Cơ sở tiêm điền Google Form</div>
-              <div class="step-desc">Mỗi đơn vị điền 1 lần/tháng. Hạn: ngày 05. Link Form gửi qua email đơn vị.</div>
+        <hr class="divider" style="margin-bottom:20px">
+
+        <button class="btn-export" id="btnExport" onclick="xuatExcelDemo()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Tải Báo Cáo Excel (.xlsx)
+        </button>
+
+        <div style="margin-top:18px">
+          <div style="font-size:12px;color:var(--gray4);margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">File xuất ra bao gồm:</div>
+          <div class="checklist">
+            <div class="check-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Tiêu đề 2 phần chuẩn hành chính
             </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">2</div>
-            <div class="step-body">
-              <div class="step-ttl">Apps Script tự động tổng hợp</div>
-              <div class="step-desc">Mỗi lần nộp Form → Apps Script cập nhật Google Sheet TONG_HOP, gửi email xác nhận.</div>
+            <div class="check-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              A4 nằm ngang – vừa khít 1 trang
             </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">3</div>
-            <div class="step-body">
-              <div class="step-ttl">Import CSV vào hệ thống HTML</div>
-              <div class="step-desc">Xuất CSV từ Google Sheet → kéo thả vào tab "Nhập CSV" → tự điền bảng số liệu.</div>
+            <div class="check-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              3 chữ ký cân đối dưới cùng
             </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">4</div>
-            <div class="step-body">
-              <div class="step-ttl">Xuất Excel chuẩn mẫu gửi cấp trên</div>
-              <div class="step-desc">Tab "Xuất Excel" → điền chữ ký → nhấn Tải xuống. File đúng chuẩn font Times New Roman.</div>
+            <div class="check-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Đánh số trang tự động (Trang X/Y)
+            </div>
+            <div class="check-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Hàng CỘNG tổng tự động (SUM)
+            </div>
+            <div class="check-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Tiêu đề lặp lại khi in nhiều trang
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="ch"><span class="ct">⚙️ Cài đặt Google Apps Script (làm 1 lần)</span></div>
-    <div class="cb">
-      <div class="step-list">
-        <div class="step-item">
-          <div class="step-num">A</div>
-          <div class="step-body">
-            <div class="step-ttl">Mở Google Sheet gắn với Form → Extensions → Apps Script</div>
-          </div>
+    <div class="form-card">
+      <div class="form-card-head" style="background:#2c3e50">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Tiến độ tổng hợp báo cáo toàn tỉnh
+      </div>
+      <div class="form-card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:13px;color:var(--text2)">Đã tổng hợp: <strong>53 / 61 đơn vị</strong></span>
+          <span style="font-size:15px;font-weight:700;color:var(--blue)">87%</span>
         </div>
-        <div class="step-item">
-          <div class="step-num">B</div>
-          <div class="step-body">
-            <div class="step-ttl">Dán toàn bộ nội dung file <b>GoogleAppsScript_TiemDai.js</b></div>
-            <div class="step-desc">Xóa code cũ, paste code mới, Ctrl+S để lưu</div>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">C</div>
-          <div class="step-body">
-            <div class="step-ttl">Sửa email admin trong phần CONFIG (2 dòng đầu)</div>
-            <div class="code">EMAIL_ADMIN: "pcbtn.ksbt.hungyen@gmail.com",<br>EMAIL_CC: "giamdoc.ksbt.hungyen@gmail.com",</div>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">D</div>
-          <div class="step-body">
-            <div class="step-ttl">Chọn hàm <b>setupTriggers</b> → nhấn ▶ Run → cấp quyền khi được hỏi</div>
-            <div class="step-desc">Xuất hiện hộp thoại "✅ Cài đặt hoàn tất" = thành công</div>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">E</div>
-          <div class="step-body">
-            <div class="step-ttl">Quay lại Sheet → menu "🏥 Hệ thống Tiêm Dại" → "Khởi tạo lại sheet TONG_HOP"</div>
-          </div>
-        </div>
+        <div class="prog-wrap"><div class="prog-bar" style="width:87%"></div></div>
+        <div class="prog-label"><span>0%</span><span>100%</span></div>
+
+        <div style="margin-top:16px;font-size:12.5px;font-weight:600;color:var(--text2);margin-bottom:8px">Một số đơn vị tiêu biểu:</div>
+        <table class="unit-table">
+          <thead>
+            <tr>
+              <th>TT</th><th>Tên điểm tiêm chủng</th><th>Số người tiêm</th><th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>TT KSBT Hưng Yên cơ sở 1</td><td>5</td><td><span class="status-badge status-done">✓ Đã báo cáo</span></td></tr>
+            <tr><td>2</td><td>TT KSBT Hưng Yên cơ sở 2</td><td>54</td><td><span class="status-badge status-done">✓ Đã báo cáo</span></td></tr>
+            <tr><td>3</td><td>VNVC Hưng Yên</td><td>41</td><td><span class="status-badge status-done">✓ Đã báo cáo</span></td></tr>
+            <tr><td>4</td><td>Long Châu 144</td><td>58</td><td><span class="status-badge status-done">✓ Đã báo cáo</span></td></tr>
+            <tr><td>5</td><td>Potec 89 Hưng Yên</td><td>60</td><td><span class="status-badge status-done">✓ Đã báo cáo</span></td></tr>
+            <tr><td>43</td><td>Go Vaccine Đình Cao, Phù Cừ</td><td>0</td><td><span class="status-badge status-miss">✗ Chưa báo cáo</span></td></tr>
+            <tr><td>44</td><td>Go Vaccine Khoái Châu</td><td>0</td><td><span class="status-badge status-miss">✗ Chưa báo cáo</span></td></tr>
+            <tr><td>60</td><td>Phòng tiêm Thiện Đức</td><td>0</td><td><span class="status-badge status-pending">⏳ Chờ xác nhận</span></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="ch"><span class="ct">📋 Cấu trúc 39 chỉ tiêu trong Form & Excel</span></div>
-    <div class="cb" style="overflow-x:auto">
-      <table class="tbl">
-        <thead><tr><th>Nhóm</th><th>Chỉ tiêu chi tiết</th><th>Số cột</th></tr></thead>
-        <tbody>
-          <tr><td><b>Giới tính</b></td><td>Nam · Nữ</td><td>2</td></tr>
-          <tr><td><b>Nhóm tuổi</b></td><td>&lt;15 · 15-24 · 24-49 · ≥50</td><td>4</td></tr>
-          <tr><td><b>Thời gian cắn→tiêm</b></td><td>≤10 ngày · &gt;10 ngày</td><td>2</td></tr>
-          <tr><td><b>Loại động vật</b></td><td>Chó · Mèo · Dơi · Khác</td><td>4</td></tr>
-          <tr><td><b>Vị trí vết thương</b></td><td>Đầu/mặt/cổ · Thân · Tay · Chân</td><td>4</td></tr>
-          <tr><td><b>Mức độ vết thương</b></td><td>Độ I · Độ II · Độ III</td><td>3</td></tr>
-          <tr><td><b>Tình trạng động vật</b></td><td>Bình thường · Ốm · Chạy rông/mất tích · Lên cơn dại</td><td>4</td></tr>
-          <tr><td><b>Số người tiêm</b></td><td>Tiêm bắp · Tiêm trong da</td><td>2</td></tr>
-          <tr><td><b>HTKD</b></td><td>Số người dùng huyết thanh kháng dại</td><td>1</td></tr>
-          <tr><td><b>Phản ứng tại chỗ</b></td><td>Đau · Quầng đỏ · Tụ máu · Phù nề/nốt cứng</td><td>4</td></tr>
-          <tr><td><b>Phản ứng toàn thân</b></td><td>Sốt · Khó chịu · Ngứa mẩn đỏ · Đau cơ/khớp · Rối loạn TH · Khác</td><td>6</td></tr>
-          <tr><td><b>BN tử vong</b></td><td>Có tiêm · Không tiêm</td><td>2</td></tr>
-          <tr><td><b>Tiêm dự phòng</b></td><td>Số người tiêm dự phòng (không bị cắn)</td><td>1</td></tr>
-          <tr style="background:#f0f6ff"><td colspan="2"><b>Tổng cộng</b></td><td><b>39</b></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  </main>
 </div>
 
-</main>
-<div id="toast"></div>
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg">Xuất file thành công!</span>
+</div>
 
 <script>
-// ═══════════════════════════════════════
-//  DATA
-// ═══════════════════════════════════════
-const SITES=[
-"Phòng tiêm chủng - TT KSBT Hưng Yên cơ sở 1","Phòng tiêm DV - TT KSBT Hưng Yên cơ sở 2","Phòng tiêm chủng - Bệnh viện Nhi Thái Bình","TT VNVC Thái Bình","TT tiêm chủng Thái Bình Vàng CN Hưng Hà","TT tiêm chủng Thái Bình Vàng CN Quỳnh Phụ","TT tiêm chủng Thái Bình Vàng CN Thuỵ Xuân","TT tiêm chủng Thái Bình Vàng CN Ngã tư Đậu","TT tiêm chủng Thái Bình Vàng CN Tân Bình","TT tiêm chủng An Nhiên","TT tiêm chủng Potec 81 Thái Bình","TT tiêm chủng Potec Vũ Quý","TT tiêm chủng Potec 81.2 Hưng Hà","TT tiêm chủng Potec 81.3 Quỳnh Phụ","TT tiêm chủng Potec 81.4 Thái Thụy","TT tiêm chủng và TVDD Thái Bình CN Tiền Hải","TT tiêm chủng và TVDD Thái Bình CN Thái Thuỵ","TT tiêm chủng và TVDD Thái Bình CN Quỳnh Phụ","TT tiêm chủng và TVDD Thái Bình CN Đông Hưng","TT tiêm chủng và TVDD Thái Bình CN Hưng Nhân","TT tiêm chủng và TVDD Thái Bình CN Hưng Hà","TT tiêm chủng và TVDD Thái Bình CN Vũ Thư","TT tiêm chủng Long Châu 144","TT tiêm chủng số 1 Thái Bình","TT tiêm chủng Vaccine Incheon Thái Thuỵ","TT tiêm chủng Vaccine Incheon Đông Hưng","TT tiêm chủng Vaccine Incheon Vũ Thư","Phòng tiêm chủng vắc xin Đông Hưng","Trung tâm tiêm chủng vắc xin Thái Thuỵ","Trung tâm tiêm chủng VNVC Hưng Yên","Trung tâm tiêm chủng VNVC Phố Nối","Trung tâm tiêm chủng VNVC Văn Giang","Phòng tiêm chủng Potec 89 Hưng Yên","Phòng tiêm Potec 89.1 Kim Động","Phòng tiêm Potec 89.2 Yên Mỹ","Phòng tiêm chủng Potec 89.3 Khoái Châu","Phòng tiêm Potec 89.6 Tiên Lữ","Phòng tiêm Potec 89.7 Phù Cừ","Phòng tiêm chủng vắc xin Hưng Yên CS Kim Động","Phòng tiêm chủng vắc xin Hưng Yên CS Văn Lâm","Phòng tiêm chủng vắc xin Hưng Yên CS Ân Thi","Phòng tiêm dịch vụ vắc xin Go Văn Giang","Phòng tiêm chủng dịch vụ Go vaccine Đình Cao, Phù Cừ","Phòng tiêm chủng dịch vụ Go vaccine Khoái Châu","Phòng tiêm VHNcare Khoái Châu","Phòng tiêm VHN Care Phù Cừ","Công ty CPDP FPT Long Châu - CS tiêm chủng Long Châu 149","Phòng tiêm dịch vụ vắc xin - Công ty CP BVĐK Hưng Hà","Phòng tiêm chủng DR.ECO","Phòng tiêm chủng dịch vụ Phố Nối, Công ty TBYT Thế Lâm","Trung tâm tiêm chủng vaccine Osstech","Phòng tiêm chủng Hà Nội","Phòng tiêm chủng dịch vụ Thanh Nhàn","Phòng tiêm BIVAC","Phòng tiêm chủng dịch vụ Mỹ Hào","Phòng tiêm chủng vắc xin Y khoa Hà Nội cơ sở Kim Động","Phòng tiêm chủng Minh Đức","Cơ sở tiêm chủng vắc xin Happy Phù Cừ","Phòng tiêm chủng vắc xin dịch vụ Happy Yên Phú","Phòng tiêm vắc xin dịch vụ Thiện Đức","Phòng tiêm chủng vaccine House"
+// ── Clock ─────────────────────────────────────────────────
+function updateClock(){
+  const n=new Date();
+  const pad=x=>String(x).padStart(2,'0');
+  document.getElementById('clock').textContent=
+    `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}  –  ${n.getDate()}/${n.getMonth()+1}/${n.getFullYear()}`;
+}
+updateClock(); setInterval(updateClock,1000);
+
+// ── Set default ngày ký ───────────────────────────────────
+const nd=new Date();
+document.getElementById('inputNgayKy').value=`${nd.getDate()} tháng ${nd.getMonth()+1} năm ${nd.getFullYear()}`;
+
+// ── Dữ liệu mẫu ──────────────────────────────────────────
+const DIEM_TIEM=[
+  'Phòng tiêm chủng - TT KSBT Hưng Yên cơ sở 1',
+  'Phòng tiêm DV - TT KSBT Hưng Yên cơ sở 2',
+  'Phòng tiêm chủng - Bệnh viện Nhi Thái Bình',
+  'TT VNVC Thái Bình',
+  'TT tiêm chủng Thái Bình Vàng CN Hưng Hà',
+  'TT tiêm chủng Thái Bình Vàng CN Quỳnh Phụ',
+  'TT tiêm chủng Thái Bình Vàng CN Thuỵ Xuân',
+  'TT tiêm chủng Thái Bình Vàng CN Ngã tư Đậu',
+  'TT tiêm chủng Thái Bình Vàng CN Tân Bình',
+  'TT tiêm chủng An Nhiên',
+  'TT tiêm chủng Potec 81 Thái Bình',
+  'TT tiêm chủng Potec Vũ Quý',
+  'TT tiêm chủng Potec 81.2 Hưng Hà',
+  'TT tiêm chủng Potec 81.3 Quỳnh Phụ',
+  'TT tiêm chủng Potec 81.4 Thái Thụy',
+  'TT tiêm chủng và TVDD Thái Bình CN Tiền Hải',
+  'TT tiêm chủng và TVDD Thái Bình CN Thái Thuỵ',
+  'TT tiêm chủng và TVDD Thái Bình CN Quỳnh Phụ',
+  'TT tiêm chủng và TVDD Thái Bình CN Đông Hưng',
+  'TT tiêm chủng và TVDD Thái Bình CN Hưng Nhân',
+  'TT tiêm chủng và TVDD Thái Bình CN Hưng Hà',
+  'TT tiêm chủng và TVDD Thái Bình CN Vũ Thư',
+  'TT tiêm chủng Long Châu 144',
+  'TT tiêm chủng số 1 Thái Bình',
+  'TT tiêm chủng Vaccine Incheon Thái Thuỵ',
+  'TT tiêm chủng Vaccine Incheon Đông Hưng',
+  'TT tiêm chủng Vaccine Incheon Vũ Thư',
+  'Phòng tiêm chủng vắc xin Đông Hưng',
+  'Trung tâm tiêm chủng vắc xin Thái Thuỵ',
+  'Trung tâm tiêm chủng VNVC Hưng Yên',
+  'Trung tâm tiêm chủng VNVC Phố Nối',
+  'Trung tâm tiêm chủng VNVC Văn Giang',
+  'Phòng tiêm chủng Potec 89 Hưng Yên',
+  'Phòng tiêm Potec 89.1 Kim Động',
+  'Phòng tiêm Potec 89.2 Yên Mỹ',
+  'Phòng tiêm chủng Potec 89.3 Khoái Châu',
+  'Phòng tiêm Potec 89.6 Tiên Lữ',
+  'Phòng tiêm Potec 89.7 Phù Cừ',
+  'Phòng tiêm chủng vắc xin Hưng Yên CS Kim Động',
+  'Phòng tiêm chủng vắc xin Hưng Yên CS Văn Lâm',
+  'Phòng tiêm chủng vắc xin Hưng Yên CS Ân Thi',
+  'Phòng tiêm dịch vụ vắc xin Go Văn Giang',
+  'Phòng tiêm chủng dịch vụ Go vaccine Đình Cao, Phù Cừ',
+  'Phòng tiêm chủng dịch vụ Go vaccine Khoái Châu',
+  'Phòng tiêm VHNcare Khoái Châu',
+  'Phòng tiêm VHN Care Phù Cừ',
+  'Công ty CPDP FPT Long Châu - CS tiêm chủng Long Châu 149',
+  'Phòng tiêm dịch vụ vắc xin - Công ty CP BVĐK Hưng Hà',
+  'Phòng tiêm chủng DR.ECO',
+  'Phòng tiêm chủng dịch vụ Phố Nối, Công ty TBYT Thế Lâm',
+  'Trung tâm tiêm chủng vaccine Osstech',
+  'Phòng tiêm chủng Hà Nội',
+  'Phòng tiêm chủng dịch vụ Thanh Nhàn',
+  'Phòng tiêm BIVAC',
+  'Phòng tiêm chủng dịch vụ Mỹ Hào',
+  'Phòng tiêm chủng vắc xin Y khoa Hà Nội cơ sở Kim Động',
+  'Phòng tiêm chủng Minh Đức',
+  'Cơ sở tiêm chủng vắc xin Happy Phù Cừ',
+  'Phòng tiêm chủng vắc xin dịch vụ Happy Yên Phú',
+  'Phòng tiêm vắc xin dịch vụ Thiện Đức',
+  'Phòng tiêm chủng vaccine House',
+];
+const SAMPLE=[
+  [3,2,1,0,0,4,5,0,3,2,0,0,0,0,2,3,0,4,1,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [28,26,7,3,11,33,52,2,45,8,0,1,0,1,17,37,18,17,19,48,4,2,0,54,0,23,20,2,0,1,3,15,1,5,1,0,0,0,0,0],
+  [25,18,16,5,8,14,42,1,30,12,0,1,5,3,27,10,0,4,39,28,4,6,5,29,0,36,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [12,9,7,1,8,5,21,0,13,7,1,0,1,1,9,12,0,3,18,18,0,3,0,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [11,1,4,0,3,5,11,1,11,1,0,0,0,0,1,11,0,0,12,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [1,5,0,1,0,5,6,0,5,1,0,0,1,0,2,3,0,4,2,6,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [4,4,2,1,1,4,8,0,7,1,0,0,0,0,3,5,0,0,8,8,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [2,2,0,0,3,1,4,0,3,1,0,0,0,0,1,3,0,0,4,4,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [3,2,0,0,3,2,5,0,4,1,0,0,0,0,0,5,0,2,3,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [2,4,2,0,1,3,5,0,5,0,0,0,0,0,1,4,0,0,5,5,0,0,0,6,0,0,6,0,0,0,0,6,0,0,0,0,0,0,0,1],
+  [2,1,2,0,0,1,2,1,1,2,0,0,0,0,2,1,0,3,0,2,0,1,0,3,0,0,3,0,0,0,0,1,0,0,0,0,0,0,0,0],
+  [4,3,0,0,2,5,7,0,7,0,0,0,0,0,1,6,0,0,7,7,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [10,14,4,1,8,11,24,0,20,4,0,0,0,0,9,15,3,17,4,14,0,10,0,24,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [11,11,4,3,4,11,22,0,22,0,0,0,0,0,0,22,0,0,22,19,0,3,0,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [3,6,2,1,3,3,9,0,8,0,1,0,0,0,3,6,0,0,9,6,0,3,0,9,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [1,5,2,1,1,2,6,0,6,0,0,0,0,0,0,6,0,6,0,6,0,0,0,6,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [5,6,5,0,3,3,11,0,9,2,0,0,2,0,3,6,0,0,11,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [2,4,1,1,1,3,6,0,5,1,0,0,0,0,3,3,0,3,3,6,0,0,0,6,0,0,1,0,0,0,0,2,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [3,2,3,0,0,2,5,0,3,2,0,0,0,0,2,3,0,4,1,4,1,0,0,5,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0],
+  [1,4,1,0,0,4,5,0,5,0,0,0,0,0,1,4,0,4,1,5,0,0,0,5,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [5,2,1,0,2,4,7,0,7,0,0,0,0,0,3,4,0,6,1,7,0,0,0,7,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [33,25,34,2,4,18,58,0,48,7,0,3,0,5,27,26,3,9,46,45,4,8,1,58,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [8,4,3,1,4,4,12,0,9,3,0,0,1,0,5,6,0,5,7,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [9,7,4,0,1,11,16,0,14,2,0,0,0,0,6,10,0,16,0,14,0,2,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [2,0,0,1,1,0,2,0,2,0,0,0,0,0,0,2,2,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [1,0,0,0,0,1,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [17,14,7,3,3,18,31,0,26,5,0,0,1,2,11,17,1,27,3,26,1,4,0,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [10,2,5,0,3,4,12,0,9,3,0,0,0,0,5,8,12,0,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [21,20,14,2,11,14,41,0,30,9,0,2,0,4,8,29,1,2,38,37,2,2,0,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5],
+  [28,16,10,8,14,12,42,0,30,11,0,1,2,4,15,21,0,4,38,37,1,4,0,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+  [24,15,16,4,15,4,38,0,21,13,1,3,2,2,19,15,0,6,32,32,0,6,0,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [28,32,11,9,14,26,55,5,47,12,0,1,8,5,12,35,0,44,16,42,12,6,0,60,0,16,2,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [4,7,1,2,1,7,11,0,7,4,0,0,0,0,5,6,0,2,9,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [3,8,2,0,6,3,11,0,7,4,0,0,0,3,6,2,1,8,2,10,0,1,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [2,1,3,0,0,0,3,0,3,0,0,0,1,0,1,1,1,2,0,3,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [4,2,0,2,1,3,6,0,3,3,0,0,2,0,2,2,0,0,6,6,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [15,7,0,0,4,18,21,1,18,4,0,0,1,7,8,6,1,19,2,18,2,2,0,22,0,0,5,2,0,3,1,3,0,0,0,0,0,0,0,0],
+  [8,8,2,4,3,7,16,0,12,4,0,0,0,0,4,12,0,16,0,16,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [5,5,2,1,1,6,10,0,6,4,0,0,0,0,3,7,0,0,10,10,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [4,7,2,4,5,0,11,0,7,4,0,0,0,1,4,6,0,0,11,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [3,2,3,0,0,2,5,0,5,0,0,0,0,0,3,2,0,5,0,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [6,4,3,0,3,4,10,0,10,0,0,0,0,0,2,8,0,7,3,9,0,1,0,10,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [2,3,5,0,0,0,5,0,5,0,0,0,0,0,5,0,5,0,0,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [27,30,13,4,28,12,52,0,32,19,0,1,0,4,25,23,0,4,48,45,5,2,0,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5],
+  [22,16,8,5,15,10,36,2,21,14,0,3,4,2,11,21,0,31,7,29,3,6,0,38,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [2,4,1,2,3,0,6,0,6,0,0,0,0,0,3,3,6,0,0,6,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [8,8,2,2,6,6,16,0,10,6,0,0,0,0,6,10,0,4,12,15,0,1,0,16,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0],
+  [3,5,3,1,0,4,8,0,6,2,0,0,0,0,2,6,0,8,0,8,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [4,8,3,3,3,3,10,2,10,2,0,0,0,0,2,10,4,8,0,10,0,2,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [20,17,10,12,10,5,30,7,17,18,0,2,0,5,15,17,0,0,37,30,3,4,0,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [10,8,1,5,9,3,18,0,12,6,0,0,0,3,6,9,7,11,0,18,0,0,0,18,0,4,0,0,0,0,1,0,1,0,0,0,0,0,0],
+  [11,11,3,5,7,7,8,14,16,6,0,0,0,1,5,16,0,19,3,20,2,0,0,22,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [6,13,9,1,2,7,19,0,17,2,0,0,0,3,2,14,0,0,19,19,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [11,8,4,0,9,6,19,0,12,6,0,1,0,0,4,15,19,0,0,19,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [2,2,0,1,1,2,4,0,3,1,0,0,0,0,0,4,0,4,0,3,1,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [5,2,1,2,4,0,7,0,7,0,0,0,0,0,2,5,0,7,0,7,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 ];
 
-const INIT_DATA=[
-[3,2,1,0,0,4,5,0,3,2,0,0,0,0,2,3,0,4,1,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[28,26,7,3,11,33,52,2,45,8,0,1,0,1,17,37,18,17,19,48,4,2,0,54,0,23,20,2,0,1,3,15,1,5,1,0,0,0,0],
-[25,18,16,5,8,14,42,1,30,12,0,1,5,3,27,10,0,4,39,28,4,6,5,29,0,36,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[12,9,7,1,8,5,21,0,13,7,1,0,1,1,9,12,0,3,18,18,0,3,0,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[11,1,4,0,3,5,11,1,11,1,0,0,0,0,1,11,0,0,12,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[1,5,0,1,0,5,6,0,5,1,0,0,1,0,2,3,0,4,2,6,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,4,2,1,1,4,8,0,7,1,0,0,0,0,3,5,0,0,8,8,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,2,0,0,3,1,4,0,3,1,0,0,0,0,1,3,0,0,4,4,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,2,0,0,3,2,5,0,4,1,0,0,0,0,0,5,0,2,3,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,4,2,0,1,3,5,0,5,0,0,0,0,0,1,4,0,0,5,5,0,0,0,6,0,0,6,0,0,0,0,6,0,0,0,0,0,0,1],
-[2,1,2,0,0,1,2,1,1,2,0,0,0,0,2,1,0,3,0,2,0,1,0,3,0,0,3,0,0,0,0,1,0,0,0,0,0,0,0],
-[4,3,0,0,2,5,7,0,7,0,0,0,0,0,1,6,0,0,7,7,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[10,14,4,1,8,11,24,0,20,4,0,0,0,0,9,15,3,17,4,14,0,10,0,24,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[11,11,4,3,4,11,22,0,22,0,0,0,0,0,0,22,0,0,22,19,0,3,0,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,6,2,1,3,3,9,0,8,0,1,0,0,0,3,6,0,0,9,6,0,3,0,9,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0],
-[1,5,2,1,1,2,6,0,6,0,0,0,0,0,0,6,0,6,0,6,0,0,0,6,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
-[5,6,5,0,3,3,11,0,9,2,0,0,2,0,3,6,0,0,11,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,4,1,1,1,3,6,0,5,1,0,0,0,0,3,3,0,3,3,6,0,0,0,6,0,0,1,0,0,0,0,2,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,2,3,0,0,2,5,0,3,2,0,0,0,0,2,3,0,4,1,4,1,0,0,5,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0],
-[1,4,1,0,0,4,5,0,5,0,0,0,0,0,1,4,0,4,1,5,0,0,0,5,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0],
-[5,2,1,0,2,4,7,0,7,0,0,0,0,0,3,4,0,6,1,7,0,0,0,7,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0],
-[33,25,34,2,4,18,58,0,48,7,0,3,0,5,27,26,3,9,46,45,4,8,1,58,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[8,4,3,1,4,4,12,0,9,3,0,0,1,0,5,6,0,5,7,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[9,7,4,0,1,11,16,0,14,2,0,0,0,0,6,10,0,16,0,14,0,2,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,0,0,1,1,0,2,0,2,0,0,0,0,0,0,2,2,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[1,0,0,0,0,1,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[17,14,7,3,3,18,31,0,26,5,0,0,1,2,11,17,1,27,3,26,1,4,0,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[10,2,5,0,3,4,12,0,9,3,0,0,0,0,5,8,12,0,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[21,20,14,2,11,14,41,0,30,9,0,2,0,4,8,29,1,2,38,37,2,2,0,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[28,16,10,8,14,12,42,0,30,11,0,1,2,4,15,21,0,4,38,37,1,4,0,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-[24,15,16,4,15,4,38,0,21,13,1,3,2,2,19,15,0,6,32,32,0,6,0,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-[28,32,11,9,14,26,55,5,47,12,0,1,8,5,12,35,0,44,16,42,12,6,0,60,0,16,2,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,7,1,2,1,7,11,0,7,4,0,0,0,0,5,6,0,2,9,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,8,2,0,6,3,11,0,7,4,0,0,0,3,6,2,1,8,2,10,0,1,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,1,3,0,0,0,3,0,3,0,0,0,1,0,1,1,1,2,0,3,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,2,0,2,1,3,6,0,3,3,0,0,2,0,2,2,0,0,6,6,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[15,7,0,0,4,18,21,1,18,4,0,0,1,7,8,6,1,19,2,18,2,2,0,22,0,0,5,2,0,3,1,3,0,0,0,0,0,0,0],
-[8,8,2,4,3,7,16,0,12,4,0,0,0,0,4,12,0,16,0,16,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[5,5,2,1,1,6,10,0,6,4,0,0,0,0,3,7,0,0,10,10,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,7,2,4,5,0,11,0,7,4,0,0,0,1,4,6,0,0,11,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,2,3,0,0,2,5,0,5,0,0,0,0,0,3,2,0,5,0,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[6,4,3,0,3,4,10,0,10,0,0,0,0,0,2,8,0,7,3,9,0,1,0,10,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,3,5,0,0,0,5,0,5,0,0,0,0,0,5,0,5,0,0,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[27,30,13,4,28,12,52,0,32,19,0,1,0,4,25,23,0,4,48,45,5,2,0,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5],
-[22,16,8,5,15,10,36,2,21,14,0,3,4,2,11,21,0,31,7,29,3,6,0,38,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,4,1,2,3,0,6,0,6,0,0,0,0,0,3,3,6,0,0,6,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[8,8,2,2,6,6,16,0,10,6,0,0,0,0,6,10,0,4,12,15,0,1,0,16,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0],
-[3,5,3,1,0,4,8,0,6,2,0,0,0,0,2,6,0,8,0,8,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,8,3,3,3,3,10,2,10,2,0,0,0,0,2,10,4,8,0,10,0,2,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[20,17,10,12,10,5,30,7,17,18,0,2,0,5,15,17,0,0,37,30,3,4,0,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[10,8,1,5,9,3,18,0,12,6,0,0,0,3,6,9,7,11,0,18,0,0,0,18,0,4,0,0,0,0,0,1,0,1,0,0,0,0,0],
-[11,11,3,5,7,7,8,14,16,6,0,0,0,1,5,16,0,19,3,20,2,0,0,22,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[6,13,9,1,2,7,19,0,17,2,0,0,0,3,2,14,0,0,19,19,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[11,8,4,0,9,6,19,0,12,6,0,1,0,0,4,15,19,0,0,19,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,2,0,1,1,2,4,0,3,1,0,0,0,0,0,4,0,4,0,3,1,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[5,2,1,2,4,0,7,0,7,0,0,0,0,0,2,5,0,7,0,7,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-];
-
-// simulate submit dates
-let tableData = INIT_DATA.map(r=>[...r]);
-const DEADLINE = new Date('2026-06-05');
-const TODAY = new Date('2026-06-19');
-const submitDates = {};
-SITES.forEach((_,i)=>{
-  if(tableData[i].some(v=>v>0)){
-    const d=new Date('2026-05-28');
-    d.setDate(d.getDate()+Math.floor(Math.random()*9));
-    submitDates[i]=d;
-  }
-});
-const importLog=[];
-
-// ═══════ HELPERS ═══════
-const n=v=>parseInt(v)||0;
-const colSum=j=>tableData.reduce((s,r)=>s+n(r[j]),0);
-const rowTotal=r=>n(r[0])+n(r[1]);
-function toast(msg,type=''){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.className='show '+(type==='ok'?'ok':type==='err'?'err':'');
-  clearTimeout(el._t); el._t=setTimeout(()=>el.className='',3200);
+function showToast(msg,ok=true){
+  const t=document.getElementById('toast'),m=document.getElementById('toastMsg');
+  t.style.background=ok?'#1e8449':'#c0392b'; m.textContent=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-// ═══════ TABS ═══════
-function go(name,btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  if(btn) btn.classList.add('active');
-  if(name==='dashboard') renderDash();
-  if(name==='data') renderDT();
-  if(name==='progress') renderProg();
-  if(name==='export') renderExpCheck();
-  if(name==='import') renderManualInputs();
-}
+async function xuatExcelDemo(){
+  const btn=document.getElementById('btnExport');
+  btn.classList.add('loading'); btn.textContent='⏳ Đang tạo file...';
 
-function changeMonth(){
-  const v=document.getElementById('mPicker').value;
-  const[m,y]=v.split('-');
-  document.getElementById('data-month-lbl').textContent=`Tháng ${m}/${y}`;
-  document.getElementById('prog-month-lbl').textContent=`Tháng ${m}/${y}`;
-  renderDash();
-}
+  try {
+    const thang=parseInt(document.getElementById('selThang').value);
+    const nam=parseInt(document.getElementById('inputNam').value);
+    const soCQ=document.getElementById('inputSoChuQuan').value.trim()||'Sở Y Tế Tỉnh Hưng Yên';
+    const donVi=document.getElementById('inputDonVi').value.trim()||'Sở Y Tế Hưng Yên';
+    const ngayKy='Hưng Yên, ngày '+document.getElementById('inputNgayKy').value.trim();
+    const soVB=document.getElementById('inputSoVB').value.trim()||'     /BC-YT';
+    const kinhGui=document.getElementById('inputKinhGui').value.trim();
 
-// ═══════ DASHBOARD ═══════
-function renderDash(){
-  const nam=colSum(0),nu=colSum(1),tot=nam+nu;
-  const cho=colSum(8),meo=colSum(9),doi=colSum(10),khac=colSum(11);
-  const htkd=colSum(25),duphong=colSum(38);
-  const sub=Object.keys(submitDates).length, miss=SITES.length-sub;
-  const pct=Math.round(sub/SITES.length*100);
+    const ExcelJS=window.ExcelJS;
+    const wb=new ExcelJS.Workbook();
+    wb.creator='Hệ Thống Báo Cáo Tiêm Dại – Sở Y Tế Hưng Yên';
 
-  // countdown
-  const dLeft=Math.ceil((DEADLINE-TODAY)/86400000);
-  const cdEl=document.getElementById('countdown');
-  if(TODAY>DEADLINE){
-    cdEl.style.background='linear-gradient(135deg,#fff2f2,#ffeaea)';
-    cdEl.style.border='1px solid #e08080';
-    cdEl.innerHTML=`<div class="cd-num" style="color:var(--D)">!</div><div class="cd-text"><div class="cd-title">⚠ Đã qua hạn nộp ngày 05/06/2026</div><div class="cd-sub">Còn ${miss} đơn vị chưa nộp báo cáo. Liên hệ ngay.</div></div>`;
-  } else {
-    cdEl.innerHTML=`<div class="cd-num">${dLeft}</div><div class="cd-text"><div class="cd-title">Ngày còn lại đến hạn nộp báo cáo</div><div class="cd-sub">Hạn: 05/06/2026 · ${miss} đơn vị chưa nộp · Tháng 5/2026</div></div>`;
-  }
-
-  document.getElementById('stats').innerHTML=`
-    <div class="stat blue"><div class="stat-lbl">Tổng người tiêm</div><div class="stat-val">${tot.toLocaleString()}</div><div class="stat-sub">Nam: ${nam} | Nữ: ${nu}</div></div>
-    <div class="stat green"><div class="stat-lbl">Đơn vị đã nộp</div><div class="stat-val">${sub}/${SITES.length}</div><div class="stat-sub">${pct}% hoàn thành</div></div>
-    <div class="stat orange"><div class="stat-lbl">Dùng HTKD</div><div class="stat-val">${htkd}</div><div class="stat-sub">Huyết thanh kháng dại</div></div>
-    <div class="stat red"><div class="stat-lbl">Tiêm dự phòng</div><div class="stat-val">${duphong}</div><div class="stat-sub">Người không bị cắn</div></div>
-  `;
-  document.getElementById('pct-lbl').textContent=pct+'%';
-  document.getElementById('pct-bar').style.width=pct+'%';
-  document.getElementById('cnt-done').textContent=sub;
-  document.getElementById('cnt-miss').textContent=miss;
-  document.getElementById('cnt-late').textContent=0;
-
-  const alert=TODAY>DEADLINE&&miss>0
-    ?`<div class="alert danger"><div class="alert-icon">🚨</div><div><b>Quá hạn!</b> Đã qua ngày 05/06/2026. Còn <b>${miss} đơn vị</b> chưa nộp. Vào tab Tiến độ → Gửi nhắc nhở.</div></div>`
-    :sub===SITES.length?`<div class="alert ok"><div class="alert-icon">✅</div><div><b>Hoàn thành 100%!</b> Tất cả ${SITES.length} đơn vị đã nộp báo cáo.</div></div>`
-    :`<div class="alert warn"><div class="alert-icon">⏰</div><div>Còn ${miss} đơn vị chưa nộp. Theo dõi tại tab <b>Tiến độ</b>.</div></div>`;
-  document.getElementById('dash-alert').innerHTML=alert;
-
-  // animal chart
-  const anims=[['🐕 Chó',cho,'#1a4f7a'],['🐈 Mèo',meo,'#2d7bbf'],['🦇 Dơi',doi,'#e8a020'],['🐾 Khác',khac,'#6b7f94']];
-  const mx=Math.max(...anims.map(a=>a[1]))||1;
-  document.getElementById('animal-chart').innerHTML=anims.map(([lbl,val,color])=>`
-    <div class="animal-row">
-      <div class="animal-lbl"><span>${lbl}</span><span class="animal-val">${val} (${tot?Math.round(val/tot*100):0}%)</span></div>
-      <div class="bar-wrap" style="height:8px"><div class="bar" style="width:${Math.round(val/mx*100)}%;background:${color}"></div></div>
-    </div>`).join('');
-
-  // top sites
-  const sorted=SITES.map((s,i)=>({name:s,total:rowTotal(tableData[i])})).sort((a,b)=>b.total-a.total).slice(0,10);
-  const mxT=sorted[0]?.total||1;
-  document.getElementById('top-sites').innerHTML=sorted.map((s,i)=>`
-    <div class="top-site">
-      <div class="ts-rank" style="color:${i<3?'var(--A)':'var(--muted)'}">${i+1}</div>
-      <div class="ts-info">
-        <div class="ts-name" title="${s.name}">${s.name}</div>
-        <div class="bar-wrap" style="height:5px"><div class="bar" style="width:${Math.round(s.total/mxT*100)}%;background:var(--PL)"></div></div>
-      </div>
-      <div class="ts-val">${s.total}</div>
-    </div>`).join('');
-
-  // age chart
-  const ages=[['< 15',colSum(2),'#1a4f7a'],['15-24',colSum(3),'#2d7bbf'],['24-49',colSum(4),'#e8a020'],['≥ 50',colSum(5),'#6b7f94']];
-  const mxA=Math.max(...ages.map(a=>a[1]))||1;
-  document.getElementById('age-chart').innerHTML=ages.map(([lbl,val,color])=>`
-    <div class="animal-row">
-      <div class="animal-lbl"><span>${lbl} tuổi</span><span class="animal-val">${val}</span></div>
-      <div class="bar-wrap" style="height:8px"><div class="bar" style="width:${Math.round(val/mxA*100)}%;background:${color}"></div></div>
-    </div>`).join('');
-}
-
-// ═══════ DATA TABLE ═══════
-function renderDT(){
-  document.getElementById('dt-body').innerHTML=SITES.map((site,i)=>`
-    <tr data-row="${i}" data-nm="${site.toLowerCase()}">
-      <td class="tt">${i+1}</td>
-      <td class="nm">${site}</td>
-      ${tableData[i].map((v,j)=>`<td><input type="number" min="0" value="${v||''}" placeholder="0" onchange="cellChange(${i},${j},this.value)"></td>`).join('')}
-    </tr>`).join('');
-  updateTot();
-}
-
-function cellChange(r,c,v){tableData[r][c]=n(v);updateTot();}
-function updateTot(){
-  const tots=Array.from({length:39},(_,j)=>colSum(j));
-  document.getElementById('dt-foot').innerHTML=`<tr class="tot"><td class="tt" colspan="2" style="text-align:center">Cộng</td>${tots.map(t=>`<td><b>${t||''}</b></td>`).join('')}</tr>`;
-}
-function filterDT(q){
-  const lq=q.toLowerCase();
-  document.querySelectorAll('#dt-body tr').forEach(r=>r.style.display=r.dataset.nm.includes(lq)?'':'none');
-}
-function saveData(){renderDash();toast('✅ Đã lưu và cập nhật!','ok');}
-function clearAll(){
-  if(!confirm('Xóa toàn bộ số liệu?')) return;
-  tableData=SITES.map(()=>Array(39).fill(0));
-  renderDT(); renderDash(); toast('🗑 Đã xóa trắng số liệu');
-}
-
-// ═══════ PROGRESS ═══════
-function renderProg(){
-  const sub=Object.keys(submitDates).length, miss=SITES.length-sub;
-  document.getElementById('p-done').textContent=sub+' đã nộp';
-  document.getElementById('p-miss').textContent=miss+' chưa nộp';
-
-  const alert=TODAY>DEADLINE&&miss>0
-    ?`<div class="alert danger" style="margin-bottom:12px"><div class="alert-icon">🚨</div><div>Đã qua hạn 05/06/2026. <b>${miss} đơn vị</b> chưa nộp!</div></div>`:'';
-  document.getElementById('prog-alert').innerHTML=alert;
-
-  document.getElementById('prog-body').innerHTML=SITES.map((site,i)=>{
-    const d=submitDates[i];
-    const isLate=d&&d>DEADLINE;
-    const tot=rowTotal(tableData[i]);
-    const pill=d?(isLate?'<span class="pill pill-late">⚠ Nộp trễ</span>':'<span class="pill pill-ok">✓ Đã nộp</span>'):'<span class="pill pill-no">✗ Chưa nộp</span>';
-    const status=d?(isLate?'late':'done'):'missing';
-    return `<tr data-st="${status}" data-nm="${site.toLowerCase()}">
-      <td>${i+1}</td>
-      <td style="font-size:11px">${site}</td>
-      <td>${pill}</td>
-      <td style="font-size:11px">${d?d.toLocaleDateString('vi-VN'):'—'}</td>
-      <td style="text-align:center;font-weight:700">${tot}</td>
-      <td><div class="bar-wrap"><div class="bar" style="width:${d?100:0}%;background:${d?(isLate?'var(--W)':'var(--S)'):'var(--D)'}"></div></div></td>
-      <td>${!d?`<button class="btn btn-outline btn-sm" onclick="markOne(${i})">✔ Đánh dấu nộp</button>`:''}</td>
-    </tr>`;
-  }).join('');
-}
-
-function filterProg(q){
-  const lq=q.toLowerCase();
-  document.querySelectorAll('#prog-body tr').forEach(r=>r.style.display=r.dataset.nm.includes(lq)?'':'none');
-}
-function filterProgStatus(v){
-  document.querySelectorAll('#prog-body tr').forEach(r=>r.style.display=(v==='all'||r.dataset.st===v)?'':'none');
-}
-function markOne(i){
-  submitDates[i]=new Date();
-  renderProg(); renderDash();
-  toast('✅ Đã đánh dấu: '+SITES[i].slice(0,28)+'...','ok');
-}
-function markAllDone(){
-  if(!confirm('Đánh dấu tất cả 61 đơn vị là đã nộp?')) return;
-  SITES.forEach((_,i)=>{if(!submitDates[i])submitDates[i]=new Date();});
-  renderProg(); renderDash(); toast('✅ Đã đánh dấu tất cả đơn vị','ok');
-}
-function sendReminder(){
-  const miss=SITES.filter((_,i)=>!submitDates[i]);
-  if(!miss.length){toast('Tất cả đã nộp!','ok');return;}
-  alert(`📧 Sẽ gửi nhắc nhở đến ${miss.length} đơn vị:\n\n${miss.slice(0,5).join('\n')}${miss.length>5?`\n... và ${miss.length-5} đơn vị khác`:''}\n\nNội dung: "Đề nghị nộp số liệu tiêm dại tháng 5 trước ngày 05/06/2026 qua Google Form."`);
-  toast(`📧 Đã gửi nhắc nhở ${miss.length} đơn vị`,'ok');
-}
-
-// ═══════ CSV IMPORT ═══════
-function dzOver(e){e.preventDefault();document.getElementById('dropZone').classList.add('over')}
-function dzLeave(){document.getElementById('dropZone').classList.remove('over')}
-function dzDrop(e){e.preventDefault();dzLeave();if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);}
-
-function handleFile(file){
-  if(!file) return;
-  const ext=file.name.split('.').pop().toLowerCase();
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      let rows=[];
-      if(ext==='csv'){
-        const text=e.target.result;
-        rows=text.split('\n').map(r=>r.split(',').map(c=>c.trim().replace(/^"|"$/g,'')));
-      } else {
-        const wb=XLSX.read(e.target.result,{type:'array'});
-        const ws=wb.Sheets[wb.SheetNames[0]];
-        rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+    const ws=wb.addWorksheet(`Tháng ${thang} năm ${nam}`,{
+      pageSetup:{
+        paperSize:3, orientation:'landscape',
+        fitToPage:true, fitToWidth:1, fitToHeight:0,
+        margins:{left:0.4,right:0.3,top:0.5,bottom:0.5,header:0.2,footer:0.2}
       }
-      processImportRows(rows, file.name);
-    }catch(err){
-      document.getElementById('import-result').innerHTML=`<div class="alert danger"><div class="alert-icon">❌</div><div>Lỗi đọc file: ${err.message}</div></div>`;
+    });
+
+    // ── Đánh số trang footer ──────────────────────────────
+    ws.headerFooter.oddFooter = 
+      '&L&"Times New Roman,Italic"&10Báo cáo tiêm VX phòng dại – '+soCQ+
+      '&C&"Times New Roman,Bold"&10Trang &P / &N'+
+      '&R&"Times New Roman,Italic"&10Tháng '+thang+' năm '+nam;
+    ws.headerFooter.evenFooter = ws.headerFooter.oddFooter;
+
+    // ── Chiều rộng cột ────────────────────────────────────
+    const W=[4,21,4.5,4.5,5,5.5,5.5,5,5.5,5.5,4.5,4.5,4.5,4.5,
+             6,4.5,4.5,4.5,4.5,4.5,5,6.5,4.5,7,5.5,5.5,5.5,5,
+             4.5,5.5,4.5,6.5,4.5,5,6,6,7,4.5,5,6,5.5];
+    W.forEach((w,i)=>ws.getColumn(i+1).width=w);
+
+    // ── Styles ────────────────────────────────────────────
+    const T={style:'thin',color:{argb:'FF000000'}};
+    const bA={top:T,bottom:T,left:T,right:T};
+    const bT={top:{style:'medium',color:{argb:'FF000000'}},bottom:{style:'medium',color:{argb:'FF000000'}},left:T,right:T};
+    const fH={name:'Times New Roman',size:9,bold:true};
+    const fB={name:'Times New Roman',size:9};
+    const fT2={name:'Times New Roman',size:9,bold:true};
+    const fillH={type:'pattern',pattern:'solid',fgColor:{argb:'FFB8D4EA'}};
+    const fillT={type:'pattern',pattern:'solid',fgColor:{argb:'FFFFF2CC'}};
+    const aC={horizontal:'center',vertical:'middle',wrapText:true};
+    const aL={horizontal:'left',vertical:'middle',wrapText:true};
+
+    // ── Hàng 1-4: Tiêu đề ────────────────────────────────
+    ws.getRow(1).height=22;
+    ws.getRow(2).height=20;
+    ws.getRow(3).height=15;
+    ws.getRow(4).height=7;
+
+    ws.mergeCells('A1:G1');
+    Object.assign(ws.getCell('A1'),{value:soCQ.toUpperCase(),font:{name:'Times New Roman',size:11,bold:true},alignment:aC});
+    ws.mergeCells('A2:G2');
+    Object.assign(ws.getCell('A2'),{value:donVi,font:{name:'Times New Roman',size:10,bold:true},alignment:aC});
+    ws.mergeCells('A3:G3');
+    Object.assign(ws.getCell('A3'),{value:'Số: '+soVB,font:{name:'Times New Roman',size:9,italic:true},alignment:aC});
+
+    ws.mergeCells('H1:AO1');
+    Object.assign(ws.getCell('H1'),{
+      value:'BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI',
+      font:{name:'Times New Roman',size:14,bold:true},alignment:aC
+    });
+    ws.mergeCells('H2:AO2');
+    Object.assign(ws.getCell('H2'),{
+      value:`Tháng ${thang} năm ${nam}`,
+      font:{name:'Times New Roman',size:12,italic:true},alignment:aC
+    });
+    ws.mergeCells('H3:AO3');
+    Object.assign(ws.getCell('H3'),{
+      value:kinhGui?`(Kính gửi: ${kinhGui})`:'',
+      font:{name:'Times New Roman',size:10,italic:true},alignment:aC
+    });
+
+    // ── Hàng 5-7: Header bảng ────────────────────────────
+    ws.getRow(5).height=28;
+    ws.getRow(6).height=28;
+    ws.getRow(7).height=32;
+
+    function H(r,rE,c,cE,txt){
+      if(r!==rE||c!==cE) ws.mergeCells(r,c,rE,cE);
+      const cell=ws.getCell(r,c);
+      cell.value=txt; cell.font=fH; cell.fill=fillH; cell.alignment=aC; cell.border=bA;
     }
-  };
-  if(ext==='csv') reader.readAsText(file,'UTF-8');
-  else reader.readAsArrayBuffer(file);
-}
+    H(5,7,1,1,'TT'); H(5,7,2,2,'Điểm tiêm');
+    H(5,6,3,4,'Giới'); H(5,6,5,8,'Tuổi');
+    H(5,6,9,10,'Thời gian từ lúc bị cắn - tiêm');
+    H(5,6,11,14,'Loại động vật');
+    H(5,6,15,18,'Số người có vị trí vết thương');
+    H(5,6,19,21,'Số người có mức độ vết thương');
+    H(5,6,22,25,'Tình trạng động vật');
+    H(5,6,26,27,'Số người tiêm'); H(5,7,28,28,'Số người dùng HTKD');
+    H(5,6,29,32,'Số người có PU phụ tại chỗ');
+    H(5,6,33,38,'Số người có PU phụ toàn thân');
+    H(5,6,39,40,'BN tử vong'); H(5,7,41,41,'Số người tiêm dự phòng');
 
-function processImportRows(rows, fname){
-  let updated=0, errors=[];
-  // Try to find data rows: col 0=TT(number), col 1=site name, col 2..40 = data
-  rows.forEach((row,ri)=>{
-    if(!row[1]||typeof row[1]!=='string') return;
-    const siteName=row[1].trim();
-    const idx=SITES.findIndex(s=>s.toLowerCase()===siteName.toLowerCase());
-    if(idx===-1) return;
-    const vals=row.slice(2,41).map(v=>n(v));
-    if(vals.length>=1){
-      tableData[idx]=vals.concat(Array(39-vals.length).fill(0)).slice(0,39);
-      submitDates[idx]=new Date();
-      updated++;
+    const r7=['Nam','Nữ','< 15 tuổi','15-24 tuổi','24-49 tuổi','≥ 50 tuổi',
+      '≤ 10 ngày','> 10 ngày','Chó','Mèo','Dơi','Khác',
+      'Đầu mặt cổ','Thân','Tay','Chân','Độ I','Độ II','Độ III',
+      'Bình thường','Ốm','Chạy rông\n+ mất tích','Lên cơn dại',
+      'Tiêm bắp','Tiêm trong da',null,
+      'Đau','Quầng đỏ','Tụ máu','Phù nề/\nnốt cứng',
+      'Sốt','Khó chịu','Ngứa mẩn đỏ','Đau cơ,\nkhớp','Rối loạn\ntiêu hoá','Khác',
+      'Có tiêm','Không tiêm'];
+    r7.forEach((v,i)=>{
+      if(v===null) return;
+      const c=ws.getCell(7,i+3);
+      c.value=v; c.font=fH; c.fill=fillH; c.alignment=aC; c.border=bA;
+    });
+
+    // ── Dữ liệu ──────────────────────────────────────────
+    const DR=8;
+    DIEM_TIEM.forEach((ten,i)=>{
+      const er=DR+i; ws.getRow(er).height=15;
+      const d=SAMPLE[i]||[];
+      const a=ws.getCell(er,1); a.value=i+1; a.font=fB; a.alignment=aC; a.border=bA;
+      const b=ws.getCell(er,2); b.value=ten; b.font=fB; b.alignment=aL; b.border=bA;
+      for(let c=3;c<=41;c++){
+        const cell=ws.getCell(er,c);
+        cell.value=d[c-3]??0; cell.font=fB; cell.alignment=aC; cell.border=bA;
+        cell.numFmt='#,##0;[Red]-#,##0;"-"';
+      }
+    });
+
+    // ── Hàng CỘNG ────────────────────────────────────────
+    const CR=DR+DIEM_TIEM.length; ws.getRow(CR).height=18;
+    ws.mergeCells(CR,1,CR,2);
+    const cong=ws.getCell(CR,1);
+    cong.value='CỘNG'; cong.font=fT2; cong.fill=fillT; cong.alignment=aC;
+    cong.border={top:{style:'medium',color:{argb:'FF000000'}},bottom:{style:'medium',color:{argb:'FF000000'}},left:T,right:T};
+    for(let c=3;c<=41;c++){
+      const L=ws.getColumn(c).letter;
+      const cell=ws.getCell(CR,c);
+      cell.value={formula:`SUM(${L}${DR}:${L}${CR-1})`};
+      cell.font=fT2; cell.fill=fillT; cell.alignment=aC;
+      cell.border={top:{style:'medium',color:{argb:'FF000000'}},bottom:{style:'medium',color:{argb:'FF000000'}},left:T,right:T};
+      cell.numFmt='#,##0';
     }
-  });
 
-  const resultHTML=updated>0
-    ?`<div class="alert ok"><div class="alert-icon">✅</div><div>Đã nhập thành công <b>${updated} điểm tiêm</b> từ file <b>${fname}</b>. Vào tab "Số liệu" để kiểm tra.</div></div>`
-    :`<div class="alert warn"><div class="alert-icon">⚠</div><div>Không tìm thấy dữ liệu hợp lệ. Đảm bảo file có cột: TT | Điểm tiêm | [39 chỉ tiêu]</div></div>`;
-  document.getElementById('import-result').innerHTML=resultHTML;
+    // ── Chữ ký ───────────────────────────────────────────
+    const SDR=CR+2,STR=CR+3,SNR=CR+4,SIGNER=CR+6;
+    [SDR,STR,SNR,SIGNER].forEach(r=>ws.getRow(r).height=r===SIGNER?20:16);
 
-  // Add to log
-  importLog.unshift({time:new Date().toLocaleString('vi-VN'),src:fname,rows:updated,status:updated>0?'✅ Thành công':'⚠ Không tìm thấy dữ liệu'});
-  renderImportLog();
-  if(updated>0){renderDash(); toast(`✅ Nhập ${updated} điểm tiêm từ ${fname}`,'ok');}
-}
+    ws.mergeCells(SDR,15,SDR,41);
+    Object.assign(ws.getCell(SDR,15),{
+      value:ngayKy,
+      font:{name:'Times New Roman',size:10,italic:true},
+      alignment:{horizontal:'center',vertical:'middle'}
+    });
 
-function renderImportLog(){
-  document.getElementById('import-log-body').innerHTML=importLog.slice(0,10).map(l=>`
-    <tr><td style="font-size:11px">${l.time}</td><td style="font-size:11px">${l.src}</td>
-    <td style="text-align:center">${l.rows}</td><td></td><td>${l.status}</td></tr>`).join('') ||
-    '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Chưa có lịch sử nhập liệu</td></tr>';
-}
+    [
+      {c1:1, c2:13,label:'NGƯỜI BÁO CÁO',      note:'(Ký, ghi rõ họ tên)'},
+      {c1:15,c2:27,label:'BỘ PHẬN PHỤ TRÁCH\n(Khoa/Phòng)', note:'(Ký, ghi rõ họ tên)'},
+      {c1:29,c2:41,label:'LÃNH ĐẠO ĐƠN VỊ',    note:'(Ký, đóng dấu, ghi rõ họ tên)'},
+    ].forEach(s=>{
+      ws.mergeCells(STR,s.c1,STR,s.c2);
+      Object.assign(ws.getCell(STR,s.c1),{value:s.label,font:{name:'Times New Roman',size:10,bold:true},alignment:aC});
+      ws.mergeCells(SNR,s.c1,SNR,s.c2);
+      Object.assign(ws.getCell(SNR,s.c1),{value:s.note,font:{name:'Times New Roman',size:9,italic:true},alignment:aC});
+      ws.mergeCells(SIGNER,s.c1,SIGNER,s.c2);
+      ws.getCell(SIGNER,s.c1).border={bottom:{style:'thin',color:{argb:'FF000000'}}};
+    });
 
-function renderManualInputs(){
-  const sel=document.getElementById('manual-site');
-  if(sel.options.length<=1){
-    SITES.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s;sel.appendChild(o);});
+    ws.views=[{state:'frozen',xSplit:2,ySplit:7,activeCell:'C8'}];
+    ws.pageSetup.printArea=`A1:AO${SIGNER}`;
+    ws.pageSetup.printTitlesRow='5:7';
+
+    // ── Xuất ─────────────────────────────────────────────
+    const buf=await wb.xlsx.writeBuffer();
+    const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`BC_TiemVXPhongDai_Thang${thang}_${nam}.xlsx`;
+    a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+
+    showToast(`✅ Đã tải: BC_TiemVXPhongDai_Thang${thang}_${nam}.xlsx`);
+  } catch(e){
+    console.error(e);
+    showToast('❌ Lỗi: '+e.message, false);
+  } finally {
+    btn.classList.remove('loading');
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Tải Báo Cáo Excel (.xlsx)';
   }
-  const fields=[['Nam','Nữ'],['<15 tuổi','15-24 tuổi'],['24-49 tuổi','≥50 tuổi'],['≤10 ngày','>10 ngày'],['Chó','Mèo'],['Dơi','Khác(ĐV)'],['Đầu/mặt/cổ','Thân'],['Tay','Chân'],['Độ I','Độ II'],['Độ III','Bình thường(ĐV)'],['Ốm(ĐV)','Chạy rông'],['Lên cơn dại','Tiêm bắp'],['Tiêm trong da','HTKD'],['Đau','Quầng đỏ'],['Tụ máu','Phù nề'],['Sốt','Khó chịu'],['Ngứa','Đau cơ/khớp'],['Rối loạn TH','Khác(PU)'],['TV-Có tiêm','TV-Không tiêm'],['Dự phòng','']];
-  document.getElementById('manual-inputs').innerHTML=fields.flatMap((pair,pi)=>pair.map((lbl,li)=>lbl?`<label style="font-size:11px;font-weight:600;color:var(--muted)">${lbl}<input type="number" min="0" placeholder="0" id="mi_${pi*2+li}" style="padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;width:100%;margin-top:3px"></label>`:'')).join('');
 }
-
-function applyManual(){
-  const idx=document.getElementById('manual-site').value;
-  if(idx===''){toast('Chọn điểm tiêm trước!','err');return;}
-  const vals=Array.from({length:39},(_,j)=>{const el=document.getElementById('mi_'+j);return el?n(el.value):0;});
-  tableData[parseInt(idx)]=vals;
-  submitDates[parseInt(idx)]=new Date();
-  importLog.unshift({time:new Date().toLocaleString('vi-VN'),src:'Nhập thủ công',rows:1,status:'✅ Thành công'});
-  renderImportLog(); renderDash();
-  toast('✅ Đã cập nhật: '+SITES[parseInt(idx)].slice(0,30)+'...','ok');
-}
-
-// ═══════ EXPORT ═══════
-function renderExpCheck(){
-  const sub=Object.keys(submitDates).length;
-  const tot=colSum(0)+colSum(1);
-  const chks=[
-    {ok:sub===SITES.length,msg:`${sub}/${SITES.length} đơn vị đã nộp số liệu`},
-    {ok:tot>0,msg:`Tổng số người tiêm: ${tot.toLocaleString()}`},
-    {ok:!!document.getElementById('exp-reporter')?.value,msg:'Người báo cáo đã điền'},
-    {ok:!!document.getElementById('exp-director')?.value,msg:'Tên Giám đốc đã điền'},
-    {ok:true,msg:'Font Times New Roman – đúng chuẩn'},
-    {ok:true,msg:'39 công thức SUM – tự động'},
-  ];
-  document.getElementById('exp-check').innerHTML=chks.map(c=>`
-    <div class="chk-item">
-      <span style="color:${c.ok?'var(--S)':'var(--W)'};font-size:15px">${c.ok?'✓':'⚠'}</span>
-      <span>${c.msg}</span>
-    </div>`).join('');
-}
-
-async function exportXLSX(){
-  const btn=document.getElementById('export-btn');
-  const sp=document.getElementById('exp-spin');
-  btn.disabled=true; sp.style.display='inline-block';
-  await new Promise(r=>setTimeout(r,300));
-  try{
-    const m=document.getElementById('exp-month').value;
-    const y=document.getElementById('exp-year').value;
-    const rep=document.getElementById('exp-reporter').value;
-    const khoa=document.getElementById('exp-khoa').value;
-    const dir=document.getElementById('exp-director').value;
-    const sd=document.getElementById('exp-date').value;
-    const sdObj=sd?new Date(sd):new Date();
-    const sdStr=`${sdObj.getDate()} tháng ${sdObj.getMonth()+1} năm ${sdObj.getFullYear()}`;
-    buildXLSX(m,y,rep,khoa,dir,sdStr);
-    toast('✅ Xuất Excel thành công!','ok');
-  }catch(e){toast('❌ Lỗi: '+e.message,'err');}
-  btn.disabled=false; sp.style.display='none';
-}
-
-function buildXLSX(month,year,reporter,khoa,director,signDate){
-  const wb=XLSX.utils.book_new();
-  // Build AOA
-  const H1=['TT','Điểm tiêm','Giới','','Tuổi','','','','Thời gian từ lúc bị cắn - tiêm','','Loại động vật','','','','Số người có vị trí vết thương','','','','Số người có mức độ vết thương','','','Tình trạng động vật','','','','Số người','','Số người dùng HTKD','Phản ứng phụ tại chỗ','','','','Phản ứng phụ toàn thân','','','','','','BN tử vong','','Tiêm dự phòng'];
-  const H2=['','','Nam','Nữ','< 15','15-24','24-49','≥ 50','≤ 10 ngày','> 10 ngày','Chó','Mèo','Dơi','Khác','Đầu mặt cổ','Thân','Tay','Chân','Độ I','Độ II','Độ III','Bình thường','Ốm','Chạy rông','Lên cơn dại','Tiêm bắp','Tiêm trong da','','Đau','Quầng đỏ','Tụ máu','Phù nề','Sốt','Khó chịu','Ngứa','Đau cơ khớp','Rối loạn TH','Khác','Có tiêm','Không tiêm',''];
-  const aoa=[];
-  aoa.push([]); // row 1
-  aoa.push(['SỞ Y TẾ TỈNH HƯNG YÊN','','','','','','','BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI']);
-  aoa.push(['TRUNG TÂM KIỂM SOÁT BỆNH TẬT','','','','','','',`Tháng ${month} năm ${year}`]);
-  aoa.push([]);
-  aoa.push(H1);
-  aoa.push([]);
-  aoa.push(H2);
-  tableData.forEach((row,i)=>aoa.push([i+1,SITES[i],...row]));
-  const tots=Array.from({length:39},(_,j)=>colSum(j));
-  aoa.push(['Cộng','', ...tots]);
-  aoa.push([]);
-  aoa.push(['','','','','','','','','','','','','','','','','','','','','','','','','','','',`Hưng Yên, ngày ${signDate}`]);
-  aoa.push(['','Người báo cáo','','','','','','','','','','','','','','Trưởng Khoa PCBTN','','','','','','','','','','','','GIÁM ĐỐC']);
-  aoa.push([]);aoa.push([]);aoa.push([]);
-  aoa.push(['',reporter,'','','','','','','','','','','','','','',khoa,'','','','','','','','','','','','',director]);
-
-  const ws=XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols']=[{wch:5},{wch:30},{wch:5},{wch:5},{wch:7},{wch:7},{wch:7},{wch:7},{wch:8},{wch:8},{wch:5},{wch:5},{wch:5},{wch:5},{wch:8},{wch:6},{wch:6},{wch:6},{wch:6},{wch:6},{wch:6},{wch:8},{wch:6},{wch:8},{wch:8},{wch:8},{wch:8},{wch:7},{wch:6},{wch:7},{wch:6},{wch:8},{wch:6},{wch:7},{wch:7},{wch:8},{wch:8},{wch:6},{wch:7},{wch:8},{wch:8}];
-  ws['!merges']=[
-    {s:{r:1,c:0},e:{r:1,c:6}},{s:{r:2,c:0},e:{r:2,c:6}},
-    {s:{r:1,c:7},e:{r:1,c:40}},{s:{r:2,c:7},e:{r:2,c:40}},
-    {s:{r:4,c:0},e:{r:6,c:0}},{s:{r:4,c:1},e:{r:6,c:1}},
-    {s:{r:4,c:2},e:{r:5,c:3}},{s:{r:4,c:4},e:{r:5,c:7}},
-    {s:{r:4,c:8},e:{r:5,c:9}},{s:{r:4,c:10},e:{r:5,c:13}},
-    {s:{r:4,c:14},e:{r:5,c:17}},{s:{r:4,c:18},e:{r:5,c:20}},
-    {s:{r:4,c:21},e:{r:5,c:24}},{s:{r:4,c:25},e:{r:5,c:26}},
-    {s:{r:4,c:27},e:{r:6,c:27}},{s:{r:4,c:28},e:{r:5,c:31}},
-    {s:{r:4,c:32},e:{r:5,c:37}},{s:{r:4,c:38},e:{r:5,c:39}},
-    {s:{r:4,c:40},e:{r:6,c:40}}
-  ];
-  XLSX.utils.book_append_sheet(wb,ws,`tháng ${month} năm ${year}`);
-  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
-  const blob=new Blob([out],{type:'application/octet-stream'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`BC_TiemDai_Thang${month}_${year}.xlsx`;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-}
-
-// ═══════ INIT ═══════
-renderDash();
-renderImportLog();
 </script>
 </body>
 </html>
