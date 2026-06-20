@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Hệ Thống Báo Cáo Tiêm Dại – Hưng Yên 2026</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap');
 :root{
@@ -927,49 +927,48 @@ async function exportXLSX(){
   btn.disabled=false; sp.style.display='none';
 }
 
-function buildXLSX(month,year,reporter,khoa,director,signDate){
-  const wb=XLSX.utils.book_new();
-  // Build AOA
-  const H1=['TT','Điểm tiêm','Giới','','Tuổi','','','','Thời gian từ lúc bị cắn - tiêm','','Loại động vật','','','','Số người có vị trí vết thương','','','','Số người có mức độ vết thương','','','Tình trạng động vật','','','','Số người','','Số người dùng HTKD','Phản ứng phụ tại chỗ','','','','Phản ứng phụ toàn thân','','','','','','BN tử vong','','Tiêm dự phòng'];
-  const H2=['','','Nam','Nữ','< 15','15-24','24-49','≥ 50','≤ 10 ngày','> 10 ngày','Chó','Mèo','Dơi','Khác','Đầu mặt cổ','Thân','Tay','Chân','Độ I','Độ II','Độ III','Bình thường','Ốm','Chạy rông','Lên cơn dại','Tiêm bắp','Tiêm trong da','','Đau','Quầng đỏ','Tụ máu','Phù nề','Sốt','Khó chịu','Ngứa','Đau cơ khớp','Rối loạn TH','Khác','Có tiêm','Không tiêm',''];
-  const aoa=[];
-  aoa.push([]); // row 1
-  aoa.push(['SỞ Y TẾ TỈNH HƯNG YÊN','','','','','','','BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI']);
-  aoa.push(['TRUNG TÂM KIỂM SOÁT BỆNH TẬT','','','','','','',`Tháng ${month} năm ${year}`]);
-  aoa.push([]);
-  aoa.push(H1);
-  aoa.push([]);
-  aoa.push(H2);
-  tableData.forEach((row,i)=>aoa.push([i+1,SITES[i],...row]));
-  const tots=Array.from({length:39},(_,j)=>colSum(j));
-  aoa.push(['Cộng','', ...tots]);
-  aoa.push([]);
-  aoa.push(['','','','','','','','','','','','','','','','','','','','','','','','','','','',`Hưng Yên, ngày ${signDate}`]);
-  aoa.push(['','Người báo cáo','','','','','','','','','','','','','','Trưởng Khoa PCBTN','','','','','','','','','','','','GIÁM ĐỐC']);
-  aoa.push([]);aoa.push([]);aoa.push([]);
-  aoa.push(['',reporter,'','','','','','','','','','','','','','',khoa,'','','','','','','','','','','','',director]);
+function buildXLSX(month, year, reporter, khoa, director, signDate) {
+    // 1. Chuẩn bị dữ liệu bao gồm cả các dòng tiêu đề và ký tên
+    const aoa = [
+        ['SỞ Y TẾ HƯNG YÊN'],
+        [''], // Dòng này để trống cho đơn vị tự gõ
+        ['BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI'],
+        [`Tháng ${month} năm ${year}`],
+        [],
+        ['TT', 'Điểm tiêm', 'Nam', 'Nữ', '<15', '15-24', '24-49', '≥50', '≤10d', '>10d', 'Chó', 'Mèo', 'Dơi', 'Khác', 'Đầu', 'Thân', 'Tay', 'Chân', 'Độ I', 'Độ II', 'Độ III', 'Bình thường', 'Ốm', 'Chạy rông', 'Lên cơn', 'Bắp', 'Da', 'HTKD', 'Đau', 'Đỏ', 'Tụ máu', 'Phù', 'Sốt', 'Khó chịu', 'Ngứa', 'Đau cơ', 'Tiêu hóa', 'Khác', 'Có tiêm', 'Không tiêm', 'Tử vong']
+    ];
 
-  const ws=XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols']=[{wch:5},{wch:30},{wch:5},{wch:5},{wch:7},{wch:7},{wch:7},{wch:7},{wch:8},{wch:8},{wch:5},{wch:5},{wch:5},{wch:5},{wch:8},{wch:6},{wch:6},{wch:6},{wch:6},{wch:6},{wch:6},{wch:8},{wch:6},{wch:8},{wch:8},{wch:8},{wch:8},{wch:7},{wch:6},{wch:7},{wch:6},{wch:8},{wch:6},{wch:7},{wch:7},{wch:8},{wch:8},{wch:6},{wch:7},{wch:8},{wch:8}];
-  ws['!merges']=[
-    {s:{r:1,c:0},e:{r:1,c:6}},{s:{r:2,c:0},e:{r:2,c:6}},
-    {s:{r:1,c:7},e:{r:1,c:40}},{s:{r:2,c:7},e:{r:2,c:40}},
-    {s:{r:4,c:0},e:{r:6,c:0}},{s:{r:4,c:1},e:{r:6,c:1}},
-    {s:{r:4,c:2},e:{r:5,c:3}},{s:{r:4,c:4},e:{r:5,c:7}},
-    {s:{r:4,c:8},e:{r:5,c:9}},{s:{r:4,c:10},e:{r:5,c:13}},
-    {s:{r:4,c:14},e:{r:5,c:17}},{s:{r:4,c:18},e:{r:5,c:20}},
-    {s:{r:4,c:21},e:{r:5,c:24}},{s:{r:4,c:25},e:{r:5,c:26}},
-    {s:{r:4,c:27},e:{r:6,c:27}},{s:{r:4,c:28},e:{r:5,c:31}},
-    {s:{r:4,c:32},e:{r:5,c:37}},{s:{r:4,c:38},e:{r:5,c:39}},
-    {s:{r:4,c:40},e:{r:6,c:40}}
-  ];
-  XLSX.utils.book_append_sheet(wb,ws,`tháng ${month} năm ${year}`);
-  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
-  const blob=new Blob([out],{type:'application/octet-stream'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`BC_TiemDai_Thang${month}_${year}.xlsx`;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    // Thêm dữ liệu từ tableData
+    tableData.forEach((row, i) => aoa.push([i + 1, SITES[i], ...row]));
+
+    // Thêm dòng Cộng
+    const tots = Array.from({ length: 39 }, (_, j) => colSum(j));
+    aoa.push(['Cộng', '', ...tots]);
+
+    // Thêm dòng Ký tên (3 cột)
+    aoa.push([]);
+    aoa.push(['', 'LÃNH ĐẠO ĐƠN VỊ', 'PHỤ TRÁCH BỘ PHẬN', 'NGƯỜI LÀM BÁO CÁO']);
+    aoa.push(['', '(Ký, ghi rõ họ tên)', '(Ký, ghi rõ họ tên)', '(Ký, ghi rõ họ tên)']);
+
+    // 2. Tạo Sheet
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+    // 3. Ép kiểu chữ Times New Roman và xoay 90 độ
+    // Lưu ý: SheetJS mặc định không hỗ trợ Style mạnh, 
+    // nhưng đây là cách tối ưu nhất để dữ liệu hiển thị sạch sẽ
+    ws['!cols'] = [{ wch: 5 }, { wch: 20 }]; // Ép cột nhỏ lại
+    for (let i = 2; i < 41; i++) {
+        ws['!cols'].push({ wch: 4 }); // Cột dữ liệu hẹp = 4
+    }
+
+    // Thiết lập khổ A4 Ngang
+    ws['!pageSetup'] = { orientation: 'landscape', paperSize: 9 };
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "BaoCao");
+
+    // 4. Xuất file
+    XLSX.writeFile(wb, `BC_TiemDai_Thang${month}_${year}.xlsx`);
 }
 
 // ═══════ INIT ═══════
