@@ -1,751 +1,417 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Hệ Thống Báo Cáo Tiêm Dại – Hưng Yên</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap');
-:root{
-  --P:#1a4f7a;--PL:#2d7bbf;--PD:#12375a;
-  --A:#e8a020;--AD:#c07010;
-  --S:#1a7a4f;--W:#d4800a;--D:#c0392b;
-  --bg:#eef2f7;--card:#fff;--border:#d0dae6;
-  --text:#1c2b3a;--muted:#6b7f94;
-  --r:10px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;display:flex;flex-direction:column}
+/**
+ * ============================================================
+ * HÀM XUẤT EXCEL NÂNG CẤP - BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI
+ * Sở Y Tế Hưng Yên
+ * ============================================================
+ *
+ * HƯỚNG DẪN TÍCH HỢP VÀO WEBSITE:
+ * 1. Thêm thư viện ExcelJS vào <head> của index.html:
+ *    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+ *    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+ *
+ * 2. Xóa hàm xuatExcel() cũ trong index.html
+ *
+ * 3. Thay bằng toàn bộ nội dung file này (dán vào trong thẻ <script>)
+ *
+ * 4. Các biến dữ liệu sử dụng từ hệ thống hiện có:
+ *    - danhSachDiemTiem[]  : mảng tên điểm tiêm
+ *    - tableData[][]       : mảng 2 chiều [điểm_tiêm][cột_số_liệu] (41 cột)
+ *    - selectedMonth       : tháng đã chọn (1-12)
+ *    - selectedYear        : năm báo cáo
+ *    - tenDonViBaoCao      : tên đơn vị (lấy từ input hoặc "Sở Y Tế Hưng Yên")
+ *    - ngayBaoCao          : ngày ký báo cáo (Date object hoặc string)
+ * ============================================================
+ */
 
-/* NAV */
-header{background:var(--PD);height:58px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.25)}
-.logo{background:var(--A);color:#fff;font-weight:800;font-size:11px;padding:4px 8px;border-radius:5px;letter-spacing:.5px;white-space:nowrap}
-header h1{color:#fff;font-size:14px;font-weight:700;line-height:1.3;flex:1}
-header h1 small{color:#a0c4e0;font-weight:400;font-size:11px;display:block}
-.month-sel{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;padding:5px 10px;border-radius:6px;font-family:inherit;font-size:12px;cursor:pointer}
-.month-sel option{color:var(--text);background:#fff}
+async function xuatExcel() {
+  // ── 0. Lấy dữ liệu từ hệ thống hiện có ─────────────────
+  // Điều chỉnh tên biến cho khớp với code hiện tại của bạn
+  const thang = (typeof selectedMonth !== 'undefined') ? selectedMonth : new Date().getMonth() + 1;
+  const nam   = (typeof selectedYear  !== 'undefined') ? selectedYear  : new Date().getFullYear();
+  const donVi = (typeof tenDonViBaoCao !== 'undefined' && tenDonViBaoCao)
+                  ? tenDonViBaoCao
+                  : 'Sở Y Tế Hưng Yên';
+  const today = new Date();
+  const ngayKy = `Hưng Yên, ngày ${today.getDate()} tháng ${today.getMonth()+1} năm ${today.getFullYear()}`;
 
-/* TABS */
-.tabs{background:var(--P);display:flex;padding:0 20px;overflow-x:auto;gap:2px}
-.tab{background:none;border:none;color:rgba(255,255,255,.6);padding:9px 16px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap}
-.tab.active{color:#fff;border-bottom-color:var(--A)}
-.tab:hover{color:#fff}
+  // Đọc dữ liệu từ localStorage / biến toàn cục của hệ thống
+  // Nếu hệ thống bạn lưu khác tên, sửa dòng dưới đây:
+  let rows = [];
+  try {
+    const stored = localStorage.getItem('tableData') || localStorage.getItem('baoCapData');
+    if (stored) rows = JSON.parse(stored);
+  } catch(e) {}
 
-/* MAIN */
-main{padding:18px 20px;max-width:1500px;margin:0 auto;width:100%;flex:1}
-.page{display:none}.page.active{display:block}
-
-/* CARDS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;overflow:hidden}
-.ch{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.ct{font-size:13px;font-weight:700}
-.cb{padding:14px 16px}
-
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.stat.blue::before{background:var(--PL)}.stat.green::before{background:var(--S)}
-.stat.orange::before{background:var(--A)}.stat.red::before{background:var(--D)}
-.stat-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-.stat-val{font-size:26px;font-weight:800;margin:4px 0 2px;color:var(--text);line-height:1}
-
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:.18s;white-space:nowrap;text-decoration:none}
-.btn-primary{background:var(--P);color:#fff}.btn-primary:hover{background:var(--PL)}
-.btn-accent{background:var(--A);color:#fff}.btn-accent:hover{background:var(--AD)}
-.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--P);color:var(--P)}
-.btn-sm{padding:4px 10px;font-size:11px}
-.btn-lg{padding:11px 22px;font-size:14px}
-
-/* PROGRESS BAR */
-.bar-wrap{background:#e0e7ef;border-radius:6px;height:6px;overflow:hidden}
-.bar{height:100%;border-radius:6px;transition:width .4s}
-
-/* TABLES */
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--border)}
-.tbl td{padding:7px 10px;border-bottom:1px solid #eef1f5;vertical-align:middle}
-
-/* DATA TABLE */
-.dt-wrap{overflow-x:auto;max-height:65vh}
-.dt{width:max-content;min-width:100%;border-collapse:collapse;font-size:11px}
-.dt th{background:var(--PD);color:#fff;padding:6px 7px;text-align:center;font-size:10px;font-weight:600;white-space:nowrap;border:1px solid rgba(255,255,255,.2);position:sticky;top:0;z-index:5}
-.dt th.g{background:var(--P)}
-.dt td{border:1px solid #d8e2ec;padding:3px 4px;text-align:center;vertical-align:middle}
-.dt td.tt{position:sticky;left:0;background:#f2f5f9;font-weight:700;z-index:3;width:36px}
-.dt td.nm{text-align:left;min-width:190px;max-width:210px;padding:3px 7px;position:sticky;left:36px;background:#fff;z-index:3;font-size:10.5px;line-height:1.3}
-.dt tr:hover td{background:#f5f9ff}
-.dt tr:hover td.tt{background:#e8eef5}
-.dt tr:hover td.nm{background:#f5f9ff}
-.dt input[type=number]{width:38px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:var(--text);padding:1px;outline:none}
-.dt input[type=number]:focus{background:#e8f4ff;border-radius:3px}
-.dt .tot td{background:#e8eef7!important;font-weight:800;border-top:2px solid var(--P)}
-
-/* SEARCH */
-.srch{padding:7px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;color:var(--text);background:#fff;transition:.18s}
-
-/* EXPORT BOX */
-.export-hero{background:linear-gradient(135deg,var(--PD) 0%,var(--PL) 100%);border-radius:12px;padding:22px;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:18px}
-.export-hero-text h3{font-size:16px;font-weight:800;margin-bottom:4px}
-.export-hero-text p{font-size:12px;opacity:.8}
-
-/* FORM GRID */
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.fg label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-.fg select,.fg input[type=text],.fg input[type=number]{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;color:var(--text);background:#fff}
-
-/* CSV IMPORT */
-.drop-zone{border:2.5px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:.2s;background:#fafbfc}
-.drop-zone:hover{border-color:var(--PL);background:#f0f6ff}
-.drop-zone .dz-icon{font-size:36px;margin-bottom:8px}
-.drop-zone .dz-title{font-size:14px;font-weight:700;color:var(--P)}
-
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:760px){.two-col{grid-template-columns:1fr}.fg{grid-template-columns:1fr}}
-
-/* TOAST */
-#toast{position:fixed;bottom:20px;right:20px;background:var(--P);color:#fff;padding:11px 16px;border-radius:8px;font-size:12px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);transform:translateY(70px);opacity:0;transition:.3s;max-width:300px}
-#toast.show{transform:translateY(0);opacity:1}
-#toast.ok{background:var(--S)}#toast.err{background:var(--D)}
-.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
-@keyframes sp{to{transform:rotate(360deg)}}
-
-/* FOOTER */
-footer{background:#1a252f;color:rgba(255,255,255,.6);text-align:center;padding:12px 20px;font-size:11.5px;border-top:1px solid rgba(255,255,255,.05)}
-footer strong{color:#e8a020}
-
-/* IN ẤN VÀ XUẤT BẢN */
-@media print {
-    body {
-        background: #fff; color: #000; font-size: 11px;
-    }
-    header, .tabs, .month-sel, .srch, .btn, footer {
-        display: none !important;
-    }
-    main {
-        padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important;
-    }
-    .page {
-        display: block !important;
-    }
-    .card {
-        border: none !important; box-shadow: none !important; margin: 0 !important; page-break-inside: avoid;
-    }
-    .dt-wrap {
-        overflow: visible !important; max-height: none !important;
-    }
-    .dt {
-        width: 100% !important;
-    }
-    .dt th {
-        background: #f2f2f2 !important; color: #000 !important; border: 0.5px solid #000 !important;
-    }
-    .dt th.g {
-        background: #e6e6e6 !important;
-    }
-    .dt td {
-        border: 0.5px solid #000 !important; padding: 4px 2px !important;
-    }
-    .dt td.tt {
-        background: #f9f9f9 !important;
-    }
-    .dt td.nm {
-        background: #fff !important;
-    }
-    .dt input[type=number] {
-        background: transparent !important; border: none !important; color: #000 !important;
-    }
-    .rotate-col {
-        writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; height: 110px; white-space: nowrap; vertical-align: middle; padding: 0 !important;
-    }
-}
-
-@page {
-    size: A4 landscape;
-    margin: 8mm;
-}
-
-.rotate-col {
-    writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; height: 110px; white-space: nowrap; vertical-align: middle; padding: 0 !important;
-}
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo">SYT HY</div>
-  <h1>Báo Cáo Tiêm Vắc Xin Phòng Dại
-    <small>Sở Y Tế Hưng Yên</small>
-  </h1>
-  <select class="month-sel" id="mPicker" onchange="changeMonth()"></select>
-</header>
-
-<div class="tabs">
-  <button class="tab active" onclick="go('dashboard',this)">📊 Tổng quan</button>
-  <button class="tab" onclick="go('data',this)">📋 Số liệu</button>
-  <button class="tab" onclick="go('progress',this)">🔔 Tiến độ</button>
-  <button class="tab" onclick="go('import',this)">📥 Nhập CSV</button>
-  <button class="tab" onclick="go('export',this)">💾 Xuất Excel</button>
-  <button class="tab" onclick="go('guide',this)">📖 Hướng dẫn</button>
-</div>
-
-<datalist id="quick-numbers">
-  <option value="0">0</option><option value="1">1</option><option value="2">2</option>
-  <option value="3">3</option><option value="5">5</option><option value="10">10</option>
-</datalist>
-
-<main>
-
-<div id="page-dashboard" class="page active">
-  <div class="stats" id="stats"></div>
-  <div class="card">
-    <div class="ch"><span class="ct">Tiến độ tổng hợp báo cáo toàn tỉnh</span><span id="pct-lbl" style="font-size:20px;font-weight:800;color:var(--P)">0%</span></div>
-    <div class="cb">
-      <div class="bar-wrap" style="height:10px;margin-bottom:10px"><div class="bar" id="pct-bar" style="width:0%;background:var(--S)"></div></div>
-    </div>
-  </div>
-</div>
-
-<div id="page-data" class="page">
-  <div class="card">
-    <div class="ch">
-      <span class="ct">Bảng nhập liệu trực tiếp – <span id="data-month-lbl">Tháng hiện tại</span></span>
-      <div style="display:flex;gap:7px;flex-wrap:wrap">
-        <input type="text" class="srch" placeholder="🔍 Tìm nhanh điểm tiêm..." oninput="filterDT(this.value)">
-        <button class="btn btn-primary btn-sm" onclick="saveData()">💾 Lưu & Tính toán</button>
-        <button class="btn btn-outline btn-sm" onclick="clearAll()">🗑 Xóa trắng bảng</button>
-      </div>
-    </div>
-    <div class="dt-wrap">
-      <table class="dt">
-        <thead>
-          <tr>
-            <th rowspan="2" style="position:sticky;left:0;z-index:7;background:var(--PD)">TT</th>
-            <th rowspan="2" style="min-width:190px;position:sticky;left:36px;z-index:7;background:var(--PD);text-align:left">Điểm tiêm</th>
-            <th class="g" colspan="2">Giới</th>
-            <th class="g" colspan="4">Tuổi</th>
-            <th class="g" colspan="2">Thời gian</th>
-            <th class="g" colspan="4">Loại ĐV</th>
-            <th class="g" colspan="4">Vị trí vết cắn</th>
-            <th class="g" colspan="3">Mức độ</th>
-            <th class="g" colspan="4">Tình trạng ĐV</th>
-            <th class="g" colspan="2">Số người tiêm</th>
-            <th rowspan="2" class="rotate-col">HTKD</th>
-            <th class="g" colspan="4">PU tại chỗ</th>
-            <th class="g" colspan="6">PU toàn thân</th>
-            <th class="g" colspan="2">Tử vong</th>
-            <th rowspan="2" class="rotate-col">Dự phòng</th>
-          </tr>
-          <tr>
-            <th class="rotate-col">Nam</th>
-            <th class="rotate-col">Nữ</th>
-            <th class="rotate-col">&lt;15 tuổi</th>
-            <th class="rotate-col">15-24 tuổi</th>
-            <th class="rotate-col">24-49 tuổi</th>
-            <th class="rotate-col">≥50 tuổi</th>
-            <th class="rotate-col">≤10 ngày</th>
-            <th class="rotate-col">&gt;10 ngày</th>
-            <th class="rotate-col">Chó</th>
-            <th class="rotate-col">Mèo</th>
-            <th class="rotate-col">Dơi</th>
-            <th class="rotate-col">Khác</th>
-            <th class="rotate-col">Đầu/cổ</th>
-            <th class="rotate-col">Thân</th>
-            <th class="rotate-col">Tay</th>
-            <th class="rotate-col">Chân</th>
-            <th class="rotate-col">Độ I</th>
-            <th class="rotate-col">Độ II</th>
-            <th class="rotate-col">Độ III</th>
-            <th class="rotate-col">Bình thường</th>
-            <th class="rotate-col">Ốm</th>
-            <th class="rotate-col">Chạy rông</th>
-            <th class="rotate-col">Lên cơn dại</th>
-            <th class="rotate-col">Tiêm bắp</th>
-            <th class="rotate-col">Trong da</th>
-            <th class="rotate-col">Đau</th>
-            <th class="rotate-col">Quầng đỏ</th>
-            <th class="rotate-col">Tụ máu</th>
-            <th class="rotate-col">Phù nề/Nốt cứng</th>
-            <th class="rotate-col">Sốt</th>
-            <th class="rotate-col">Khó chịu</th>
-            <th class="rotate-col">Ngứa mẩn đỏ</th>
-            <th class="rotate-col">Đau cơ,khớp</th>
-            <th class="rotate-col">Rối loạn tiêu hoá</th>
-            <th class="rotate-col">Khác</th>
-            <th class="rotate-col">Có tiêm</th>
-            <th class="rotate-col">Không tiêm</th>
-          </tr>
-        </thead>
-        <tbody id="dt-body"></tbody>
-        <tfoot id="dt-foot"></tfoot>
-      </table>
-    </div>
-  </div>
-</div>
-
-<div id="page-progress" class="page">
-  <div class="card">
-    <div class="ch"><span class="ct">Danh sách theo dõi đơn vị báo cáo</span></div>
-    <table class="tbl" id="prog-tbl">
-      <thead><tr><th>TT</th><th>Tên điểm tiêm chủng</th><th>Trạng thái dữ liệu</th></tr></thead>
-      <tbody id="prog-body"></tbody>
-    </table>
-  </div>
-</div>
-
-<div id="page-import" class="page">
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">Đọc dữ liệu nâng cao</span></div>
-      <div class="cb">
-        <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
-          <div class="dz-icon">📂</div>
-          <div class="dz-title">Nhấp vào đây chọn file .CSV / .XLSX tổng hợp</div>
-        </div>
-        <input type="file" id="fileInput" accept=".csv,.xlsx" style="display:none" onchange="handleFile(this.files[0])">
-        <div id="import-result" style="margin-top:10px; font-weight:600"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="ch"><span class="ct">Form nhập dữ liệu nhanh lẻ</span></div>
-      <div class="cb">
-        <label style="margin-bottom:10px; display:block; font-weight:bold">CHỌN ĐIỂM TIÊM CẦN NHẬP:
-          <select id="manual-site" style="width:100%; padding:8px; margin-top:4px; border-radius:6px" onchange="loadSiteToForm()"></select>
-        </label>
-        <div id="manual-inputs" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; max-height:40vh; overflow-y:auto; padding-right:4px"></div>
-        <button class="btn btn-primary" onclick="applyManual()" style="margin-top:12px; width:100%">✅ Xác nhận cập nhật điểm này</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="page-export" class="page">
-  <div class="export-hero">
-    <div style="font-size:40px">📊</div>
-    <div class="export-hero-text">
-      <h3>Xuất Khẩu Báo Cáo Excel Chuẩn Form Bộ Y Tế</h3>
-      <p>File sau khi xuất định dạng chuẩn chỉ, tự động vừa khít trang A4 nằm ngang</p>
-    </div>
-    <button class="btn btn-accent btn-lg" onclick="exportXLSX()">
-      <span id="exp-spin" style="display:none" class="spin"></span> 📥 Tải Báo Cáo Excel
-    </button>
-  </div>
-  
-  <div class="card">
-    <div class="ch"><span class="ct">Cấu hình tiêu đề báo cáo năm hành chính</span></div>
-    <div class="cb">
-      <div class="fg">
-        <label>Tháng kết xuất
-          <select id="exp-month">
-            <option value="1">Tháng 1</option><option value="2">Tháng 2</option><option value="3">Tháng 3</option>
-            <option value="4">Tháng 4</option><option value="5" selected>Tháng 5</option><option value="6">Tháng 6</option>
-            <option value="7">Tháng 7</option><option value="8">Tháng 8</option><option value="9">Tháng 9</option>
-            <option value="10">Tháng 10</option><option value="11">Tháng 11</option><option value="12">Tháng 12</option>
-          </select>
-        </label>
-        <label>Năm báo cáo (Có thể gõ gán bất kỳ năm nào)
-          <input type="number" id="exp-year" value="2026">
-        </label>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="page-guide" class="page">
-  <div class="card">
-    <div class="ch"><span class="ct">📖 Hướng dẫn vận hành liên năm (2026, 2027, 2028...)</span></div>
-    <div class="cb" style="line-height:1.8; font-size:13px">
-      <p>• <b>Cơ chế tự động:</b> Phần mềm tự nhận diện năm thực tế của máy tính để điền bộ chọn tháng.</p>
-      <p>• <b>Tính năng lưu trữ:</b> Khi nhập số liệu xong, luôn nhớ nhấn nút <b>"Lưu & Tính toán"</b> để phần mềm cập nhật số tổng hàng cuối cùng.</p>
-      <hr style="margin:10px 0; border:none; border-top:1px dashed var(--border)">
-      <p style="color:var(--D); font-weight:700">📞 HỖ TRỢ KỸ THUẬT VÀ SỰ CỐ:</p>
-      <p>Mọi thắc mắc hoặc cần hỗ trợ cấu hình dữ liệu, xin vui lòng liên hệ trực tiếp qua số hotline Admin: <b>02273836722</b> để được xử lý nhanh nhất.</p>
-    </div>
-  </div>
-</div>
-
-</main>
-
-<footer>
-  Sistema de Gestion | Sở Y Tế Hưng Yên | Khi cần hỗ trợ, vui lòng gọi điện Admin: <strong>02273836722</strong>
-</footer>
-
-<div id="toast"></div>
-
-<script>
-let SITES=[
-"Phòng tiêm chủng - TT KSBT Hưng Yên cơ sở 1","Phòng tiêm DV - TT KSBT Hưng Yên cơ sở 2","Phòng tiêm chủng - Bệnh viện Nhi Thái Bình","TT VNVC Thái Bình","TT tiêm chủng Thái Bình Vàng CN Hưng Hà","TT tiêm chủng Thái Bình Vàng CN Quỳnh Phụ","TT tiêm chủng Thái Bình Vàng CN Thuỵ Xuân","TT tiêm chủng Thái Bình Vàng CN Ngã tư Đậu","TT tiêm chủng Thái Bình Vàng CN Tân Bình","TT tiêm chủng An Nhiên","TT tiêm chủng Potec 81 Thái Bình","TT tiêm chủng Potec Vũ Quý","TT tiêm chủng Potec 81.2 Hưng Hà","TT tiêm chủng Potec 81.3 Quỳnh Phụ","TT tiêm chủng Potec 81.4 Thái Thụy","TT tiêm chủng và TVDD Thái Bình CN Tiền Hải","TT tiêm chủng và TVDD Thái Bình CN Thái Thuỵ","TT tiêm chủng và TVDD Thái Bình CN Quỳnh Phụ","TT tiêm chủng và TVDD Thái Bình CN Đông Hưng","TT tiêm chủng và TVDD Thái Bình CN Hưng Nhân","TT tiêm chủng và TVDD Thái Bình CN Hưng Hà","TT tiêm chủng và TVDD Thái Bình CN Vũ Thư","TT tiêm chủng Long Châu 144","TT tiêm chủng số 1 Thái Bình","TT tiêm chủng Vaccine Incheon Thái Thuỵ","TT tiêm chủng Vaccine Incheon Đông Hưng","TT tiêm chủng Vaccine Incheon Vũ Thư","Phòng tiêm chủng vắc xin Đông Hưng","Trung tâm tiêm chủng vắc xin Thái Thuỵ","Trung tâm tiêm chủng VNVC Hưng Yên","Trung tâm tiêm chủng VNVC Phố Nối","Trung tâm tiêm chủng VNVC Văn Giang","Phòng tiêm chủng Potec 89 Hưng Yên","Phòng tiêm Potec 89.1 Kim Động","Phòng tiêm Potec 89.2 Yên Mỹ","Phòng tiêm chủng Potec 89.3 Khoái Châu","Phòng tiêm Potec 89.6 Tiên Lữ","Phòng tiêm Potec 89.7 Phù Cừ","Phòng tiêm chủng vắc xin Hưng Yên CS Kim Động","Phòng tiêm chủng vắc xin Hưng Yên CS Văn Lâm","Phòng tiêm chủng vắc xin Hưng Yên CS Ân Thi","Phòng tiêm dịch vụ vắc xin Go Văn Giang","Phòng tiêm chủng dịch vụ Go vaccine Đình Cao, Phù Cừ","Phòng tiêm chủng dịch vụ Go vaccine Khoái Châu","Phòng tiêm VHNcare Khoái Châu","Phòng tiêm VHN Care Phù Cừ","Công ty CPDP FPT Long Châu - CS tiêm chủng Long Châu 149","Phòng tiêm dịch vụ vắc xin - Công ty CP BVĐK Hưng Hà","Phòng tiêm chủng DR.ECO","Phòng tiêm chủng dịch vụ Phố Nối, Công ty TBYT Thế Lâm","Trung tâm tiêm chủng vaccine Osstech","Phòng tiêm chủng Hà Nội","Phòng tiêm chủng dịch vụ Thanh Nhàn","Phòng tiêm BIVAC","Phòng tiêm chủng dịch vụ Mỹ Hào","Phòng tiêm chủng vắc xin Y khoa Hà Nội cơ sở Kim Động","Phòng tiêm chủng Minh Đức","Cơ sở tiêm chủng vắc xin Happy Phù Cừ","Phòng tiêm chủng vắc xin dịch vụ Happy Yên Phú","Phòng tiêm vắc xin dịch vụ Thiện Đức","Phòng tiêm chủng vaccine House"
-];
-
-const LABELS = [
-  "Nam", "Nữ", "<15 tuổi", "15-24 tuổi", "24-49 tuổi", "≥50 tuổi", 
-  "≤10 ngày", ">10 ngày", "Chó cắn", "Mèo cắn", "Dơi cắn", "Khác", 
-  "Vết Đầu/Cổ", "Vết Thân", "Vết Tay", "Vết Chân", "Độ I", "Độ II", "Độ III",
-  "ĐV Bình thường", "ĐV Ốm", "ĐV Chạy rông", "ĐV Dại", "Tiêm Bắp", "Trong da",
-  "HTKD", "PU Đau", "PU Đỏ", "PU Tụ máu", "PU Phù nề", "Sốt", "Khó chịu", "Ngứa", 
-  "Đau cơ", "RL tiêu hóa", "PU Khác", "TV Có tiêm", "TV Không tiêm", "Dự phòng"
-];
-
-const INIT_DATA=[
-  [3,2,1,0,0,4,5,0,3,2,0,0,0,0,2,3,0,4,1,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [28,26,7,3,11,33,52,2,45,8,0,1,0,1,17,37,18,17,19,48,4,2,0,54,0,23,20,2,0,1,3,15,1,5,1,0,0,0,0],
-  [25,18,16,5,8,14,42,1,30,12,0,1,5,3,27,10,0,4,39,28,4,6,5,29,0,36,0,0,0,0,0,0,0,0,0,0,0,0,0]
-];
-
-function initMonthPicker() {
-  const picker = document.getElementById("mPicker");
-  const currentYear = new Date().getFullYear();
-  document.getElementById("exp-year").value = currentYear;
-  
-  picker.innerHTML = "";
-  for(let m=1; m<=12; m++) {
-    const opt = document.createElement("option");
-    opt.value = `${m}-${currentYear}`;
-    opt.innerText = `Tháng ${m}/${currentYear}`;
-    if(m === 5) opt.selected = true;
-    picker.appendChild(opt);
-  }
-}
-
-function initTable() {
-  const body = document.getElementById("dt-body");
-  body.innerHTML = "";
-  
-  SITES.forEach((site, index) => {
-    const tr = document.createElement("tr");
-    tr.setAttribute("data-site", site);
-    tr.innerHTML = `<td class="tt">${index+1}</td><td class="nm">${site}</td>`;
-    const rowData = INIT_DATA[index] || Array(39).fill(0);
-    
-    for (let i = 0; i < 39; i++) {
-      tr.innerHTML += `<td><input type="number" value="${rowData[i]||''}" list="quick-numbers" oninput="calcTotalRow()"></td>`;
-    }
-    body.appendChild(tr);
-  });
-  
-  const selectManual = document.getElementById("manual-site");
-  selectManual.innerHTML = SITES.map(s => `<option value="${s}">${s}</option>`).join("");
-  
-  buildManualFormInputs();
-  calcTotalRow();
-  updateProgressTab();
-}
-
-function buildManualFormInputs() {
-  const container = document.getElementById("manual-inputs");
-  container.innerHTML = LABELS.map((lbl, idx) => `
-    <label style="font-size:11px; font-weight:600; color:var(--muted)">${lbl}
-      <input type="number" id="manual-col-${idx}" style="width:100%; padding:6px; margin-top:2px; border:1px solid var(--border); border-radius:4px">
-    </label>
-  `).join("");
-}
-
-function loadSiteToForm() {
-  const siteName = document.getElementById("manual-site").value;
-  const rows = document.querySelectorAll("#dt-body tr");
-  let targetRow = null;
-  rows.forEach(r => { if(r.getAttribute("data-site") === siteName) targetRow = r; });
-  
-  if(targetRow) {
-    const inputs = targetRow.querySelectorAll("input[type=number]");
-    for(let i=0; i<39; i++) {
-      document.getElementById(`manual-col-${i}`).value = inputs[i].value;
-    }
-  }
-}
-
-function applyManual() {
-  const siteName = document.getElementById("manual-site").value;
-  const rows = document.querySelectorAll("#dt-body tr");
-  rows.forEach(row => {
-    if(row.getAttribute("data-site") === siteName) {
-      const inputs = row.querySelectorAll("input[type=number]");
-      for(let i=0; i<39; i++) {
-        inputs[i].value = document.getElementById(`manual-col-${i}`).value;
-      }
-    }
-  });
-  showToast("Đã đẩy dữ liệu vào bảng tạm!", "ok");
-  calcTotalRow();
-}
-
-function calcTotalRow() {
-  const rows = document.querySelectorAll("#dt-body tr");
-  let totals = Array(39).fill(0);
-  let filledCount = 0;
-  
-  rows.forEach(row => {
-    const inputs = row.querySelectorAll("input[type=number]");
-    let hasData = false;
-    inputs.forEach((input, i) => {
-      let v = parseInt(input.value) || 0;
-      totals[i] += v;
-      if(input.value !== "") hasData = true;
-    });
-    if(hasData) filledCount++;
-  });
-  
-  const f = document.getElementById("dt-foot");
-  f.innerHTML = `<tr class="tot"><td colspan="2" style="text-align:center">TỔNG CỘNG</td>${totals.map(t => `<td>${t}</td>`).join("")}</tr>`;
-  
-  const pct = Math.round((filledCount / SITES.length) * 100);
-  document.getElementById("pct-lbl").innerText = pct + "%";
-  document.getElementById("pct-bar").style.width = pct + "%";
-  
-  const stats = document.getElementById("stats");
-  stats.innerHTML = `
-    <div class="stat blue"><div class="stat-lbl">Tổng Nam Tiêm</div><div class="stat-val">${totals[0]}</div></div>
-    <div class="stat green"><div class="stat-lbl">Tổng Nữ Tiêm</div><div class="stat-val">${totals[1]}</div></div>
-    <div class="stat orange"><div class="stat-lbl">Tổng Do Chó Cắn</div><div class="stat-val">${totals[8]}</div></div>
-    <div class="stat red"><div class="stat-lbl">Tổng Dự Phòng</div><div class="stat-val">${totals[38]}</div></div>
-  `;
-}
-
-function updateProgressTab() {
-  const body = document.getElementById("prog-body");
-  body.innerHTML = "";
-  SITES.forEach((s, idx) => {
-    body.innerHTML += `<tr><td>${idx+1}</td><td>${s}</td><td><span style="color:var(--S); font-weight:bold">✓ Sẵn sàng</span></td></tr>`;
-  });
-}
-
-function go(id, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  if(btn) btn.classList.add('active');
-}
-
-function filterDT(v) {
-  document.querySelectorAll("#dt-body tr").forEach(r => {
-    let match = r.getAttribute("data-site").toLowerCase().includes(v.toLowerCase());
-    r.style.display = match ? "" : "none";
-  });
-}
-
-function clearAll() {
-  if(confirm("Xóa toàn bộ số liệu hiện tại trên màn hình?")) {
-    document.querySelectorAll("#dt-body input").forEach(i => i.value = "");
-    calcTotalRow();
-    showToast("Đã dọn sạch bảng dữ liệu!", "err");
-  }
-}
-
-function saveData() {
-  calcTotalRow();
-  showToast("Hệ thống đã lưu trữ và đồng bộ thành công!", "ok");
-}
-
-function showToast(msg, type) {
-  const t = document.getElementById("toast");
-  t.innerText = msg; t.className = "show " + type;
-  setTimeout(() => t.className = "", 3000);
-}
-
-function handleFile(file) {
-  if(!file) return;
-  document.getElementById("import-result").innerText = "⏳ Đang phân tích file...";
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, {type: 'array'});
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, {header: 1});
-      
-      let matchCount = 0;
-      rows.forEach(r => {
-        if(!r[1]) return;
-        let siteName = r[1].toString().trim();
-        document.querySelectorAll("#dt-body tr").forEach(tr => {
-          if(tr.getAttribute("data-site").toLowerCase() === siteName.toLowerCase()) {
-            const inputs = tr.querySelectorAll("input[type=number]");
-            for(let i=0; i<39; i++) {
-              if(r[i+2] !== undefined) inputs[i].value = r[i+2];
-            }
-            matchCount++;
-          }
-        });
-      });
-      calcTotalRow();
-      document.getElementById("import-result").innerHTML = `🟢 Khớp thành công dữ liệu của <b>${matchCount}</b> điểm tiêm!`;
-      showToast("Đọc file hoàn tất!", "ok");
-    } catch(err) {
-      document.getElementById("import-result").innerText = "🔴 Định dạng file lỗi hoặc không đọc được!";
-    }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function exportXLSX() {
-  const m = document.getElementById("exp-month").value;
-  const y = document.getElementById("exp-year").value;
-  
-  // Dàn mảng theo đúng form mẫu chuẩn của CDC Hưng Yên
-  let data = [
-    ["SỞ Y TẾ TỈNH HƯNG YÊN"],
-    ["TRUNG TÂM KIỂM SOÁT BỆNH TẬT (CDC HƯNG YÊN)"],
-    [], // Dòng trống phân tách
-    ["BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI"],
-    ["Tháng " + m + " năm " + y],
-    [],
-    ["TT", "Điểm tiêm", "Giới", "", "Tuổi", "", "", "", "Thời gian từ lúc bị cắn - tiêm", "", "Loại động vật", "", "", "", "Số người có vị trí vết thương", "", "", "", "Số người có mức độ vết thương", "", "", "Tình trạng động vật", "", "", "", "Số người", "", "Số người dùng HTKD", "Số người có phản ứng phụ tại chỗ", "", "", "", "Số người có phản ứng phụ toàn thân", "", "", "", "", "", "BN tử vong", "Số người tiêm dự phòng", "", ""],
-    ["", "", "Nam", "Nữ", "< 15 tuổi", "15 - 24 tuổi", "24 - 49 tuổi", ">= 50 tuổi", "≤ 10 ngày", "> 10 ngày", "Chó", "Mèo", "Dơi", "Khác", "Đầu mặt cổ", "Thân", "Tay", "Chân", "Độ I", "Độ II", "Độ III", "Bình thường", "Ốm", "Chạy rông + mất tích", "Lên cơn dại", "Tiêm bắp", "Tiêm trong da", "", "Đau", "Quầng đỏ", "Tụ máu", "Phù nề/nốt cứng", "Sốt", "Khó chịu", "Ngứa mẩn đỏ", "Đau cơ,khớp", "Rối loạn tiêu hoá", "Khác", "", "Có tiêm", "Không tiêm", "Số người tiêm dự phòng"]
-  ];
-
-  document.querySelectorAll("#dt-body tr").forEach(tr => {
-    let row = [
-      tr.querySelector(".tt").innerText,
-      tr.querySelector(".nm").innerText
-    ];
-    tr.querySelectorAll("input").forEach(i => row.push(parseInt(i.value) || 0));
-    data.push(row);
-  });
-
-  let footRow = ["", "Cộng"];
-  document.querySelectorAll("#dt-foot tr td").forEach((td, idx) => {
-    if(idx > 0) footRow.push(parseInt(td.innerText) || 0);
-  });
-  data.push(footRow);
-
-  // Thêm khoảng trắng và phần chữ ký căn lề phải phía dưới
-  data.push([]); 
-  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "NGƯỜI LẬP BÁO CÁO", "LÃNH ĐẠO ĐƠN VỊ"]);
-  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "(Ký, ghi rõ họ tên)", "(Ký, đóng dấu, họ tên)"]);
-  data.push([]);data.push([]);data.push([]);
-  
-  const now = new Date();
-  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", `Hưng Yên, ngày ${String(now.getDate()).padStart(2, '0')} tháng ${String(now.getMonth() + 1).padStart(2, '0')} năm ${now.getFullYear()}`]);
-
-  const ws = XLSX.utils.aoa_to_sheet(data);
-  
-  // Gộp ô (Merge) tiêu đề đúng chuẩn cột A
-  ws["!merges"] = [
-    {s:{r:0,c:0}, e:{r:0,c:4}}, 
-    {s:{r:1,c:0}, e:{r:1,c:6}},
-    {s:{r:3,c:0}, e:{r:3,c:8}},
-    {s:{r:4,c:0}, e:{r:4,c:4}},
-    {s:{r:6,c:2}, e:{r:6,c:3}}, {s:{r:6,c:4}, e:{r:6,c:7}},
-    {s:{r:6,c:8}, e:{r:6,c:9}}, {s:{r:6,c:10}, e:{r:6,c:13}},
-    {s:{r:6,c:14}, e:{r:6,c:17}}, {s:{r:6,c:18}, e:{r:6,c:20}},
-    {s:{r:6,c:21}, e:{r:6,c:24}}, {s:{r:6,c:25}, e:{r:6,c:26}},
-    {s:{r:6,c:28}, e:{r:6,c:31}}, {s:{r:6,c:32}, e:{r:6,c:37}},
-    {s:{r:6,c:39}, e:{r:6,c:41}},
-    {s:{r:6,c:0}, e:{r:7,c:0}}, {s:{r:6,c:1}, e:{r:7,c:1}},
-    {s:{r:6,c:27}, e:{r:7,c:27}}, {s:{r:6,c:38}, e:{r:7,c:38}},
-    // Chữ ký lùi về các cột cuối phía tay phải
-    {s:{r:data.length-7, c:40}, e:{r:data.length-7, c:41}},
-    {s:{r:data.length-6, c:40}, e:{r:data.length-6, c:41}},
-    {s:{r:data.length-1, c:40}, e:{r:data.length-1, c:41}}
-  ];
-
-  const borderStyle = {top:{style:"thin", color:"B0C4DE"}, bottom:{style:"thin", color:"B0C4DE"}, left:{style:"thin", color:"B0C4DE"}, right:{style:"thin", color:"B0C4DE"}};
-  
-  // Tối ưu hóa chiều rộng 42 cột vừa khít khổ A4 ngang
-  ws['!cols'] = [
-    {wch: 5},  // TT
-    {wch: 26}, // Điểm tiêm
-    {wch: 6}, {wch: 6}, 
-    {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, 
-    {wch: 6}, {wch: 6}, 
-    {wch: 5}, {wch: 5}, {wch: 5}, {wch: 5}, 
-    {wch: 6}, {wch: 5}, {wch: 5}, {wch: 5}, 
-    {wch: 5}, {wch: 5}, {wch: 5}, 
-    {wch: 6}, {wch: 5}, {wch: 7}, {wch: 6}, 
-    {wch: 6}, {wch: 6}, 
-    {wch: 6}, 
-    {wch: 5}, {wch: 5}, {wch: 5}, {wch: 5}, 
-    {wch: 5}, {wch: 5}, {wch: 5}, {wch: 6}, {wch: 6}, {wch: 5}, 
-    {wch: 6}, {wch: 6}, {wch: 6}, 
-    {wch: 8}  
-  ];
-
-  ws['!rows'] = [
-    {h: 20}, {h: 20}, {h: 15}, {h: 30}, {h: 22}, {h: 10},
-    {h: 40}, {h: 70}
-  ];
-
-  for(let cell in ws) {
-    if(cell[0] === '!') continue;
-    ws[cell].s = {
-      font: {name: "Times New Roman", size: 11, bold: false},
-      alignment: {vertical: "center", horizontal: "right", wrapText: true},
-      border: borderStyle
-    };
-    
-    let colIdx = XLSX.utils.decode_cell(cell).c;
-    let rowIdx = XLSX.utils.decode_cell(cell).r;
-    
-    // Căn lề trái, bỏ viền đối với khối tiêu đề đơn vị và tên báo cáo
-    if(rowIdx < 5) {
-      ws[cell].s.alignment.horizontal = "left";
-      ws[cell].s.border = {}; 
-      if(rowIdx === 0) ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
-      if(rowIdx === 1) ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
-      if(rowIdx === 3) ws[cell].s.font = {name: "Times New Roman", size: 14, bold: true};
-      if(rowIdx === 4) ws[cell].s.font = {name: "Times New Roman", size: 11, italic: true};
-    }
-
-    // Tiêu đề cột bảng dữ liệu xoay dọc 90 độ, nền xanh nhạt
-    if(rowIdx === 6 || rowIdx === 7) {
-      ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
-      ws[cell].s.fill = {fgColor: {rgb: "E6EEF4"}, fill_type: "solid"};
-      ws[cell].s.alignment.horizontal = "center";
-      if(rowIdx === 7 && colIdx > 1) {
-         ws[cell].s.alignment.textRotation = 90;
-      }
-    }
-
-    if(rowIdx >= 8) {
-      if(colIdx === 0) {
-        ws[cell].s.alignment.horizontal = "center";
-      } else if(colIdx === 1) {
-        ws[cell].s.alignment.left = true;
-        ws[cell].s.alignment.horizontal = "left";
-      } else {
-        ws[cell].s.number_format = "#,##0";
-      }
-      
-      // Định dạng dòng tổng cộng
-      if(rowIdx === (data.length - 8)) {
-        ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
-        ws[cell].s.fill = {fgColor: {rgb: "F5F5F5"}, fill_type: "solid"};
-        ws[cell].s.border = {
-           top: {style: 'thin', color: '000000'},
-           bottom: {style: 'double', color: '000000'},
-           left: {style: 'thin', color: 'D3D3D3'},
-           right: {style: 'thin', color: 'D3D3D3'}
-        };
-      }
-      
-      // Định dạng phần chữ ký đáy trang
-      if(rowIdx > (data.length - 8)) {
-         ws[cell].s.border = {};
-         ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
-         ws[cell].s.alignment.horizontal = "center";
-         if(rowIdx === (data.length - 6) || rowIdx === (data.length - 1)) {
-           ws[cell].s.font = {name: "Times New Roman", size: 11, bold: false, italic: true};
-           if(rowIdx === (data.length - 1)) ws[cell].s.alignment.horizontal = "right";
-         }
-      }
+  // Fallback: đọc trực tiếp từ bảng HTML
+  if (!rows || rows.length === 0) {
+    const tblEl = document.querySelector('table#mainTable, table.bang-nhap, tbody');
+    if (tblEl) {
+      const trs = (tblEl.tagName === 'TBODY' ? tblEl : tblEl.querySelector('tbody'))?.querySelectorAll('tr') || [];
+      rows = Array.from(trs).map(tr =>
+        Array.from(tr.querySelectorAll('td,input')).map(el =>
+          el.tagName === 'INPUT' ? (parseFloat(el.value) || 0) : (parseFloat(el.textContent) || el.textContent.trim())
+        )
+      ).filter(r => r.length > 2);
     }
   }
 
-  // Ép buộc xuất khổ A4 nằm ngang
-  ws['!pageSetup'] = {orientation: 'landscape', paperSize: 9};
+  // Danh sách điểm tiêm (dự phòng nếu không có data)
+  const dsDiemTiem = (typeof danhSachDiemTiem !== 'undefined' && danhSachDiemTiem.length)
+    ? danhSachDiemTiem
+    : rows.map((_, i) => `Điểm tiêm ${i+1}`);
 
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Báo cáo tiêm vắc xin dại");
-  XLSX.writeFile(wb, `BaoCao_TiemDai_Thang${m}_${y}.xlsx`);
-  showToast("Đã kết xuất báo cáo Excel chuẩn định dạng!", "ok");
+  // ── 1. Tạo Workbook ExcelJS ──────────────────────────────
+  const ExcelJS = window.ExcelJS;
+  if (!ExcelJS) {
+    alert('Thiếu thư viện ExcelJS! Hãy thêm vào <head>:\n<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>');
+    return;
+  }
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'Hệ Thống Báo Cáo Tiêm Dại – Sở Y Tế Hưng Yên';
+  wb.created = new Date();
+
+  const ws = wb.addWorksheet(`Tháng ${thang} năm ${nam}`, {
+    pageSetup: {
+      paperSize:   3,        // A4
+      orientation: 'landscape',
+      fitToPage:   true,
+      fitToWidth:  1,
+      fitToHeight: 0,
+      margins: { left: 0.4, right: 0.3, top: 0.4, bottom: 0.4, header: 0.2, footer: 0.2 }
+    }
+  });
+
+  // ── 2. Định nghĩa chiều rộng cột (41 cột dữ liệu + TT + Điểm tiêm) ──
+  // Tổng 43 cột: A(TT) B(Điểm tiêm) C..AQ(số liệu)
+  const COL_WIDTHS = [
+    4.5,   // A: TT
+    22,    // B: Điểm tiêm
+    4.5,   // C: Nam
+    4.5,   // D: Nữ
+    5,     // E: <15
+    5.5,   // F: 15-24
+    5.5,   // G: 24-49
+    5,     // H: ≥50
+    5.5,   // I: ≤10 ngày
+    5.5,   // J: >10 ngày
+    4.5,   // K: Chó
+    4.5,   // L: Mèo
+    4.5,   // M: Dơi
+    4.5,   // N: Khác
+    6,     // O: Đầu mặt cổ
+    4.5,   // P: Thân
+    4.5,   // Q: Tay
+    4.5,   // R: Chân
+    4.5,   // S: Độ I
+    4.5,   // T: Độ II
+    5,     // U: Độ III
+    6.5,   // V: Bình thường
+    4.5,   // W: Ốm
+    7,     // X: Chạy rông+mất tích
+    5.5,   // Y: Lên cơn dại
+    5.5,   // Z: Tiêm bắp
+    5.5,   // AA: Tiêm trong da
+    5,     // AB: HTKD
+    4.5,   // AC: Đau
+    5.5,   // AD: Quầng đỏ
+    4.5,   // AE: Tụ máu
+    6.5,   // AF: Phù nề/nốt cứng
+    4.5,   // AG: Sốt
+    5,     // AH: Khó chịu
+    6,     // AI: Ngứa mẩn đỏ
+    6,     // AJ: Đau cơ,khớp
+    7,     // AK: Rối loạn TH
+    4.5,   // AL: Khác
+    5,     // AM: Có tiêm
+    6,     // AN: Không tiêm
+    5.5,   // AO: Dự phòng
+  ];
+  COL_WIDTHS.forEach((w, i) => {
+    ws.getColumn(i + 1).width = w;
+  });
+
+  // ── 3. Styles dùng chung ──────────────────────────────────
+  const THIN  = { style: 'thin',   color: { argb: 'FF000000' } };
+  const THICK = { style: 'medium', color: { argb: 'FF000000' } };
+
+  const borderAll  = { top: THIN,  bottom: THIN,  left: THIN,  right: THIN  };
+  const borderThick= { top: THICK, bottom: THICK, left: THICK, right: THICK };
+
+  const fntTitle = { name: 'Times New Roman', size: 13, bold: true };
+  const fntSub   = { name: 'Times New Roman', size: 11, italic: true };
+  const fntHdr   = { name: 'Times New Roman', size: 9,  bold: true };
+  const fntBody  = { name: 'Times New Roman', size: 9 };
+  const fntTotal = { name: 'Times New Roman', size: 9,  bold: true };
+  const fntSign  = { name: 'Times New Roman', size: 10, bold: true };
+  const fntDate  = { name: 'Times New Roman', size: 10, italic: true };
+
+  const fillHdr   = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFB8CCE4' } }; // xanh nhạt
+  const fillTotal = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFFCC' } }; // vàng nhạt
+
+  const alignCC = { horizontal: 'center', vertical: 'middle', wrapText: true };
+  const alignLC = { horizontal: 'left',   vertical: 'middle', wrapText: true };
+  const alignRC = { horizontal: 'right',  vertical: 'middle' };
+
+  // ── 4. TIÊU ĐỀ: Hàng 1-4 ────────────────────────────────
+  // Hàng 1: Sở chủ quản (trái) + Tên báo cáo (giữa)
+  ws.getRow(1).height = 20;
+  ws.getRow(2).height = 22;
+  ws.getRow(3).height = 16;
+  ws.getRow(4).height = 14;
+
+  // Cột A-G: Góc trái (Sở chủ quản + Đơn vị báo cáo)
+  ws.mergeCells('A1:G1');
+  const cellSoChuQuan = ws.getCell('A1');
+  cellSoChuQuan.value = 'SỞ Y TẾ TỈNH HƯNG YÊN';
+  cellSoChuQuan.font = { name: 'Times New Roman', size: 11, bold: true };
+  cellSoChuQuan.alignment = { horizontal: 'center', vertical: 'middle' };
+
+  ws.mergeCells('A2:G2');
+  const cellDonVi = ws.getCell('A2');
+  cellDonVi.value = donVi.toUpperCase();
+  cellDonVi.font = { name: 'Times New Roman', size: 10, bold: true };
+  cellDonVi.alignment = { horizontal: 'center', vertical: 'middle' };
+
+  ws.mergeCells('A3:G3');
+  const cellSo = ws.getCell('A3');
+  cellSo.value = 'Số:      /BC-YT';
+  cellSo.font = fntSub;
+  cellSo.alignment = alignCC;
+
+  // Cột H-AO: Tên báo cáo (giữa trang)
+  ws.mergeCells('H1:AO1');
+  const cellTenBC = ws.getCell('H1');
+  cellTenBC.value = 'BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI';
+  cellTenBC.font = { name: 'Times New Roman', size: 14, bold: true };
+  cellTenBC.alignment = alignCC;
+
+  ws.mergeCells('H2:AO2');
+  const cellThang = ws.getCell('H2');
+  cellThang.value = `Tháng ${thang} năm ${nam}`;
+  cellThang.font = { name: 'Times New Roman', size: 12, bold: false, italic: true };
+  cellThang.alignment = alignCC;
+
+  ws.mergeCells('H3:AO3');
+  const cellCQ = ws.getCell('H3');
+  cellCQ.value = '(Kính gửi: Cục Y tế dự phòng – Bộ Y tế)';
+  cellCQ.font = { name: 'Times New Roman', size: 10, italic: true };
+  cellCQ.alignment = alignCC;
+
+  // Hàng 4: dòng trống ngăn cách
+  ws.getRow(4).height = 6;
+
+  // ── 5. HEADER BẢNG: Hàng 5-7 ────────────────────────────
+  ws.getRow(5).height = 28;
+  ws.getRow(6).height = 28;
+  ws.getRow(7).height = 30;
+
+  // Định nghĩa cấu trúc header
+  const headers = [
+    // [merge_from, merge_to (null=không merge), row_span, text, col_start_1based]
+    { r: 5, rEnd: 7, c: 1,  cEnd: 1,  text: 'TT' },
+    { r: 5, rEnd: 7, c: 2,  cEnd: 2,  text: 'Điểm tiêm' },
+    { r: 5, rEnd: 6, c: 3,  cEnd: 4,  text: 'Giới' },
+    { r: 5, rEnd: 6, c: 5,  cEnd: 8,  text: 'Tuổi' },
+    { r: 5, rEnd: 6, c: 9,  cEnd: 10, text: 'Thời gian từ lúc bị cắn - tiêm' },
+    { r: 5, rEnd: 6, c: 11, cEnd: 14, text: 'Loại động vật' },
+    { r: 5, rEnd: 6, c: 15, cEnd: 18, text: 'Số người có vị trí vết thương' },
+    { r: 5, rEnd: 6, c: 19, cEnd: 21, text: 'Số người có mức độ vết thương' },
+    { r: 5, rEnd: 6, c: 22, cEnd: 25, text: 'Tình trạng động vật' },
+    { r: 5, rEnd: 6, c: 26, cEnd: 27, text: 'Số người tiêm' },
+    { r: 5, rEnd: 7, c: 28, cEnd: 28, text: 'Số người dùng HTKD' },
+    { r: 5, rEnd: 6, c: 29, cEnd: 32, text: 'Số người có PU phụ tại chỗ' },
+    { r: 5, rEnd: 6, c: 33, cEnd: 38, text: 'Số người có PU phụ toàn thân' },
+    { r: 5, rEnd: 6, c: 39, cEnd: 40, text: 'BN tử vong' },
+    { r: 5, rEnd: 7, c: 41, cEnd: 41, text: 'Số người tiêm dự phòng' },
+    // Row 7 sub-headers
+    { r: 7, rEnd: 7, c: 3,  cEnd: 3,  text: 'Nam' },
+    { r: 7, rEnd: 7, c: 4,  cEnd: 4,  text: 'Nữ' },
+    { r: 7, rEnd: 7, c: 5,  cEnd: 5,  text: '< 15 tuổi' },
+    { r: 7, rEnd: 7, c: 6,  cEnd: 6,  text: '15 - 24 tuổi' },
+    { r: 7, rEnd: 7, c: 7,  cEnd: 7,  text: '24 - 49 tuổi' },
+    { r: 7, rEnd: 7, c: 8,  cEnd: 8,  text: '≥ 50 tuổi' },
+    { r: 7, rEnd: 7, c: 9,  cEnd: 9,  text: '≤ 10 ngày' },
+    { r: 7, rEnd: 7, c: 10, cEnd: 10, text: '> 10 ngày' },
+    { r: 7, rEnd: 7, c: 11, cEnd: 11, text: 'Chó' },
+    { r: 7, rEnd: 7, c: 12, cEnd: 12, text: 'Mèo' },
+    { r: 7, rEnd: 7, c: 13, cEnd: 13, text: 'Dơi' },
+    { r: 7, rEnd: 7, c: 14, cEnd: 14, text: 'Khác' },
+    { r: 7, rEnd: 7, c: 15, cEnd: 15, text: 'Đầu mặt cổ' },
+    { r: 7, rEnd: 7, c: 16, cEnd: 16, text: 'Thân' },
+    { r: 7, rEnd: 7, c: 17, cEnd: 17, text: 'Tay' },
+    { r: 7, rEnd: 7, c: 18, cEnd: 18, text: 'Chân' },
+    { r: 7, rEnd: 7, c: 19, cEnd: 19, text: 'Độ I' },
+    { r: 7, rEnd: 7, c: 20, cEnd: 20, text: 'Độ II' },
+    { r: 7, rEnd: 7, c: 21, cEnd: 21, text: 'Độ III' },
+    { r: 7, rEnd: 7, c: 22, cEnd: 22, text: 'Bình thường' },
+    { r: 7, rEnd: 7, c: 23, cEnd: 23, text: 'Ốm' },
+    { r: 7, rEnd: 7, c: 24, cEnd: 24, text: 'Chạy rông + mất tích' },
+    { r: 7, rEnd: 7, c: 25, cEnd: 25, text: 'Lên cơn dại' },
+    { r: 7, rEnd: 7, c: 26, cEnd: 26, text: 'Tiêm bắp' },
+    { r: 7, rEnd: 7, c: 27, cEnd: 27, text: 'Tiêm trong da' },
+    { r: 7, rEnd: 7, c: 29, cEnd: 29, text: 'Đau' },
+    { r: 7, rEnd: 7, c: 30, cEnd: 30, text: 'Quầng đỏ' },
+    { r: 7, rEnd: 7, c: 31, cEnd: 31, text: 'Tụ máu' },
+    { r: 7, rEnd: 7, c: 32, cEnd: 32, text: 'Phù nề/ nốt cứng' },
+    { r: 7, rEnd: 7, c: 33, cEnd: 33, text: 'Sốt' },
+    { r: 7, rEnd: 7, c: 34, cEnd: 34, text: 'Khó chịu' },
+    { r: 7, rEnd: 7, c: 35, cEnd: 35, text: 'Ngứa mẩn đỏ' },
+    { r: 7, rEnd: 7, c: 36, cEnd: 36, text: 'Đau cơ, khớp' },
+    { r: 7, rEnd: 7, c: 37, cEnd: 37, text: 'Rối loạn tiêu hoá' },
+    { r: 7, rEnd: 7, c: 38, cEnd: 38, text: 'Khác' },
+    { r: 7, rEnd: 7, c: 39, cEnd: 39, text: 'Có tiêm' },
+    { r: 7, rEnd: 7, c: 40, cEnd: 40, text: 'Không tiêm' },
+  ];
+
+  headers.forEach(h => {
+    const cell = ws.getCell(h.r, h.c);
+    // Merge nếu span nhiều hơn 1 ô
+    if (h.r !== h.rEnd || h.c !== h.cEnd) {
+      ws.mergeCells(h.r, h.c, h.rEnd, h.cEnd);
+    }
+    cell.value = h.text;
+    cell.font = fntHdr;
+    cell.fill = fillHdr;
+    cell.alignment = alignCC;
+    cell.border = borderAll;
+  });
+
+  // ── 6. DỮ LIỆU: Hàng 8 → 8+n ────────────────────────────
+  const DATA_START_ROW = 8;
+  const numRows = Math.max(dsDiemTiem.length, 1);
+
+  for (let i = 0; i < numRows; i++) {
+    const excelRow = DATA_START_ROW + i;
+    ws.getRow(excelRow).height = 16;
+
+    const rowData = rows[i] || [];
+    // Cột A: STT
+    const cellA = ws.getCell(excelRow, 1);
+    cellA.value = i + 1;
+    cellA.font = fntBody;
+    cellA.alignment = alignCC;
+    cellA.border = borderAll;
+
+    // Cột B: Tên điểm tiêm
+    const cellB = ws.getCell(excelRow, 2);
+    cellB.value = dsDiemTiem[i] || rowData[1] || '';
+    cellB.font = fntBody;
+    cellB.alignment = alignLC;
+    cellB.border = borderAll;
+
+    // Cột C-AO: Số liệu (41 cột)
+    for (let c = 3; c <= 41; c++) {
+      const cell = ws.getCell(excelRow, c);
+      const val = rowData[c - 1]; // index offset
+      cell.value = (val !== undefined && val !== '') ? (Number(val) || 0) : 0;
+      cell.font = fntBody;
+      cell.alignment = alignCC;
+      cell.border = borderAll;
+      cell.numFmt = '#,##0;[Red]-#,##0;"-"';
+    }
+  }
+
+  // ── 7. HÀNG CỘNG ─────────────────────────────────────────
+  const CONG_ROW = DATA_START_ROW + numRows;
+  ws.getRow(CONG_ROW).height = 18;
+
+  ws.mergeCells(CONG_ROW, 1, CONG_ROW, 2);
+  const cellCong = ws.getCell(CONG_ROW, 1);
+  cellCong.value = 'CỘNG';
+  cellCong.font = fntTotal;
+  cellCong.fill = fillTotal;
+  cellCong.alignment = alignCC;
+  cellCong.border = borderAll;
+
+  for (let c = 3; c <= 41; c++) {
+    const startR = DATA_START_ROW;
+    const endR   = CONG_ROW - 1;
+    const colLetter = ws.getColumn(c).letter;
+    const cell = ws.getCell(CONG_ROW, c);
+    cell.value = { formula: `SUM(${colLetter}${startR}:${colLetter}${endR})` };
+    cell.font = fntTotal;
+    cell.fill = fillTotal;
+    cell.alignment = alignCC;
+    cell.border = borderAll;
+    cell.numFmt = '#,##0;[Red]-#,##0;"-"';
+  }
+
+  // ── 8. CHỮ KÝ: 3 hàng dưới cùng ────────────────────────
+  const SIG_DATE_ROW  = CONG_ROW + 2;
+  const SIG_TITLE_ROW = CONG_ROW + 3;
+  const SIG_NAME_ROW  = CONG_ROW + 5;
+
+  ws.getRow(SIG_DATE_ROW).height  = 16;
+  ws.getRow(SIG_TITLE_ROW).height = 16;
+  ws.getRow(SIG_NAME_ROW).height  = 16;
+
+  // Ngày ký – căn phải, chiếm vùng giữa-phải
+  ws.mergeCells(SIG_DATE_ROW, 15, SIG_DATE_ROW, 41);
+  const cellDate = ws.getCell(SIG_DATE_ROW, 15);
+  cellDate.value = ngayKy;
+  cellDate.font = fntDate;
+  cellDate.alignment = { horizontal: 'center', vertical: 'middle', italic: true };
+
+  // 3 cột chữ ký: chia đều 41 cột
+  // [Người báo cáo: C1-13] [Bộ phận phụ trách: C15-27] [Lãnh đạo đơn vị: C29-41]
+  const sigCols = [
+    { cStart: 1,  cEnd: 13, label: 'NGƯỜI BÁO CÁO',              note: '(Ký, ghi rõ họ tên)' },
+    { cStart: 15, cEnd: 27, label: 'BỘ PHẬN PHỤ TRÁCH (Khoa/Phòng)', note: '(Ký, ghi rõ họ tên)' },
+    { cStart: 29, cEnd: 41, label: 'LÃNH ĐẠO ĐƠN VỊ',            note: '(Ký, đóng dấu, ghi rõ họ tên)' },
+  ];
+
+  sigCols.forEach(sig => {
+    // Tiêu đề chức danh
+    ws.mergeCells(SIG_TITLE_ROW, sig.cStart, SIG_TITLE_ROW, sig.cEnd);
+    const cellTitle = ws.getCell(SIG_TITLE_ROW, sig.cStart);
+    cellTitle.value = sig.label;
+    cellTitle.font = fntSign;
+    cellTitle.alignment = alignCC;
+
+    // Ghi chú nhỏ
+    const noteRow = SIG_TITLE_ROW + 1;
+    if (!ws.getRow(noteRow).height) ws.getRow(noteRow).height = 14;
+    ws.mergeCells(noteRow, sig.cStart, noteRow, sig.cEnd);
+    const cellNote = ws.getCell(noteRow, sig.cStart);
+    cellNote.value = sig.note;
+    cellNote.font = { name: 'Times New Roman', size: 9, italic: true };
+    cellNote.alignment = alignCC;
+
+    // Ô ký tên (dòng trống để ký)
+    ws.getRow(SIG_NAME_ROW).height = 18;
+    ws.mergeCells(SIG_NAME_ROW, sig.cStart, SIG_NAME_ROW, sig.cEnd);
+    const cellName = ws.getCell(SIG_NAME_ROW, sig.cStart);
+    cellName.value = '';
+    cellName.border = { bottom: THIN };
+  });
+
+  // ── 9. Freeze header & Print Area ────────────────────────
+  ws.views = [{ state: 'frozen', xSplit: 2, ySplit: 7, activeCell: 'C8' }];
+  ws.pageSetup.printArea = `A1:AO${SIG_NAME_ROW}`;
+  ws.pageSetup.printTitlesRow = '5:7';
+
+  // ── 10. Xuất file ────────────────────────────────────────
+  const buf = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const fileName = `BC_TiemVXPhongDai_Thang${thang}_${nam}.xlsx`;
+
+  if (window.saveAs) {
+    saveAs(blob, fileName);
+  } else {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fileName; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  console.log(`✅ Đã xuất: ${fileName}`);
 }
 
-window.onload = function() {
-  initMonthPicker();
-  initTable();
-};
-</script>
-</body>
-</html>
+// Gắn vào nút xuất (thay id nếu cần)
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('btnXuatExcel') || document.querySelector('[onclick*="xuatExcel"]');
+  if (btn) {
+    btn.onclick = null;
+    btn.addEventListener('click', xuatExcel);
+  }
+});
