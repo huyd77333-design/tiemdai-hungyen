@@ -116,51 +116,37 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;width:100%;flex:1}
 footer{background:#1a252f;color:rgba(255,255,255,.6);text-align:center;padding:12px 20px;font-size:11.5px;border-top:1px solid rgba(255,255,255,.05)}
 footer strong{color:#e8a020}
 
-/* =====================================================
-   TỐI ƯU HÓA GIAO DIỆN IN VÀ XUẤT BẢN KHỔ A4 NGANG
-   ===================================================== */
+/* IN ẤN VÀ XUẤT BẢN */
 @media print {
     body {
-        background: #fff;
-        color: #000;
-        font-size: 11px;
+        background: #fff; color: #000; font-size: 11px;
     }
     header, .tabs, .month-sel, .srch, .btn, footer {
         display: none !important;
     }
     main {
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-        width: 100% !important;
+        padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important;
     }
     .page {
         display: block !important;
     }
     .card {
-        border: none !important;
-        box-shadow: none !important;
-        margin: 0 !important;
-        page-break-inside: avoid;
+        border: none !important; box-shadow: none !important; margin: 0 !important; page-break-inside: avoid;
     }
     .dt-wrap {
-        overflow: visible !important;
-        max-height: none !important;
+        overflow: visible !important; max-height: none !important;
     }
     .dt {
         width: 100% !important;
     }
     .dt th {
-        background: #f2f2f2 !important;
-        color: #000 !important;
-        border: 0.5px solid #000 !important;
+        background: #f2f2f2 !important; color: #000 !important; border: 0.5px solid #000 !important;
     }
     .dt th.g {
         background: #e6e6e6 !important;
     }
     .dt td {
-        border: 0.5px solid #000 !important;
-        padding: 4px 2px !important;
+        border: 0.5px solid #000 !important; padding: 4px 2px !important;
     }
     .dt td.tt {
         background: #f9f9f9 !important;
@@ -169,20 +155,10 @@ footer strong{color:#e8a020}
         background: #fff !important;
     }
     .dt input[type=number] {
-        background: transparent !important;
-        border: none !important;
-        color: #000 !important;
+        background: transparent !important; border: none !important; color: #000 !important;
     }
-    
-    /* Xoay dọc tiêu đề 90 độ khi in */
     .rotate-col {
-        writing-mode: vertical-rl;
-        transform: rotate(180deg);
-        text-align: center;
-        height: 110px;
-        white-space: nowrap;
-        vertical-align: middle;
-        padding: 0 !important;
+        writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; height: 110px; white-space: nowrap; vertical-align: middle; padding: 0 !important;
     }
 }
 
@@ -192,13 +168,7 @@ footer strong{color:#e8a020}
 }
 
 .rotate-col {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    text-align: center;
-    height: 110px;
-    white-space: nowrap;
-    vertical-align: middle;
-    padding: 0 !important;
+    writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; height: 110px; white-space: nowrap; vertical-align: middle; padding: 0 !important;
 }
 </style>
 </head>
@@ -356,7 +326,7 @@ footer strong{color:#e8a020}
     <div style="font-size:40px">📊</div>
     <div class="export-hero-text">
       <h3>Xuất Khẩu Báo Cáo Excel Chuẩn Form Bộ Y Tế</h3>
-      <p>File sau khi xuất tự định dạng chữ đứng, tiêu đề xoay dọc 90 độ, co dãn tự động khít giấy A4</p>
+      <p>File sau khi xuất tự định dạng chữ đứng, tiêu đề xoay dọc 90 độ, co dãn tự động khít giấy A4 nằm ngang</p>
     </div>
     <button class="btn btn-accent btn-lg" onclick="exportXLSX()">
       <span id="exp-spin" style="display:none" class="spin"></span> 📥 Tải Báo Cáo Excel
@@ -613,13 +583,14 @@ function exportXLSX() {
   const m = document.getElementById("exp-month").value;
   const y = document.getElementById("exp-year").value;
   
+  // Dàn mảng dữ liệu với tiêu đề phân tách ô SỞ Y TẾ và TÊN BÁO CÁO
   let data = [
     ["SỞ Y TẾ TỈNH HƯNG YÊN"],
-    ["TRUNG TÂM KIỂM SOÁT BỆNH TẬT"],
+    ["TRUNG TÂM KIỂM SOÁT BỆNH TẬT (CDC HƯNG YÊN)"],
     ["BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI"],
     ["Tháng " + m + " năm " + y],
     [],
-    ["TT", "Điểm tiêm", "Giới", "", "Tuổi", "", "", "", "Thời gian từ lúc bị cắn - tiêm", "", "Loại động vật", "", "", "", "Số người có vị trí vết thương", "", "", "", "Số người có mức độ vết thương", "", "", "Tình trạng động vật", "", "", "", "Số người", "", "Số người có phản ứng phụ HTKD", "Số người có phản ứng phụ tại chỗ", "", "", "", "Số người có phản ứng toàn thân", "", "", "", "", "", "BN tử vong", "Số người tiêm dự phòng", "", ""],
+    ["TT", "Điểm tiêm", "Giới", "", "Tuổi", "", "", "", "Thời gian từ lúc bị cắn - tiêm", "", "Loại động vật", "", "", "", "Số người có vị trí vết thương", "", "", "", "Số người có mức độ vết thương", "", "", "Tình trạng động vật", "", "", "", "Số người", "", "Số người dùng HTKD", "Số người có phản ứng phụ tại chỗ", "", "", "", "Số người có phản ứng phụ toàn thân", "", "", "", "", "", "BN tử vong", "Số người tiêm dự phòng", "", ""],
     ["", "", "Nam", "Nữ", "< 15 tuổi", "15 - 24 tuổi", "24 - 49 tuổi", ">= 50 tuổi", "≤ 10 ngày", "> 10 ngày", "Chó", "Mèo", "Dơi", "Khác", "Đầu mặt cổ", "Thân", "Tay", "Chân", "Độ I", "Độ II", "Độ III", "Bình thường", "Ốm", "Chạy rông + mất tích", "Lên cơn dại", "Tiêm bắp", "Tiêm trong da", "", "Đau", "Quầng đỏ", "Tụ máu", "Phù nề/nốt cứng", "Sốt", "Khó chịu", "Ngứa mẩn đỏ", "Đau cơ,khớp", "Rối loạn tiêu hoá", "Khác", "", "Có tiêm", "Không tiêm", "Số người tiêm dự phòng"]
   ];
 
@@ -638,9 +609,9 @@ function exportXLSX() {
   });
   data.push(footRow);
 
-  // Bổ sung thêm khối chữ ký chuẩn dự thảo ở cuối bảng
+  // Bổ sung thêm khoảng trắng và khối chữ ký chuẩn hành chính ở cuối bảng
   data.push([]); 
-  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "NGƯỜI LÀM BÁO CÁO", "", "", "LÃNH ĐẠO ĐƠN VỊ"]);
+  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "NGƯỜI LẬM BÁO CÁO", "", "", "LÃNH ĐẠO ĐƠN VỊ"]);
   data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "(Ký, họ tên)", "", "", "(Ký, đóng dấu, họ tên)"]);
   data.push([]);data.push([]);data.push([]);
   
@@ -649,6 +620,7 @@ function exportXLSX() {
 
   const ws = XLSX.utils.aoa_to_sheet(data);
   
+  // Khối định dạng gộp ô (Merge) tiêu đề và chữ ký
   ws["!merges"] = [
     {s:{r:0,c:0}, e:{r:0,c:41}}, 
     {s:{r:1,c:0}, e:{r:1,c:41}},
@@ -662,7 +634,7 @@ function exportXLSX() {
     {s:{r:5,c:39}, e:{r:5,c:41}},
     {s:{r:5,c:0}, e:{r:6,c:0}}, {s:{r:5,c:1}, e:{r:6,c:1}},
     {s:{r:5,c:27}, e:{r:6,c:27}}, {s:{r:5,c:38}, e:{r:6,c:38}},
-    // Gộp chú thích chữ ký
+    // Căn lề chữ ký dạt sang phía tay phải đúng chuẩn
     {s:{r:data.length-7, c:37}, e:{r:data.length-7, c:39}},
     {s:{r:data.length-7, c:40}, e:{r:data.length-7, c:41}},
     {s:{r:data.length-6, c:37}, e:{r:data.length-6, c:39}},
@@ -672,23 +644,23 @@ function exportXLSX() {
 
   const borderStyle = {top:{style:"thin", color:"B0C4DE"}, bottom:{style:"thin", color:"B0C4DE"}, left:{style:"thin", color:"B0C4DE"}, right:{style:"thin", color:"B0C4DE"}};
   
-  // Thu hẹp chiều rộng các cột để vừa khít giấy A4 nằm ngang
+  // Thiết lập chiều rộng (wch) để dàn 42 cột khít trên A4 ngang
   ws['!cols'] = [
-    {wch: 6},  // TT
-    {wch: 28}, // Điểm tiêm
+    {wch: 5},  // TT
+    {wch: 26}, // Điểm tiêm
     {wch: 6}, {wch: 6}, 
-    {wch: 7}, {wch: 7}, {wch: 7}, {wch: 7}, 
-    {wch: 7}, {wch: 7}, 
     {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, 
-    {wch: 8}, {wch: 6}, {wch: 6}, {wch: 6}, 
-    {wch: 6}, {wch: 6}, {wch: 6}, 
-    {wch: 6}, {wch: 6}, {wch: 8}, {wch: 6}, 
-    {wch: 7}, {wch: 7}, 
+    {wch: 6}, {wch: 6}, 
+    {wch: 5}, {wch: 5}, {wch: 5}, {wch: 5}, 
+    {wch: 6}, {wch: 5}, {wch: 5}, {wch: 5}, 
+    {wch: 5}, {wch: 5}, {wch: 5}, 
+    {wch: 6}, {wch: 5}, {wch: 7}, {wch: 6}, 
+    {wch: 6}, {wch: 6}, 
     {wch: 6}, 
-    {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, 
-    {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, {wch: 6}, 
-    {wch: 6}, {wch: 6}, 
-    {wch: 8}, 
+    {wch: 5}, {wch: 5}, {wch: 5}, {wch: 5}, 
+    {wch: 5}, {wch: 5}, {wch: 5}, {wch: 6}, {wch: 6}, {wch: 5}, 
+    {wch: 6}, {wch: 6}, {wch: 6}, 
+    {wch: 8}  
   ];
 
   ws['!rows'] = [
@@ -707,12 +679,16 @@ function exportXLSX() {
     let colIdx = XLSX.utils.decode_cell(cell).c;
     let rowIdx = XLSX.utils.decode_cell(cell).r;
     
+    // Căn chỉnh và thiết lập cỡ chữ cho phần Tiêu đề SỞ Y TẾ / TÊN ĐƠN VỊ
     if(rowIdx < 4) {
       ws[cell].s.alignment.horizontal = "center";
+      if(rowIdx === 0) ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
+      if(rowIdx === 1) ws[cell].s.font = {name: "Times New Roman", size: 11, bold: false, italic: true};
       if(rowIdx === 2) ws[cell].s.font = {name: "Times New Roman", size: 16, bold: true};
       if(rowIdx === 3) ws[cell].s.font = {name: "Times New Roman", size: 12, italic: true};
     }
 
+    // Tiêu đề bảng biểu được bôi nền nhẹ và chữ xoay dọc 90 độ
     if(rowIdx === 5 || rowIdx === 6) {
       ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
       ws[cell].s.fill = {fgColor: {rgb: "E6EEF4"}, fill_type: "solid"};
@@ -743,7 +719,7 @@ function exportXLSX() {
         };
       }
       
-      // Định dạng khoảng trắng phần chữ ký
+      // Định dạng chữ ký (bỏ đường viền ô, căn lề)
       if(rowIdx > (data.length - 8)) {
          ws[cell].s.border = {};
          ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
@@ -755,6 +731,7 @@ function exportXLSX() {
     }
   }
 
+  // Ép định dạng trang in ra giấy A4 nằm ngang (Landscape)
   ws['!pageSetup'] = {orientation: 'landscape', paperSize: 9};
 
   const wb = XLSX.utils.book_new();
