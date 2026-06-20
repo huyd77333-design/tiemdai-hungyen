@@ -326,7 +326,7 @@ footer strong{color:#e8a020}
     <div style="font-size:40px">📊</div>
     <div class="export-hero-text">
       <h3>Xuất Khẩu Báo Cáo Excel Chuẩn Form Bộ Y Tế</h3>
-      <p>File sau khi xuất tự định dạng chữ đứng, tiêu đề xoay dọc 90 độ, co dãn tự động khít giấy A4 nằm ngang</p>
+      <p>File sau khi xuất định dạng chuẩn chỉ, tự động vừa khít trang A4 nằm ngang</p>
     </div>
     <button class="btn btn-accent btn-lg" onclick="exportXLSX()">
       <span id="exp-spin" style="display:none" class="spin"></span> 📥 Tải Báo Cáo Excel
@@ -583,10 +583,11 @@ function exportXLSX() {
   const m = document.getElementById("exp-month").value;
   const y = document.getElementById("exp-year").value;
   
-  // Dàn mảng dữ liệu với tiêu đề phân tách ô SỞ Y TẾ và TÊN BÁO CÁO
+  // Dàn mảng theo đúng form mẫu chuẩn của CDC Hưng Yên
   let data = [
     ["SỞ Y TẾ TỈNH HƯNG YÊN"],
     ["TRUNG TÂM KIỂM SOÁT BỆNH TẬT (CDC HƯNG YÊN)"],
+    [], // Dòng trống phân tách
     ["BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI"],
     ["Tháng " + m + " năm " + y],
     [],
@@ -609,42 +610,40 @@ function exportXLSX() {
   });
   data.push(footRow);
 
-  // Bổ sung thêm khoảng trắng và khối chữ ký chuẩn hành chính ở cuối bảng
+  // Thêm khoảng trắng và phần chữ ký căn lề phải phía dưới
   data.push([]); 
-  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "NGƯỜI LẬM BÁO CÁO", "", "", "LÃNH ĐẠO ĐƠN VỊ"]);
-  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "(Ký, họ tên)", "", "", "(Ký, đóng dấu, họ tên)"]);
+  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "NGƯỜI LẬP BÁO CÁO", "LÃNH ĐẠO ĐƠN VỊ"]);
+  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "(Ký, ghi rõ họ tên)", "(Ký, đóng dấu, họ tên)"]);
   data.push([]);data.push([]);data.push([]);
   
   const now = new Date();
-  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", `Hưng Yên, ngày ${String(now.getDate()).padStart(2, '0')} tháng ${String(now.getMonth() + 1).padStart(2, '0')} năm ${now.getFullYear()}`]);
+  data.push(["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", `Hưng Yên, ngày ${String(now.getDate()).padStart(2, '0')} tháng ${String(now.getMonth() + 1).padStart(2, '0')} năm ${now.getFullYear()}`]);
 
   const ws = XLSX.utils.aoa_to_sheet(data);
   
-  // Khối định dạng gộp ô (Merge) tiêu đề và chữ ký
+  // Gộp ô (Merge) tiêu đề đúng chuẩn cột A
   ws["!merges"] = [
-    {s:{r:0,c:0}, e:{r:0,c:41}}, 
-    {s:{r:1,c:0}, e:{r:1,c:41}},
-    {s:{r:2,c:0}, e:{r:2,c:41}},
-    {s:{r:3,c:0}, e:{r:3,c:41}},
-    {s:{r:5,c:2}, e:{r:5,c:3}}, {s:{r:5,c:4}, e:{r:5,c:7}},
-    {s:{r:5,c:8}, e:{r:5,c:9}}, {s:{r:5,c:10}, e:{r:5,c:13}},
-    {s:{r:5,c:14}, e:{r:5,c:17}}, {s:{r:5,c:18}, e:{r:5,c:20}},
-    {s:{r:5,c:21}, e:{r:5,c:24}}, {s:{r:5,c:25}, e:{r:5,c:26}},
-    {s:{r:5,c:28}, e:{r:5,c:31}}, {s:{r:5,c:32}, e:{r:5,c:37}},
-    {s:{r:5,c:39}, e:{r:5,c:41}},
-    {s:{r:5,c:0}, e:{r:6,c:0}}, {s:{r:5,c:1}, e:{r:6,c:1}},
-    {s:{r:5,c:27}, e:{r:6,c:27}}, {s:{r:5,c:38}, e:{r:6,c:38}},
-    // Căn lề chữ ký dạt sang phía tay phải đúng chuẩn
-    {s:{r:data.length-7, c:37}, e:{r:data.length-7, c:39}},
+    {s:{r:0,c:0}, e:{r:0,c:4}}, 
+    {s:{r:1,c:0}, e:{r:1,c:6}},
+    {s:{r:3,c:0}, e:{r:3,c:8}},
+    {s:{r:4,c:0}, e:{r:4,c:4}},
+    {s:{r:6,c:2}, e:{r:6,c:3}}, {s:{r:6,c:4}, e:{r:6,c:7}},
+    {s:{r:6,c:8}, e:{r:6,c:9}}, {s:{r:6,c:10}, e:{r:6,c:13}},
+    {s:{r:6,c:14}, e:{r:6,c:17}}, {s:{r:6,c:18}, e:{r:6,c:20}},
+    {s:{r:6,c:21}, e:{r:6,c:24}}, {s:{r:6,c:25}, e:{r:6,c:26}},
+    {s:{r:6,c:28}, e:{r:6,c:31}}, {s:{r:6,c:32}, e:{r:6,c:37}},
+    {s:{r:6,c:39}, e:{r:6,c:41}},
+    {s:{r:6,c:0}, e:{r:7,c:0}}, {s:{r:6,c:1}, e:{r:7,c:1}},
+    {s:{r:6,c:27}, e:{r:7,c:27}}, {s:{r:6,c:38}, e:{r:7,c:38}},
+    // Chữ ký lùi về các cột cuối phía tay phải
     {s:{r:data.length-7, c:40}, e:{r:data.length-7, c:41}},
-    {s:{r:data.length-6, c:37}, e:{r:data.length-6, c:39}},
     {s:{r:data.length-6, c:40}, e:{r:data.length-6, c:41}},
-    {s:{r:data.length-1, c:37}, e:{r:data.length-1, c:41}}
+    {s:{r:data.length-1, c:40}, e:{r:data.length-1, c:41}}
   ];
 
   const borderStyle = {top:{style:"thin", color:"B0C4DE"}, bottom:{style:"thin", color:"B0C4DE"}, left:{style:"thin", color:"B0C4DE"}, right:{style:"thin", color:"B0C4DE"}};
   
-  // Thiết lập chiều rộng (wch) để dàn 42 cột khít trên A4 ngang
+  // Tối ưu hóa chiều rộng 42 cột vừa khít khổ A4 ngang
   ws['!cols'] = [
     {wch: 5},  // TT
     {wch: 26}, // Điểm tiêm
@@ -664,7 +663,7 @@ function exportXLSX() {
   ];
 
   ws['!rows'] = [
-    {h: 20}, {h: 20}, {h: 30}, {h: 22}, {h: 10},
+    {h: 20}, {h: 20}, {h: 15}, {h: 30}, {h: 22}, {h: 10},
     {h: 40}, {h: 70}
   ];
 
@@ -679,35 +678,37 @@ function exportXLSX() {
     let colIdx = XLSX.utils.decode_cell(cell).c;
     let rowIdx = XLSX.utils.decode_cell(cell).r;
     
-    // Căn chỉnh và thiết lập cỡ chữ cho phần Tiêu đề SỞ Y TẾ / TÊN ĐƠN VỊ
-    if(rowIdx < 4) {
-      ws[cell].s.alignment.horizontal = "center";
+    // Căn lề trái, bỏ viền đối với khối tiêu đề đơn vị và tên báo cáo
+    if(rowIdx < 5) {
+      ws[cell].s.alignment.horizontal = "left";
+      ws[cell].s.border = {}; 
       if(rowIdx === 0) ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
-      if(rowIdx === 1) ws[cell].s.font = {name: "Times New Roman", size: 11, bold: false, italic: true};
-      if(rowIdx === 2) ws[cell].s.font = {name: "Times New Roman", size: 16, bold: true};
-      if(rowIdx === 3) ws[cell].s.font = {name: "Times New Roman", size: 12, italic: true};
+      if(rowIdx === 1) ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
+      if(rowIdx === 3) ws[cell].s.font = {name: "Times New Roman", size: 14, bold: true};
+      if(rowIdx === 4) ws[cell].s.font = {name: "Times New Roman", size: 11, italic: true};
     }
 
-    // Tiêu đề bảng biểu được bôi nền nhẹ và chữ xoay dọc 90 độ
-    if(rowIdx === 5 || rowIdx === 6) {
+    // Tiêu đề cột bảng dữ liệu xoay dọc 90 độ, nền xanh nhạt
+    if(rowIdx === 6 || rowIdx === 7) {
       ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
       ws[cell].s.fill = {fgColor: {rgb: "E6EEF4"}, fill_type: "solid"};
       ws[cell].s.alignment.horizontal = "center";
-      if(rowIdx === 6 && colIdx > 1) {
+      if(rowIdx === 7 && colIdx > 1) {
          ws[cell].s.alignment.textRotation = 90;
       }
     }
 
-    if(rowIdx >= 7) {
+    if(rowIdx >= 8) {
       if(colIdx === 0) {
         ws[cell].s.alignment.horizontal = "center";
       } else if(colIdx === 1) {
+        ws[cell].s.alignment.left = true;
         ws[cell].s.alignment.horizontal = "left";
       } else {
         ws[cell].s.number_format = "#,##0";
       }
       
-      // Dòng tổng cộng
+      // Định dạng dòng tổng cộng
       if(rowIdx === (data.length - 8)) {
         ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
         ws[cell].s.fill = {fgColor: {rgb: "F5F5F5"}, fill_type: "solid"};
@@ -719,10 +720,11 @@ function exportXLSX() {
         };
       }
       
-      // Định dạng chữ ký (bỏ đường viền ô, căn lề)
+      // Định dạng phần chữ ký đáy trang
       if(rowIdx > (data.length - 8)) {
          ws[cell].s.border = {};
          ws[cell].s.font = {name: "Times New Roman", size: 11, bold: true};
+         ws[cell].s.alignment.horizontal = "center";
          if(rowIdx === (data.length - 6) || rowIdx === (data.length - 1)) {
            ws[cell].s.font = {name: "Times New Roman", size: 11, bold: false, italic: true};
            if(rowIdx === (data.length - 1)) ws[cell].s.alignment.horizontal = "right";
@@ -731,7 +733,7 @@ function exportXLSX() {
     }
   }
 
-  // Ép định dạng trang in ra giấy A4 nằm ngang (Landscape)
+  // Ép buộc xuất khổ A4 nằm ngang
   ws['!pageSetup'] = {orientation: 'landscape', paperSize: 9};
 
   const wb = XLSX.utils.book_new();
