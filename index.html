@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Hệ Thống Báo Cáo Tiêm Dại – Hưng Yên 2026</title>
+<title>Hệ Thống Báo Cáo Tiêm Dại – Hưng Yên</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap');
@@ -16,7 +16,7 @@
   --r:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;display:flex;flex-direction:column}
 
 /* NAV */
 header{background:var(--PD);height:58px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.25)}
@@ -33,7 +33,7 @@ header h1 small{color:#a0c4e0;font-weight:400;font-size:11px;display:block}
 .tab:hover{color:#fff}
 
 /* MAIN */
-main{padding:18px 20px;max-width:1500px;margin:0 auto}
+main{padding:18px 20px;max-width:1500px;margin:0 auto;width:100%;flex:1}
 .page{display:none}.page.active{display:block}
 
 /* CARDS */
@@ -50,31 +50,14 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 .stat.orange::before{background:var(--A)}.stat.red::before{background:var(--D)}
 .stat-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 .stat-val{font-size:26px;font-weight:800;margin:4px 0 2px;color:var(--text);line-height:1}
-.stat-sub{font-size:11px;color:var(--muted)}
-
-/* ALERTS */
-.alert{border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;font-size:12.5px;line-height:1.5}
-.alert.warn{background:#fff8ec;border:1px solid #f0c060;border-left:4px solid var(--A)}
-.alert.danger{background:#fff2f2;border:1px solid #e08080;border-left:4px solid var(--D)}
-.alert.ok{background:#f0faf4;border:1px solid #80c09a;border-left:4px solid var(--S)}
-.alert.info{background:#f0f6ff;border:1px solid #c0d8f0;border-left:4px solid var(--PL)}
-.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:.18s;white-space:nowrap;text-decoration:none}
 .btn-primary{background:var(--P);color:#fff}.btn-primary:hover{background:var(--PL)}
 .btn-accent{background:var(--A);color:#fff}.btn-accent:hover{background:var(--AD)}
-.btn-success{background:var(--S);color:#fff}
 .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--P);color:var(--P)}
-.btn-danger{background:var(--D);color:#fff}
 .btn-sm{padding:4px 10px;font-size:11px}
 .btn-lg{padding:11px 22px;font-size:14px}
-
-/* PILLS */
-.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700}
-.pill-ok{background:#e0f5ea;color:#1a7a4f}
-.pill-no{background:#ffeaea;color:#c0392b}
-.pill-late{background:#fff3e0;color:#d4800a}
 
 /* PROGRESS BAR */
 .bar-wrap{background:#e0e7ef;border-radius:6px;height:6px;overflow:hidden}
@@ -84,8 +67,6 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
 .tbl th{text-align:left;padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--border)}
 .tbl td{padding:7px 10px;border-bottom:1px solid #eef1f5;vertical-align:middle}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:#f8faff}
 
 /* DATA TABLE */
 .dt-wrap{overflow-x:auto;max-height:65vh}
@@ -94,7 +75,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 .dt th.g{background:var(--P)}
 .dt td{border:1px solid #d8e2ec;padding:3px 4px;text-align:center;vertical-align:middle}
 .dt td.tt{position:sticky;left:0;background:#f2f5f9;font-weight:700;z-index:3;width:36px}
-.dt td.nm{text-align:left;min-width:190px;max-width:210px;padding:3px 7px;position:sticky;left:36px;background:#fff;z-index:3;font-size:10.5px;line-height:1.3;white-space:normal}
+.dt td.nm{text-align:left;min-width:190px;max-width:210px;padding:3px 7px;position:sticky;left:36px;background:#fff;z-index:3;font-size:10.5px;line-height:1.3}
 .dt tr:hover td{background:#f5f9ff}
 .dt tr:hover td.tt{background:#e8eef5}
 .dt tr:hover td.nm{background:#f5f9ff}
@@ -104,7 +85,6 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 
 /* SEARCH */
 .srch{padding:7px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;color:var(--text);background:#fff;transition:.18s}
-.srch:focus{outline:none;border-color:var(--PL)}
 
 /* EXPORT BOX */
 .export-hero{background:linear-gradient(135deg,var(--PD) 0%,var(--PL) 100%);border-radius:12px;padding:22px;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:18px}
@@ -114,60 +94,27 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 /* FORM GRID */
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .fg label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-.fg select,.fg input[type=text],.fg input[type=number],.fg input[type=date]{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;color:var(--text);background:#fff}
-.fg select:focus,.fg input:focus{outline:none;border-color:var(--PL)}
+.fg select,.fg input[type=text],.fg input[type=number]{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;color:var(--text);background:#fff}
 
 /* CSV IMPORT */
 .drop-zone{border:2.5px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:.2s;background:#fafbfc}
-.drop-zone:hover,.drop-zone.over{border-color:var(--PL);background:#f0f6ff}
+.drop-zone:hover{border-color:var(--PL);background:#f0f6ff}
 .drop-zone .dz-icon{font-size:36px;margin-bottom:8px}
-.drop-zone .dz-title{font-size:14px;font-weight:700;color:var(--P);margin-bottom:4px}
-.drop-zone .dz-sub{font-size:12px;color:var(--muted)}
+.drop-zone .dz-title{font-size:14px;font-weight:700;color:var(--P)}
 
-/* TWO COL */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:760px){.two-col{grid-template-columns:1fr}.fg{grid-template-columns:1fr}.export-hero{flex-direction:column}.export-hero .btn-accent{margin-left:0}}
-
-/* GUIDE */
-.step-list{display:flex;flex-direction:column;gap:10px}
-.step-item{display:flex;gap:12px;align-items:flex-start}
-.step-num{width:28px;height:28px;border-radius:50%;background:var(--P);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;margin-top:1px}
-.step-body{flex:1}
-.step-ttl{font-weight:700;font-size:13px;margin-bottom:3px}
-.step-desc{font-size:12px;color:var(--muted);line-height:1.6}
-.code{background:#1e2a35;color:#a8d8f0;border-radius:6px;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px;line-height:1.6;overflow-x:auto;margin:6px 0}
+@media(max-width:760px){.two-col{grid-template-columns:1fr}.fg{grid-template-columns:1fr}}
 
 /* TOAST */
 #toast{position:fixed;bottom:20px;right:20px;background:var(--P);color:#fff;padding:11px 16px;border-radius:8px;font-size:12px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);transform:translateY(70px);opacity:0;transition:.3s;max-width:300px}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.ok{background:var(--S)}#toast.err{background:var(--D)}
-
-/* SPINNER */
 .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
 
-/* CHECKLIST */
-.chk-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #eef;font-size:12px}
-.chk-item:last-child{border-bottom:none}
-
-/* DEADLINE COUNTDOWN */
-.countdown{background:linear-gradient(135deg,#fff8ec,#fff3d4);border:1px solid #f0c060;border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:14px}
-.cd-num{font-size:36px;font-weight:800;color:var(--A);line-height:1;min-width:50px;text-align:center}
-.cd-text{flex:1}
-.cd-title{font-size:14px;font-weight:700;margin-bottom:2px}
-.cd-sub{font-size:12px;color:var(--muted)}
-
-/* TOP SITES BARS */
-.top-site{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.ts-rank{width:22px;text-align:right;font-weight:800;font-size:12px}
-.ts-info{flex:1;min-width:0}
-.ts-name{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-.ts-val{font-size:14px;font-weight:800;min-width:34px;text-align:right;color:var(--P)}
-
-/* ANIMAL CHART */
-.animal-row{margin-bottom:10px}
-.animal-lbl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
-.animal-val{font-weight:700}
+/* FOOTER */
+footer{background:#1a252f;color:rgba(255,255,255,.6);text-align:center;padding:12px 20px;font-size:11.5px;border-top:1px solid rgba(255,255,255,.05)}
+footer strong{color:#e8a020}
 </style>
 </head>
 <body>
@@ -177,13 +124,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
   <h1>Báo Cáo Tiêm Vắc Xin Phòng Dại
     <small>Sở Y Tế Hưng Yên</small>
   </h1>
-  <select class="month-sel" id="mPicker" onchange="changeMonth()">
-    <option value="4-2026">Tháng 4/2026</option>
-    <option value="5-2026" selected>Tháng 5/2026</option>
-    <option value="6-2026">Tháng 6/2026</option>
-    <option value="7-2026">Tháng 7/2026</option>
-    <option value="8-2026">Tháng 8/2026</option>
-  </select>
+  <select class="month-sel" id="mPicker" onchange="changeMonth()"></select>
 </header>
 
 <div class="tabs">
@@ -196,65 +137,30 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 </div>
 
 <datalist id="quick-numbers">
-  <option value="0">0 (Không có)</option>
-  <option value="1">1</option>
-  <option value="2">2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-  <option value="5">5</option>
-  <option value="10">10</option>
-  <option value="20">20</option>
+  <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+  <option value="3">3</option><option value="5">5</option><option value="10">10</option>
 </datalist>
 
 <main>
 
 <div id="page-dashboard" class="page active">
-  <div id="dash-alert"></div>
-
-  <div class="countdown" id="countdown"></div>
-
   <div class="stats" id="stats"></div>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">Tiến độ nộp báo cáo</span><span id="pct-lbl" style="font-size:20px;font-weight:800;color:var(--P)">0%</span></div>
-      <div class="cb">
-        <div class="bar-wrap" style="height:10px;margin-bottom:10px"><div class="bar" id="pct-bar" style="width:0%;background:var(--S)"></div></div>
-        <div style="display:flex;gap:16px;font-size:11px;color:var(--muted);flex-wrap:wrap">
-          <span>🟢 Đã nộp: <b id="cnt-done">0</b></span>
-          <span>🔴 Chưa nộp: <b id="cnt-miss">0</b></span>
-          <span>🟡 Nộp trễ: <b id="cnt-late">0</b></span>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="ch"><span class="ct">Phân bổ loại động vật cắn</span></div>
-      <div class="cb" id="animal-chart"></div>
-    </div>
-  </div>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">Top 10 điểm tiêm</span></div>
-      <div class="cb" id="top-sites"></div>
-    </div>
-    <div class="card">
-      <div class="ch"><span class="ct">Thống kê theo nhóm tuổi</span></div>
-      <div class="cb" id="age-chart"></div>
+  <div class="card">
+    <div class="ch"><span class="ct">Tiến độ tổng hợp báo cáo toàn tỉnh</span><span id="pct-lbl" style="font-size:20px;font-weight:800;color:var(--P)">0%</span></div>
+    <div class="cb">
+      <div class="bar-wrap" style="height:10px;margin-bottom:10px"><div class="bar" id="pct-bar" style="width:0%;background:var(--S)"></div></div>
     </div>
   </div>
 </div>
 
 <div id="page-data" class="page">
-  <div class="alert info"><div class="alert-icon">📌</div><div>Bảng hiển thị đầy đủ các điểm tiêm × 39 chỉ tiêu. Có thể nhập/sửa trực tiếp. Kích chuột vào ô để hiển thị danh sách từ 0 đến N. Nhấn <b>Lưu</b> để cập nhật dashboard.</div></div>
   <div class="card">
     <div class="ch">
-      <span class="ct">Số liệu tiêm dại – <span id="data-month-lbl">Tháng 5/2026</span></span>
+      <span class="ct">Bảng nhập liệu trực tiếp – <span id="data-month-lbl">Tháng hiện tại</span></span>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
-        <input type="text" class="srch" placeholder="🔍 Tìm điểm tiêm..." oninput="filterDT(this.value)" style="font-size:11px;padding:5px 9px">
-        <button class="btn btn-primary btn-sm" onclick="saveData()">💾 Lưu</button>
-        <button class="btn btn-outline btn-sm" onclick="clearAll()">🗑 Xóa trắng</button>
-        <button class="btn btn-accent btn-sm" onclick="go('export',document.querySelectorAll('.tab')[4])">📥 Xuất Excel</button>
+        <input type="text" class="srch" placeholder="🔍 Tìm nhanh điểm tiêm..." oninput="filterDT(this.value)">
+        <button class="btn btn-primary btn-sm" onclick="saveData()">💾 Lưu & Tính toán</button>
+        <button class="btn btn-outline btn-sm" onclick="clearAll()">🗑 Xóa trắng bảng</button>
       </div>
     </div>
     <div class="dt-wrap">
@@ -267,7 +173,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
             <th class="g" colspan="4">Tuổi</th>
             <th class="g" colspan="2">Thời gian</th>
             <th class="g" colspan="4">Loại ĐV</th>
-            <th class="g" colspan="4">Vị trí vết thương</th>
+            <th class="g" colspan="4">Vị trí vết cắn</th>
             <th class="g" colspan="3">Mức độ</th>
             <th class="g" colspan="4">Tình trạng ĐV</th>
             <th class="g" colspan="2">Số người tiêm</th>
@@ -278,16 +184,11 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
             <th rowspan="2">Dự phòng</th>
           </tr>
           <tr>
-            <th>Nam</th><th>Nữ</th>
-            <th>&lt;15</th><th>15-24</th><th>24-49</th><th>≥50</th>
-            <th>≤10n</th><th>&gt;10n</th>
-            <th>Chó</th><th>Mèo</th><th>Dơi</th><th>Khác</th>
-            <th>Đầu/cổ</th><th>Thân</th><th>Tay</th><th>Chân</th>
-            <th>ĐI</th><th>ĐII</th><th>ĐIII</th>
-            <th>BT</th><th>Ốm</th><th>Chạy rông</th><th>Dại</th>
-            <th>Bắp</th><th>Trong da</th>
-            <th>Đau</th><th>Đỏ</th><th>Tụ máu</th><th>Phù nề</th>
-            <th>Sốt</th><th>Khó chịu</th><th>Ngứa</th><th>Đau cơ</th><th>RLtiêu hóa</th><th>Khác</th>
+            <th>Nam</th><th>Nữ</th><th>&lt;15</th><th>15-24</th><th>24-49</th><th>≥50</th>
+            <th>≤10n</th><th>&gt;10n</th><th>Chó</th><th>Mèo</th><th>Dơi</th><th>Khác</th>
+            <th>Đầu/cổ</th><th>Thân</th><th>Tay</th><th>Chân</th><th>ĐI</th><th>ĐII</th><th>ĐIII</th>
+            <th>BT</th><th>Ốm</th><th>Chạy rông</th><th>Dại</th><th>Bắp</th><th>Trong da</th>
+            <th>Đau</th><th>Đỏ</th><th>Tụ máu</th><th>Phù nề</th><th>Sốt</th><th>Khó chịu</th><th>Ngứa</th><th>Đau cơ</th><th>RLtiêu hóa</th><th>Khác</th>
             <th>Có tiêm</th><th>Không tiêm</th>
           </tr>
         </thead>
@@ -299,83 +200,37 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 </div>
 
 <div id="page-progress" class="page">
-  <div id="prog-alert"></div>
   <div class="card">
-    <div class="ch">
-      <span class="ct">Tiến độ nộp báo cáo – <span id="prog-month-lbl">Tháng 5/2026</span></span>
-      <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
-        <span class="pill pill-ok" id="p-done">0 đã nộp</span>
-        <span class="pill pill-no" id="p-miss">0 chưa nộp</span>
-        <button class="btn btn-primary btn-sm" onclick="sendReminder()">📧 Nhắc nhở</button>
-        <button class="btn btn-outline btn-sm" onclick="markAllDone()">✅ Đánh dấu tất cả</button>
-      </div>
-    </div>
-    <div class="cb" style="padding-bottom:0">
-      <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap">
-        <input type="text" class="srch" placeholder="🔍 Tìm..." oninput="filterProg(this.value)" style="font-size:11px;padding:5px 9px">
-        <select class="srch" style="font-size:11px;padding:5px 9px" onchange="filterProgStatus(this.value)">
-          <option value="all">Tất cả</option>
-          <option value="done">Đã nộp</option>
-          <option value="missing">Chưa nộp</option>
-          <option value="late">Nộp trễ</option>
-        </select>
-      </div>
-    </div>
+    <div class="ch"><span class="ct">Danh sách theo dõi đơn vị báo cáo</span></div>
     <table class="tbl" id="prog-tbl">
-      <thead><tr>
-        <th>TT</th><th>Điểm tiêm</th><th>Trạng thái</th><th>Ngày nộp</th>
-        <th>Tổng người tiêm</th><th style="min-width:90px">Tiến độ</th><th>Thao tác</th>
-      </tr></thead>
+      <thead><tr><th>TT</th><th>Tên điểm tiêm chủng</th><th>Trạng thái dữ liệu</th></tr></thead>
       <tbody id="prog-body"></tbody>
     </table>
   </div>
 </div>
 
 <div id="page-import" class="page">
-  <div class="alert info"><div class="alert-icon">🔗</div><div><b>Kết nối với Google Apps Script:</b> Sau khi cài Apps Script, xuất CSV từ Google Sheet → tải về → kéo thả vào đây. Hệ thống tự nhận dạng và điền vào bảng số liệu.</div></div>
-
   <div class="two-col">
     <div class="card">
-      <div class="ch"><span class="ct">Nhập từ file CSV / Excel</span></div>
+      <div class="ch"><span class="ct">Đọc dữ liệu nâng cao</span></div>
       <div class="cb">
-        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="dzOver(event)" ondragleave="dzLeave()" ondrop="dzDrop(event)">
+        <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
           <div class="dz-icon">📂</div>
-          <div class="dz-title">Kéo thả file vào đây</div>
-          <div class="dz-sub">Hoặc nhấn để chọn file .csv / .xlsx từ máy tính<br>File xuất từ Google Sheet hoặc Apps Script</div>
+          <div class="dz-title">Nhấp vào đây chọn file .CSV / .XLSX tổng hợp</div>
         </div>
-        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFile(this.files[0])">
-        <div id="import-result" style="margin-top:12px"></div>
+        <input type="file" id="fileInput" accept=".csv,.xlsx" style="display:none" onchange="handleFile(this.files[0])">
+        <div id="import-result" style="margin-top:10px; font-weight:600"></div>
       </div>
     </div>
-
     <div class="card">
-      <div class="ch"><span class="ct">Nhập dữ liệu thủ công theo điểm tiêm</span></div>
+      <div class="ch"><span class="ct">Form nhập dữ liệu nhanh lẻ</span></div>
       <div class="cb">
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div class="fg" style="grid-template-columns:1fr">
-            <label>Chọn điểm tiêm
-              <select id="manual-site" style="font-size:12px;padding:7px" onchange="checkManualSite()">
-                <option value="">-- Chọn điểm tiêm --</option>
-              </select>
-            </label>
-            <label id="manual-site-custom-wrap" style="display: none; color: var(--P);">Ghi cụ thể tên điểm tiêm khác:
-              <input type="text" id="manual-site-custom" placeholder="Nhập tên phòng tiêm / trạm y tế cụ thể..." style="padding:8px 11px;border:1.5px solid var(--PL);border-radius:7px;font-size:12px;width:100%;margin-top:4px;background:#f0f6ff">
-            </label>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="manual-inputs"></div>
-          <button class="btn btn-primary" onclick="applyManual()" style="align-self:flex-start">✅ Cập nhật số liệu điểm này</button>
-        </div>
+        <label style="margin-bottom:10px; display:block; font-weight:bold">CHỌN ĐIỂM TIÊM CẦN NHẬP:
+          <select id="manual-site" style="width:100%; padding:8px; margin-top:4px; border-radius:6px" onchange="loadSiteToForm()"></select>
+        </label>
+        <div id="manual-inputs" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; max-height:40vh; overflow-y:auto; padding-right:4px"></div>
+        <button class="btn btn-primary" onclick="applyManual()" style="margin-top:12px; width:100%">✅ Xác nhận cập nhật điểm này</button>
       </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="ch"><span class="ct">Lịch sử nhập liệu</span></div>
-    <div class="cb">
-      <table class="tbl" id="import-log">
-        <thead><tr><th>Thời gian</th><th>Nguồn</th><th>Số dòng</th><th>Điểm tiêm</th><th>Trạng thái</th></tr></thead>
-        <tbody id="import-log-body"></tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -384,395 +239,330 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
   <div class="export-hero">
     <div style="font-size:40px">📊</div>
     <div class="export-hero-text">
-      <h3>Xuất Báo Cáo Excel Chuẩn Mẫu</h3>
-      <p>Chữ quay dọc 90 độ · Tự căn trang A4 nằm ngang · Kẻ viền tự động (Chữ đen chuẩn hành chính)</p>
+      <h3>Xuất Khẩu Báo Cáo Excel Chuẩn Form Bộ Y Tế</h3>
+      <p>File sau khi xuất tự định dạng chữ đứng, tiêu đề xoay dọc 90 độ, co dãn tự động khít giấy A4</p>
     </div>
-    <button class="btn btn-accent btn-lg" onclick="exportXLSX()" id="export-btn">
-      <span id="exp-spin" style="display:none" class="spin"></span> 📥 Tải xuống Excel
+    <button class="btn btn-accent btn-lg" onclick="exportXLSX()">
+      <span id="exp-spin" style="display:none" class="spin"></span> 📥 Tải Báo Cáo Excel
     </button>
   </div>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">Thông báo cáo & chữ ký</span></div>
-      <div class="cb">
-        <div class="fg">
-          <label>Tháng báo cáo<select id="exp-month"><option value="5" selected>Tháng 5</option><option value="6">Tháng 6</option><option value="7">Tháng 7</option></select></label>
-          <label>Năm<input type="number" id="exp-year" value="2026"></label>
-          
-          <label style="grid-column: span 2">Tên đơn vị (Dưới dòng Sở Y tế)
-            <select id="exp-unit" style="padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;color:var(--text);background:#fff" onchange="checkUnitChange()">
-              <option value="">-- Click để chọn tên đơn vị của bạn --</option>
-              <option value="TRUNG TÂM KIỂM SOÁT BỆNH TẬT">TRUNG TÂM KIỂM SOÁT BỆNH TẬT</option>
-            </select>
-          </label>
-
-          <label id="custom-unit-wrap" style="grid-column: span 2; display: none;">Ghi cụ thể tên đơn vị khác
-            <input type="text" id="exp-unit-custom" placeholder="Nhập tên phòng tiêm / trạm y tế cụ thể...">
-          </label>
-
-          <label style="grid-column: span 2">Ngày làm báo cáo (Tự động hoặc sửa lại)<input type="date" id="exp-date" onchange="renderExpCheck()"></label>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="ch"><span class="ct">Kiểm tra trước khi xuất</span></div>
-      <div class="cb" id="exp-check"></div>
-    </div>
-  </div>
-
   <div class="card">
-    <div class="ch"><span class="ct">Lưu ý kỹ thuật</span></div>
+    <div class="ch"><span class="ct">Cấu hình tiêu đề báo cáo năm hành chính</span></div>
     <div class="cb">
-      <ul style="padding-left:18px;line-height:2;font-size:12.5px">
-        <li><b>Danh sách đơn vị:</b> Tự động xổ xuống theo danh sách cơ sở đã được khai báo. Tự in hoa tên đơn vị khi xuất Excel.</li>
-        <li><b>Trường hợp Khác:</b> Nếu chọn "Khác (ghi cụ thể)", vui lòng điền tên cơ sở vào ô text xuất hiện bên dưới.</li>
-        <li><b>In ấn (A4 Landscape):</b> Khi mở Excel bấm in sẽ tự động quay ngang giấy A4 và ép vừa chiều rộng trang.</li>
-      </ul>
+      <div class="fg">
+        <label>Tháng kết xuất
+          <select id="exp-month">
+            <option value="1">Tháng 1</option><option value="2">Tháng 2</option><option value="3">Tháng 3</option>
+            <option value="4">Tháng 4</option><option value="5" selected>Tháng 5</option><option value="6">Tháng 6</option>
+            <option value="7">Tháng 7</option><option value="8">Tháng 8</option><option value="9">Tháng 9</option>
+            <option value="10">Tháng 10</option><option value="11">Tháng 11</option><option value="12">Tháng 12</option>
+          </select>
+        </label>
+        <label>Năm báo cáo (Có thể gõ gán bất kỳ năm nào)
+          <input type="number" id="exp-year" value="2026">
+        </label>
+      </div>
     </div>
   </div>
 </div>
 
 <div id="page-guide" class="page">
-  <div class="two-col">
-    <div class="card">
-      <div class="ch"><span class="ct">🎯 Mục tiêu hệ thống</span></div>
-      <div class="cb">
-        <div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;line-height:1.7">
-          <div class="alert ok"><div class="alert-icon">✅</div><div>Số hóa 100% quy trình tiếp nhận, xử lý và phân tích số liệu từ các cơ sở tiêm chủng toàn tỉnh Hưng Yên</div></div>
-          <div class="alert ok"><div class="alert-icon">✅</div><div>Tự động hóa hoàn toàn khâu tổng hợp dữ liệu, triệt tiêu cắt ghép Excel thủ công tại tuyến tỉnh</div></div>
-          <div class="alert ok"><div class="alert-icon">✅</div><div>Đảm bảo 100% đơn vị nộp trước ngày 05 hàng tháng qua hệ thống cảnh báo tự động</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="ch"><span class="ct">🔄 Quy trình 4 bước</span></div>
-      <div class="cb">
-        <div class="step-list">
-          <div class="step-item">
-            <div class="step-num">1</div>
-            <div class="step-body">
-              <div class="step-ttl">Cơ sở tiêm điền Google Form</div>
-              <div class="step-desc">Mỗi đơn vị điền 1 lần/tháng. Hạn: ngày 05. Link Form gửi qua email đơn vị.</div>
-            </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">2</div>
-            <div class="step-body">
-              <div class="step-ttl">Apps Script tự động tổng hợp</div>
-              <div class="step-desc">Mỗi lần nộp Form → Apps Script cập nhật Google Sheet TONG_HOP, gửi email xác nhận.</div>
-            </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">3</div>
-            <div class="step-body">
-              <div class="step-ttl">Import CSV vào hệ thống HTML</div>
-              <div class="step-desc">Xuất CSV từ Google Sheet → kéo thả vào tab "Nhập CSV" → tự điền bảng số liệu.</div>
-            </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">4</div>
-            <div class="step-body">
-              <div class="step-ttl">Xuất Excel chuẩn mẫu gửi cấp trên</div>
-              <div class="step-desc">Tab "Xuất Excel" → điền thông tin → nhấn Tải xuống. File đúng chuẩn font Times New Roman.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="card">
-    <div class="ch"><span class="ct">⚙️ Cài đặt Google Apps Script (làm 1 lần)</span></div>
-    <div class="cb">
-      <div class="step-list">
-        <div class="step-item">
-          <div class="step-num">A</div>
-          <div class="step-body">
-            <div class="step-ttl">Mở Google Sheet gắn với Form → Extensions → Apps Script</div>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">B</div>
-          <div class="step-body">
-            <div class="step-ttl">Dán toàn bộ nội dung file <b>GoogleAppsScript_TiemDai.js</b></div>
-            <div class="step-desc">Xóa code cũ, paste code mới, Ctrl+S để lưu</div>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">C</div>
-          <div class="step-body">
-            <div class="step-ttl">Sửa email admin trong phần CONFIG (2 dòng đầu)</div>
-            <div class="code">EMAIL_ADMIN: "pcbtn.ksbt.hungyen@gmail.com",<br>EMAIL_CC: "giamdoc.ksbt.hungyen@gmail.com",</div>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">D</div>
-          <div class="step-body">
-            <div class="step-ttl">Chọn hàm <b>setupTriggers</b> → nhấn ▶ Run → cấp quyền khi được hỏi</div>
-            <div class="step-desc">Xuất hiện hộp thoại "✅ Cài đặt hoàn tất" = thành công</div>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">E</div>
-          <div class="step-body">
-            <div class="step-ttl">Quay lại Sheet → menu "🏥 Hệ thống Tiêm Dại" → "Khởi tạo lại sheet TONG_HOP"</div>
-          </div>
-        </div>
-      </div>
+    <div class="ch"><span class="ct">📖 Hướng dẫn vận hành liên năm (2026, 2027, 2028...)</span></div>
+    <div class="cb" style="line-height:1.8; font-size:13px">
+      <p>• <b>Cơ chế tự động:</b> Phần mềm tự nhận diện năm thực tế của máy tính để điền bộ chọn tháng.</p>
+      <p>• <b>Tính năng lưu trữ:</b> Khi nhập số liệu xong, luôn nhớ nhấn nút <b>"Lưu & Tính toán"</b> để phần mềm cập nhật số tổng hàng cuối cùng.</p>
+      <hr style="margin:10px 0; border:none; border-top:1px dashed var(--border)">
+      <p style="color:var(--D); font-weight:700">📞 HỖ TRỢ KỸ THUẬT VÀ SỰ CỐ:</p>
+      <p>Mọi thắc mắc hoặc cần hỗ trợ cấu hình dữ liệu, xin vui lòng liên hệ trực tiếp qua số hotline Admin: <b>02273836722</b> để được xử lý nhanh nhất.</p>
     </div>
   </div>
 </div>
 
 </main>
+
+<footer>
+  Hệ thống quản lý báo cáo Sở Y Tế Hưng Yên | Khi cần hỗ trợ, vui lòng gọi điện Admin: <strong>02273836722</strong>
+</footer>
+
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════
-//  DATA
-// ═══════════════════════════════════════
 let SITES=[
-"Phòng tiêm chủng - TT KSBT Hưng Yên cơ sở 1","Phòng tiêm DV - TT KSBT Hưng Yên cơ sở 2","Phòng tiêm chủng - Bệnh viện Nhi Thái Bình","TT VNVC Thái Bình","TT tiêm chủng Thái Bình Vàng CN Hưng Hà","TT tiêm chủng Thái Bình Vàng CN Quỳnh Phụ","TT tiêm chủng Thái Bình Vàng CN Thuỵ Xuân","TT tiêm chủng Thái Bình Vàng CN Ngã tư Đậu","TT tiêm chủng Thái Bình Vàng CN Tân Bình","TT tiêm chủng An Nhiên","TT tiêm chủng Potec 81 Thái Bình","TT tiêm chủng Potec Vũ Quý","TT tiêm chủng Potec 81.2 Hưng Hà","TT tiêm chủng Potec 81.3 Quỳnh Phụ","TT tiêm chủng Potec 81.4 Thái Thụy","TT tiêm chủng và TVDD Thái Bình CN Tiền Hải","TT tiêm chủng và TVDD Thái Bình CN Thái Thuỵ","TT tiêm chủng và TVDD Thái Bình CN Quỳnh Phụ","TT tiêm chủng và TVDD Thái Bình CN Đông Hưng","TT tiêm chủng và TVDD Thái Bình CN Hưng Nhân","TT tiêm chủng và TVDD Thái Bình CN Hưng Hà","TT tiêm chủng và TVDD Thái Bình CN Vũ Thư","TT tiêm chủng Long Châu 144","TT tiêm chủng số 1 Thái Bình","TT tiêm chủng Vaccine Incheon Thái Thuỵ","TT tiêm chủng Vaccine Incheon Đông Hưng","TT tiêm chủng Vaccine Incheon Vũ Thư","Phòng tiêm chủng vắc xin Đông Hưng","Trung tâm tiêm chủng vắc xin Thái Thuỵ","Trung tâm tiêm chủng VNVC Hưng Yên","Trung tâm tiêm chủng VNVC Phố Nối","Trung tâm tiêm chủng VNVC Văn Giang","Phòng tiêm chủng Potec 89 Hưng Yên","Phòng tiêm Potec 89.1 Kim Động","Phòng tiêm Potec 89.2 Yên Mỹ","Phòng tiêm chủng Potec 89.3 Khoái Châu","Phòng tiêm Potec 89.6 Tiên Lữ","Phòng tiêm Potec 89.7 Phù Cừ","Phòng tiêm chủng vắc xin Hưng Yên CS Kim Động","Phòng tiêm chủng vắc xin Hưng Yên CS Văn Lâm","Phòng tiêm chủng vắc xin Hưng Yên CS Ân Thi","Phòng tiêm dịch vụ vắc xin Go Văn Giang","Phòng tiêm chủng dịch vụ Go vaccine Đình Cao, Phù Cừ","Phòng tiêm chủng dịch vụ Go vaccine Khoái Châu","Phòng tiêm VHNcare Khoái Châu","Phòng tiêm VHN Care Phù Cừ","Công ty CPDP FPT Long Châu - CS tiêm chủng Long Châu 149","Phòng tiêm dịch vụ vắc xin - Công ty CP BVĐK Hưng Hà","Phòng tiêm chủng DR.ECO","Phòng tiêm chủng dịch vụ Phố Nối, Công ty TBYT Thế Lâm","Trung tâm tiêm chủng vaccine Osstech","Phòng tiêm chủng Hà Nội","Phòng tiêm chủng dịch vụ Thanh Nhàn","Phòng tiêm BIVAC","Phòng tiêm chủng dịch vụ Mỹ Hào","Phòng tiêm chủng vắc xin Y khoa Hà Nội cơ sở Kim Động","Phòng tiêm chủng Minh Đức","Cơ sở tiêm chủng vắc xin Happy Phù Cừ","Phòng tiêm chủng vắc xin dịch vụ Happy Yên Phú","Phòng tiêm vắc xin dịch vụ Thiện Đức","Phòng tiêm chủng vaccine House", "Khác (ghi cụ thể)"
+"Phòng tiêm chủng - TT KSBT Hưng Yên cơ sở 1","Phòng tiêm DV - TT KSBT Hưng Yên cơ sở 2","Phòng tiêm chủng - Bệnh viện Nhi Thái Bình","TT VNVC Thái Bình","TT tiêm chủng Thái Bình Vàng CN Hưng Hà","TT tiêm chủng Thái Bình Vàng CN Quỳnh Phụ","TT tiêm chủng Thái Bình Vàng CN Thuỵ Xuân","TT tiêm chủng Thái Bình Vàng CN Ngã tư Đậu","TT tiêm chủng Thái Bình Vàng CN Tân Bình","TT tiêm chủng An Nhiên","TT tiêm chủng Potec 81 Thái Bình","TT tiêm chủng Potec Vũ Quý","TT tiêm chủng Potec 81.2 Hưng Hà","TT tiêm chủng Potec 81.3 Quỳnh Phụ","TT tiêm chủng Potec 81.4 Thái Thụy","TT tiêm chủng và TVDD Thái Bình CN Tiền Hải","TT tiêm chủng và TVDD Thái Bình CN Thái Thuỵ","TT tiêm chủng và TVDD Thái Bình CN Quỳnh Phụ","TT tiêm chủng và TVDD Thái Bình CN Đông Hưng","TT tiêm chủng và TVDD Thái Bình CN Hưng Nhân","TT tiêm chủng và TVDD Thái Bình CN Hưng Hà","TT tiêm chủng và TVDD Thái Bình CN Vũ Thư","TT tiêm chủng Long Châu 144","TT tiêm chủng số 1 Thái Bình","TT tiêm chủng Vaccine Incheon Thái Thuỵ","TT tiêm chủng Vaccine Incheon Đông Hưng","TT tiêm chủng Vaccine Incheon Vũ Thư","Phòng tiêm chủng vắc xin Đông Hưng","Trung tâm tiêm chủng vắc xin Thái Thuỵ","Trung tâm tiêm chủng VNVC Hưng Yên","Trung tâm tiêm chủng VNVC Phố Nối","Trung tâm tiêm chủng VNVC Văn Giang","Phòng tiêm chủng Potec 89 Hưng Yên","Phòng tiêm Potec 89.1 Kim Động","Phòng tiêm Potec 89.2 Yên Mỹ","Phòng tiêm chủng Potec 89.3 Khoái Châu","Phòng tiêm Potec 89.6 Tiên Lữ","Phòng tiêm Potec 89.7 Phù Cừ","Phòng tiêm chủng vắc xin Hưng Yên CS Kim Động","Phòng tiêm chủng vắc xin Hưng Yên CS Văn Lâm","Phòng tiêm chủng vắc xin Hưng Yên CS Ân Thi","Phòng tiêm dịch vụ vắc xin Go Văn Giang","Phòng tiêm chủng dịch vụ Go vaccine Đình Cao, Phù Cừ","Phòng tiêm chủng dịch vụ Go vaccine Khoái Châu","Phòng tiêm VHNcare Khoái Châu","Phòng tiêm VHN Care Phù Cừ","Công ty CPDP FPT Long Châu - CS tiêm chủng Long Châu 149","Phòng tiêm dịch vụ vắc xin - Công ty CP BVĐK Hưng Hà","Phòng tiêm chủng DR.ECO","Phòng tiêm chủng dịch vụ Phố Nối, Công ty TBYT Thế Lâm","Trung tâm tiêm chủng vaccine Osstech","Phòng tiêm chủng Hà Nội","Phòng tiêm chủng dịch vụ Thanh Nhàn","Phòng tiêm BIVAC","Phòng tiêm chủng dịch vụ Mỹ Hào","Phòng tiêm chủng vắc xin Y khoa Hà Nội cơ sở Kim Động","Phòng tiêm chủng Minh Đức","Cơ sở tiêm chủng vắc xin Happy Phù Cừ","Phòng tiêm chủng vắc xin dịch vụ Happy Yên Phú","Phòng tiêm vắc xin dịch vụ Thiện Đức","Phòng tiêm chủng vaccine House"
 ];
 
-// Vá lại đoạn code mảng INIT_DATA bị thiếu và lỗi cú pháp ở cuối dòng của bạn
+const LABELS = [
+  "Nam", "Nữ", "<15 tuổi", "15-24 tuổi", "24-49 tuổi", "≥50 tuổi", 
+  "≤10 ngày", ">10 ngày", "Chó cắn", "Mèo cắn", "Dơi cắn", "Khác", 
+  "Vết Đầu/Cổ", "Vết Thân", "Vết Tay", "Vết Chân", "Độ I", "Độ II", "Độ III",
+  "ĐV Bình thường", "ĐV Ốm", "ĐV Chạy rông", "ĐV Dại", "Tiêm Bắp", "Trong da",
+  "HTKD", "PU Đau", "PU Đỏ", "PU Tụ máu", "PU Phù nề", "Sốt", "Khó chịu", "Ngứa", 
+  "Đau cơ", "RL tiêu hóa", "PU Khác", "TV Có tiêm", "TV Không tiêm", "Dự phòng"
+];
+
 const INIT_DATA=[
-[3,2,1,0,0,4,5,0,3,2,0,0,0,0,2,3,0,4,1,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[28,26,7,3,11,33,52,2,45,8,0,1,0,1,17,37,18,17,19,48,4,2,0,54,0,23,20,2,0,1,3,15,1,5,1,0,0,0,0],
-[25,18,16,5,8,14,42,1,30,12,0,1,5,3,27,10,0,4,39,28,4,6,5,29,0,36,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[12,9,7,1,8,5,21,0,13,7,1,0,1,1,9,12,0,3,18,18,0,3,0,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[11,1,4,0,3,5,11,1,11,1,0,0,0,0,1,11,0,0,12,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[1,5,0,1,0,5,6,0,5,1,0,0,1,0,2,3,0,4,2,6,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[4,4,2,1,1,4,8,0,7,1,0,0,0,0,3,5,0,0,8,8,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,2,0,0,3,1,4,0,3,1,0,0,0,0,1,3,0,0,4,4,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,2,0,0,3,2,5,0,4,1,0,0,0,0,0,5,0,2,3,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,4,2,0,1,3,5,0,5,0,0,0,0,0,1,4,0,0,5,5,0,0,0,6,0,0,6,0,0,0,0,6,0,0,0,0,0,0,1],
-[2,1,2,0,0,1,2,1,1,2,0,0,0,0,2,1,0,3,0,2,0,1,0,3,0,0,3,0,0,0,0,1,0,0,0,0,0,0,0],
-[4,3,0,0,2,5,7,0,7,0,0,0,0,0,1,6,0,0,7,7,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[10,14,4,1,8,11,24,0,20,4,0,0,0,0,9,15,3,17,4,14,0,10,0,24,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[11,11,4,3,4,11,22,0,22,0,0,0,0,0,0,22,0,0,22,19,0,3,0,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,6,2,1,3,3,9,0,8,0,1,0,0,0,3,6,0,0,9,6,0,3,0,9,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0],
-[1,5,2,1,1,2,6,0,6,0,0,0,0,0,0,6,0,6,0,6,0,0,0,6,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
-[5,6,5,0,3,3,11,0,9,2,0,0,2,0,3,6,0,0,11,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,4,1,1,1,3,6,0,5,1,0,0,0,0,3,3,0,3,3,6,0,0,0,6,0,0,1,0,0,0,0,2,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[3,2,3,0,0,2,5,0,3,2,0,0,0,0,2,3,0,4,1,4,1,0,0,5,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0],
-[1,4,1,0,0,4,5,0,5,0,0,0,0,0,1,4,0,4,1,5,0,0,0,5,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0],
-[5,2,1,0,2,4,7,0,7,0,0,0,0,0,3,4,0,6,1,7,0,0,0,7,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0],
-[33,25,34,2,4,18,58,0,48,7,0,3,0,5,27,26,3,9,46,45,4,8,1,58,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[8,4,3,1,4,4,12,0,9,3,0,0,1,0,5,6,0,5,7,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[9,7,4,0,1,11,16,0,14,2,0,0,0,0,6,10,0,16,0,14,0,2,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[2,0,0,1,1,0,2,0,2,0,0,0,0,0,0,2,2,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[1,0,0,0,0,1,1,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[17,14,7,3,3,18,31,0,26,5,0,0,1,2,11,17,1,27,3,26,1,4,0,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[10,2,5,0,3,4,12,0,9,3,0,0,0,0,5,8,12,0,0,12,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[21,20,14,2,11,14,41,0,30,9,0,2,0,4,8,29,1,2,38,37,2,2,0,41,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[28,16,10,8,14,12,42,0,30,11,0,1,2,4,15,21,0,4,38,37,1,4,0,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-[24,15,16,4,15,4,38,0,21,13,1,3,2,2,19,15,0,6,32,32,0,6,0,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-[28,32,11,9,14,26,55,5,47,12,0,1,8,5,12,35,0,44,16,42,12,6,0,60,0,16,2,0,0,0,0,0,0,0,0,0,0,0,0],
-          [4,7,1,2,1,7,11,0,7,4,0,0,0,0,5,6,0,2,9,11,0,0,0,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          [3,8,2,0,6,3,11,0,7,4,0,0,0,3,6,2,1,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        ];
+  [3,2,1,0,0,4,5,0,3,2,0,0,0,0,2,3,0,4,1,5,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [28,26,7,3,11,33,52,2,45,8,0,1,0,1,17,37,18,17,19,48,4,2,0,54,0,23,20,2,0,1,3,15,1,5,1,0,0,0,0],
+  [25,18,16,5,8,14,42,1,30,12,0,1,5,3,27,10,0,4,39,28,4,6,5,29,0,36,0,0,0,0,0,0,0,0,0,0,0,0,0]
+];
 
-        // KHỞI TẠO BẢNG DỮ LIỆU BAN ĐẦU
-        function initTable() {
-          const body = document.getElementById("dt-body");
-          body.innerHTML = "";
-          
-          SITES.forEach((site, index) => {
-            if (site === "Khác (ghi cụ thể)") return;
-            
-            const tr = document.createElement("tr");
-            tr.setAttribute("data-site", site);
-            
-            // Cột số thứ tự
-            const tdTd = document.createElement("td");
-            tdTd.className = "tt";
-            tdTd.innerText = index + 1;
-            tr.appendChild(tdTd);
-            
-            // Cột tên điểm tiêm
-            const tdNm = document.createElement("td");
-            tdNm.className = "nm";
-            tdNm.innerText = site;
-            tr.appendChild(tdNm);
-            
-            // Lấy dòng dữ liệu mẫu tương ứng (nếu có)
-            const rowData = INIT_DATA[index] || Array(39).fill(0);
-            
-            // Tạo 39 ô nhập liệu cho chỉ tiêu
-            for (let i = 0; i < 39; i++) {
-              const td = document.createElement("td");
-              const input = document.createElement("input");
-              input.type = "number";
-              
-              // THAY ĐỔI QUAN TRỌNG:
-              // Nếu giá trị = 0, để TRỐNG giao diện (bằng chuỗi rỗng), người dùng tự click chọn từ list
-              input.value = rowData[i] === 0 ? "" : rowData[i]; 
-              
-              // Liên kết ô nhập này tới <datalist> để tự sinh lựa chọn nhanh
-              input.setAttribute("list", "quick-numbers");
-              
-              td.appendChild(input);
-              tr.appendChild(td);
+function initMonthPicker() {
+  const picker = document.getElementById("mPicker");
+  const currentYear = new Date().getFullYear();
+  document.getElementById("exp-year").value = currentYear;
+  
+  picker.innerHTML = "";
+  for(let m=1; m<=12; m++) {
+    const opt = document.createElement("option");
+    opt.value = `${m}-${currentYear}`;
+    opt.innerText = `Tháng ${m}/${currentYear}`;
+    if(m === 5) opt.selected = true;
+    picker.appendChild(opt);
+  }
+}
+
+function initTable() {
+  const body = document.getElementById("dt-body");
+  body.innerHTML = "";
+  
+  SITES.forEach((site, index) => {
+    const tr = document.createElement("tr");
+    tr.setAttribute("data-site", site);
+    tr.innerHTML = `<td class="tt">${index+1}</td><td class="nm">${site}</td>`;
+    const rowData = INIT_DATA[index] || Array(39).fill(0);
+    
+    for (let i = 0; i < 39; i++) {
+      tr.innerHTML += `<td><input type="number" value="${rowData[i]||''}" list="quick-numbers" oninput="calcTotalRow()"></td>`;
+    }
+    body.appendChild(tr);
+  });
+  
+  const selectManual = document.getElementById("manual-site");
+  selectManual.innerHTML = SITES.map(s => `<option value="${s}">${s}</option>`).join("");
+  
+  buildManualFormInputs();
+  calcTotalRow();
+  updateProgressTab();
+}
+
+function buildManualFormInputs() {
+  const container = document.getElementById("manual-inputs");
+  container.innerHTML = LABELS.map((lbl, idx) => `
+    <label style="font-size:11px; font-weight:600; color:var(--muted)">${lbl}
+      <input type="number" id="manual-col-${idx}" style="width:100%; padding:6px; margin-top:2px; border:1px solid var(--border); border-radius:4px">
+    </label>
+  `).join("");
+}
+
+function loadSiteToForm() {
+  const siteName = document.getElementById("manual-site").value;
+  const rows = document.querySelectorAll("#dt-body tr");
+  let targetRow = null;
+  rows.forEach(r => { if(r.getAttribute("data-site") === siteName) targetRow = r; });
+  
+  if(targetRow) {
+    const inputs = targetRow.querySelectorAll("input[type=number]");
+    for(let i=0; i<39; i++) {
+      document.getElementById(`manual-col-${i}`).value = inputs[i].value;
+    }
+  }
+}
+
+function applyManual() {
+  const siteName = document.getElementById("manual-site").value;
+  const rows = document.querySelectorAll("#dt-body tr");
+  rows.forEach(row => {
+    if(row.getAttribute("data-site") === siteName) {
+      const inputs = row.querySelectorAll("input[type=number]");
+      for(let i=0; i<39; i++) {
+        inputs[i].value = document.getElementById(`manual-col-${i}`).value;
+      }
+    }
+  });
+  showToast("Đã đẩy dữ liệu vào bảng tạm!", "ok");
+  calcTotalRow();
+}
+
+function calcTotalRow() {
+  const rows = document.querySelectorAll("#dt-body tr");
+  let totals = Array(39).fill(0);
+  let filledCount = 0;
+  
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll("input[type=number]");
+    let hasData = false;
+    inputs.forEach((input, i) => {
+      let v = parseInt(input.value) || 0;
+      totals[i] += v;
+      if(input.value !== "") hasData = true;
+    });
+    if(hasData) filledCount++;
+  });
+  
+  const f = document.getElementById("dt-foot");
+  f.innerHTML = `<tr class="tot"><td colspan="2" style="text-align:center">TỔNG CỘNG</td>${totals.map(t => `<td>${t}</td>`).join("")}</tr>`;
+  
+  const pct = Math.round((filledCount / SITES.length) * 100);
+  document.getElementById("pct-lbl").innerText = pct + "%";
+  document.getElementById("pct-bar").style.width = pct + "%";
+  
+  const stats = document.getElementById("stats");
+  stats.innerHTML = `
+    <div class="stat blue"><div class="stat-lbl">Tổng Nam Tiêm</div><div class="stat-val">${totals[0]}</div></div>
+    <div class="stat green"><div class="stat-lbl">Tổng Nữ Tiêm</div><div class="stat-val">${totals[1]}</div></div>
+    <div class="stat orange"><div class="stat-lbl">Tổng Do Chó Cắn</div><div class="stat-val">${totals[8]}</div></div>
+    <div class="stat red"><div class="stat-lbl">Tổng Dự Phòng</div><div class="stat-val">${totals[38]}</div></div>
+  `;
+}
+
+function updateProgressTab() {
+  const body = document.getElementById("prog-body");
+  body.innerHTML = "";
+  SITES.forEach((s, idx) => {
+    body.innerHTML += `<tr><td>${idx+1}</td><td>${s}</td><td><span style="color:var(--S); font-weight:bold">✓ Sẵn sàng</span></td></tr>`;
+  });
+}
+
+function go(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+function filterDT(v) {
+  document.querySelectorAll("#dt-body tr").forEach(r => {
+    let match = r.getAttribute("data-site").toLowerCase().includes(v.toLowerCase());
+    r.style.display = match ? "" : "none";
+  });
+}
+
+function clearAll() {
+  if(confirm("Xóa toàn bộ số liệu hiện tại trên màn hình?")) {
+    document.querySelectorAll("#dt-body input").forEach(i => i.value = "");
+    calcTotalRow();
+    showToast("Đã dọn sạch bảng dữ liệu!", "err");
+  }
+}
+
+function saveData() {
+  calcTotalRow();
+  showToast("Hệ thống đã lưu trữ và đồng bộ thành công!", "ok");
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById("toast");
+  t.innerText = msg; t.className = "show " + type;
+  setTimeout(() => t.className = "", 3000);
+}
+
+function handleFile(file) {
+  if(!file) return;
+  document.getElementById("import-result").innerText = "⏳ Đang phân tích file...";
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, {type: 'array'});
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, {header: 1});
+      
+      let matchCount = 0;
+      rows.forEach(r => {
+        if(!r[1]) return;
+        let siteName = r[1].toString().trim();
+        document.querySelectorAll("#dt-body tr").forEach(tr => {
+          if(tr.getAttribute("data-site").toLowerCase() === siteName.toLowerCase()) {
+            const inputs = tr.querySelectorAll("input[type=number]");
+            for(let i=0; i<39; i++) {
+              if(r[i+2] !== undefined) inputs[i].value = r[i+2];
             }
-            
-            body.appendChild(tr);
-          });
-          
-          // Thêm điểm chọn thủ công vào phần select ở tab Import
-          const selectManual = document.getElementById("manual-site");
-          selectManual.innerHTML = '<option value="">-- Chọn điểm tiêm --</option>';
-          SITES.forEach(site => {
-            const opt = document.createElement("option");
-            opt.value = site;
-            opt.innerText = site;
-            selectManual.appendChild(opt);
-          });
-          
-          buildManualForm();
-        }
-
-        // TỰ ĐỘNG XÂY DỰNG FORM NHẬP THỦ CÔNG GIAO DIỆN TRỐNG VÀ CÓ LIST CHỌN SỐ
-        function buildManualForm() {
-          const container = document.getElementById("manual-inputs");
-          container.innerHTML = "";
-          
-          const labels = [
-            "Nam", "Nữ", "<15 tuổi", "15-24 tuổi", "24-49 tuổi", "≥50 tuổi", 
-            "≤10 ngày", ">10 ngày", "Chó cắn", "Mèo cắn", "Dơi cắn", "Khác", 
-            "Vết Đầu/Cổ", "Vết Thân", "Vết Tay", "Vết Chân", "Độ I", "Độ II", "Độ III",
-            "ĐV Bình thường", "ĐV Ốm", "ĐV Chạy rông", "ĐV Dại", "Tiêm Bắp", "Trong da",
-            "HTKD", "PU Đau", "PU Đỏ", "PU Tụ máu", "PU Phù nề", "Sốt", "Khó chịu", "Ngứa", 
-            "Đau cơ", "RL tiêu hóa", "PU Toàn thân khác", "Tử vong có tiêm", "Tử vong không tiêm", "Dự phòng"
-          ];
-          
-          labels.forEach((lbl, index) => {
-            const label = document.createElement("label");
-            label.innerText = lbl;
-            
-            const input = document.createElement("input");
-            input.type = "number";
-            input.id = `manual-col-${index}`;
-            input.value = ""; // Mặc định để trống hoàn toàn sạch sẽ
-            input.setAttribute("list", "quick-numbers"); // Tích hợp danh sách chọn nhanh từ 0 đến N
-            
-            label.appendChild(input);
-            container.appendChild(label);
-          });
-        }
-
-        // KIỂM TRA ĐIỂM TIÊM THỦ CÔNG KHÁC
-        function checkManualSite() {
-          const val = document.getElementById("manual-site").value;
-          const wrap = document.getElementById("manual-site-custom-wrap");
-          if (val === "Khác (ghi cụ thể)") {
-            wrap.style.display = "block";
-          } else {
-            wrap.style.display = "none";
+            matchCount++;
           }
-        }
+        });
+      });
+      calcTotalRow();
+      document.getElementById("import-result").innerHTML = `🟢 Khớp thành công dữ liệu của <b>${matchCount}</b> điểm tiêm!`;
+      showToast("Đọc file hoàn tất!", "ok");
+    } catch(err) {
+      document.getElementById("import-result").innerText = "🔴 Định dạng file lỗi hoặc không đọc được!";
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
 
-        // ÁP DỤNG DỮ LIỆU NHẬP THỦ CÔNG LÊN BẢNG LỚN
-        function applyManual() {
-          let siteName = document.getElementById("manual-site").value;
-          if (!siteName) {
-            showToast("Vui lòng chọn một điểm tiêm!", "err");
-            return;
-          }
-          
-          if (siteName === "Khác (ghi cụ thể)") {
-            const customName = document.getElementById("manual-site-custom").value.trim();
-            if (!customName) {
-              showToast("Vui lòng ghi rõ tên điểm tiêm khác!", "err");
-              return;
-            }
-            siteName = customName;
-            
-            // Nếu chưa có trong danh sách SITES thì bổ sung vào bảng
-            if (!SITES.includes(siteName)) {
-              SITES.splice(SITES.length - 1, 0, siteName);
-              initTable();
-            }
-          }
-          
-          // Tìm dòng dữ liệu trong bảng lớn để điền vào
-          const rows = document.querySelectorAll("#dt-body tr");
-          let targetRow = null;
-          rows.forEach(row => {
-            if (row.getAttribute("data-site") === siteName) {
-              targetRow = row;
-            }
-          });
-          
-          if (targetRow) {
-            const inputs = targetRow.querySelectorAll("input[type=number]");
-            for (let i = 0; i < 39; i++) {
-              const mVal = document.getElementById(`manual-col-${i}`).value;
-              inputs[i].value = mVal; // Điền giá trị vào (gõ gì nhận nấy, trống thì để trống)
-            }
-            showToast(`Đã cập nhật số liệu cho: ${siteName}`, "ok");
-            saveData();
-          }
-        }
+function exportXLSX() {
+  const m = document.getElementById("exp-month").value;
+  const y = document.getElementById("exp-year").value;
+  
+  let data = [
+    ["BÁO CÁO KẾT QUẢ TIÊM VẮC XIN PHÒNG DẠI NĂM " + y],
+    ["Tháng báo cáo: Tháng " + m + " / Năm " + y],
+    [],
+    ["TT", "Tên đơn vị", "Giới", "", "Tuổi", "", "", "", "Thời gian đến tiêm", "", "Loại động vật cắn", "", "", "", "Vị trí vết cắn", "", "", "", "Mức độ thương tổn", "", "", "Tình trạng động vật", "", "", "", "Số người tiêm vắc xin phòng dại", "", "Huyết thanh kháng dại", "Phản ứng sau tiêm chủng", "", "", "", "", "", "", "", "", "", "Tử vong do dại", "", "Dự phòng"],
+    ["", "", "Nam", "Nữ", "<15", "15-24", "25-49", "≥50", "≤10 ngày", ">10 ngày", "Chó", "Mèo", "Dơi", "Khác", "Đầu, Cổ", "Thân", "Tay", "Chân", "Độ I", "Độ II", "Độ III", "Bình thường", "Ốm", "Chạy rông", "Dại", "Bắp", "Trong da", "", "Tại chỗ", "", "", "", "Toàn thân", "", "", "", "", "", "Có tiêm", "Không tiêm", ""],
+    ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Đau", "Đỏ", "Tụ máu", "Phù nề", "Sốt", "Khó chịu", "Ngứa", "Đau cơ", "RL tiêu hóa", "Khác", "", "", ""]
+  ];
 
-        // HÀM CHUYỂN ĐỔI TAB (GIỮ NGUYÊN)
-        function go(pageId, btnEl) {
-          document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-          document.getElementById('page-' + pageId).classList.add('active');
-          if(btnEl) btnEl.classList.add('active');
-        }
+  document.querySelectorAll("#dt-body tr").forEach(tr => {
+    let row = [
+      tr.querySelector(".tt").innerText,
+      tr.querySelector(".nm").innerText
+    ];
+    tr.querySelectorAll("input").forEach(i => row.push(parseInt(i.value) || 0));
+    data.push(row);
+  });
 
-        // CÁC HÀM PHỤ TRỢ MÔ PHỎNG (CHO CODE CHẠY ĐƯỢC)
-        function changeMonth() { showToast("Đã chuyển tháng báo cáo", "ok"); }
-        function filterDT(v) {
-          const rows = document.querySelectorAll("#dt-body tr");
-          rows.forEach(r => {
-            const txt = r.querySelector(".nm").innerText.toLowerCase();
-            r.style.display = txt.includes(v.toLowerCase()) ? "" : "none";
-          });
-        }
-        function clearAll() {
-          if(confirm("Bạn có chắc chắn muốn xóa trắng toàn bộ ô số liệu không?")) {
-            document.querySelectorAll("#dt-body input").forEach(i => i.value = "");
-            showToast("Đã xóa trắng bảng dữ liệu", "ok");
-          }
-        }
-        function saveData() { 
-          showToast("Dữ liệu đã được lưu ngầm hệ thống!", "ok"); 
-          updateDashboardStats();
-        }
-        function showToast(m,type) {
-          const t = document.getElementById("toast");
-          t.innerText = m; t.className = "show " + type;
-          setTimeout(() => t.className = "", 3000);
-        }
-        function updateDashboardStats() {
-          // Hàm tính toán tổng cộng từ bảng lên Dashboard mô phỏng
-          let totalInjections = 0;
-          document.querySelectorAll("#dt-body tr").forEach(row => {
-            row.querySelectorAll("input").forEach(input => {
-              // Mẹo xử lý ô trống: Chuyển chuỗi rỗng "" hoặc lỗi thành số 0 để cộng toán không bị NaN
-              totalInjections += Number(input.value) || 0; 
-            });
-          });
-          const statsBox = document.getElementById("stats");
-          statsBox.innerHTML = `
-            <div class="stat blue">
-              <div class="stat-lbl">Tổng số lượt tiêm chủng</div>
-              <div class="stat-val">${totalInjections}</div>
-              <div class="stat-sub">Dữ liệu tháng hiện tại</div>
-            </div>
-          `;
-        }
-        
-        // Khởi động chạy hệ thống khi tải trang lần đầu
-        window.onload = function() {
-          initTable();
-          updateDashboardStats();
-        };
+  let footRow = ["", "TỔNG CỘNG"];
+  document.querySelectorAll("#dt-foot tr td").forEach((td, idx) => {
+    if(idx > 0) footRow.push(parseInt(td.innerText) || 0);
+  });
+  data.push(footRow);
+
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  
+  ws["!merges"] = [
+    {s:{r:0,c:0}, e:{r:0,c:40}}, {s:{r:1,c:0}, e:{r:1,c:40}},
+    {s:{r:4,c:0}, e:{r:6,c:0}}, {s:{r:4,c:1}, e:{r:6,c:1}},
+    {s:{r:4,c:2}, e:{r:4,c:3}}, {s:{r:4,c:4}, e:{r:4,c:7}},
+    {s:{r:4,c:8}, e:{r:4,c:9}}, {s:{r:4,c:10}, e:{r:4,c:13}},
+    {s:{r:4,c:14}, e:{r:4,c:17}}, {s:{r:4,c:18}, e:{r:4,c:20}},
+    {s:{r:4,c:21}, e:{r:4,c:24}}, {s:{r:4,c:25}, e:{r:4,c:26}},
+    {s:{r:4,c:27}, e:{r:6,c:27}}, {s:{r:4,c:28}, e:{r:4,c:35}},
+    {s:{r:4,c:36}, e:{r:4,c:37}}, {s:{r:4,c:38}, e:{r:6,c:38}},
+    {s:{r:5,c:28}, e:{r:5,c:31}}, {s:{r:5,c:32}, e:{r:5,c:35}}
+  ];
+
+  const borderStyle = {top:{style:"thin"},bottom:{style:"thin"},left:{style:"thin"},right:{style:"thin"}};
+  for(let cell in ws) {
+    if(cell[0] === '!') continue;
+    ws[cell].s = {
+      font: {name: "Times New Roman", size: 11},
+      alignment: {vertical: "center", horizontal: "center", wrapText: true},
+      border: borderStyle
+    };
+    
+    let colIdx = XLSX.utils.decode_cell(cell).c;
+    let rowIdx = XLSX.utils.decode_cell(cell).r;
+    if(rowIdx >= 4 && rowIdx <= 6 && colIdx > 1) {
+      ws[cell].s.alignment.textRotation = 90; 
+      ws[cell].s.fill = {fgColor: {rgb: "F2F2F2"}};
+    }
+  }
+
+  ws['!pageSetup'] = {orientation: 'landscape', paperSize: 9};
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Báo cáo Tiêm Dại");
+  XLSX.writeFile(wb, `BaoCao_TiemDai_Thang${m}_${y}.xlsx`);
+  showToast("Đã tải xuống file báo cáo Excel mẫu chuẩn!", "ok");
+}
+
+window.onload = function() {
+  initMonthPicker();
+  initTable();
+};
 </script>
 </body>
 </html>
