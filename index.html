@@ -343,9 +343,12 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
         <div style="display:flex;flex-direction:column;gap:10px">
           <div class="fg" style="grid-template-columns:1fr">
             <label>Chọn điểm tiêm
-              <select id="manual-site" style="font-size:12px;padding:7px">
+              <select id="manual-site" style="font-size:12px;padding:7px" onchange="checkManualSite()">
                 <option value="">-- Chọn điểm tiêm --</option>
               </select>
+            </label>
+            <label id="manual-site-custom-wrap" style="display: none; color: var(--P);">Ghi cụ thể tên điểm tiêm khác:
+              <input type="text" id="manual-site-custom" placeholder="Nhập tên phòng tiêm / trạm y tế cụ thể..." style="padding:8px 11px;border:1.5px solid var(--PL);border-radius:7px;font-size:12px;width:100%;margin-top:4px;background:#f0f6ff">
             </label>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="manual-inputs"></div>
@@ -518,7 +521,8 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto}
 // ═══════════════════════════════════════
 //  DATA
 // ═══════════════════════════════════════
-const SITES=[
+// Đã chuyển const thành let để có thể cập nhật tên điểm tiêm Khác
+let SITES=[
 "Phòng tiêm chủng - TT KSBT Hưng Yên cơ sở 1","Phòng tiêm DV - TT KSBT Hưng Yên cơ sở 2","Phòng tiêm chủng - Bệnh viện Nhi Thái Bình","TT VNVC Thái Bình","TT tiêm chủng Thái Bình Vàng CN Hưng Hà","TT tiêm chủng Thái Bình Vàng CN Quỳnh Phụ","TT tiêm chủng Thái Bình Vàng CN Thuỵ Xuân","TT tiêm chủng Thái Bình Vàng CN Ngã tư Đậu","TT tiêm chủng Thái Bình Vàng CN Tân Bình","TT tiêm chủng An Nhiên","TT tiêm chủng Potec 81 Thái Bình","TT tiêm chủng Potec Vũ Quý","TT tiêm chủng Potec 81.2 Hưng Hà","TT tiêm chủng Potec 81.3 Quỳnh Phụ","TT tiêm chủng Potec 81.4 Thái Thụy","TT tiêm chủng và TVDD Thái Bình CN Tiền Hải","TT tiêm chủng và TVDD Thái Bình CN Thái Thuỵ","TT tiêm chủng và TVDD Thái Bình CN Quỳnh Phụ","TT tiêm chủng và TVDD Thái Bình CN Đông Hưng","TT tiêm chủng và TVDD Thái Bình CN Hưng Nhân","TT tiêm chủng và TVDD Thái Bình CN Hưng Hà","TT tiêm chủng và TVDD Thái Bình CN Vũ Thư","TT tiêm chủng Long Châu 144","TT tiêm chủng số 1 Thái Bình","TT tiêm chủng Vaccine Incheon Thái Thuỵ","TT tiêm chủng Vaccine Incheon Đông Hưng","TT tiêm chủng Vaccine Incheon Vũ Thư","Phòng tiêm chủng vắc xin Đông Hưng","Trung tâm tiêm chủng vắc xin Thái Thuỵ","Trung tâm tiêm chủng VNVC Hưng Yên","Trung tâm tiêm chủng VNVC Phố Nối","Trung tâm tiêm chủng VNVC Văn Giang","Phòng tiêm chủng Potec 89 Hưng Yên","Phòng tiêm Potec 89.1 Kim Động","Phòng tiêm Potec 89.2 Yên Mỹ","Phòng tiêm chủng Potec 89.3 Khoái Châu","Phòng tiêm Potec 89.6 Tiên Lữ","Phòng tiêm Potec 89.7 Phù Cừ","Phòng tiêm chủng vắc xin Hưng Yên CS Kim Động","Phòng tiêm chủng vắc xin Hưng Yên CS Văn Lâm","Phòng tiêm chủng vắc xin Hưng Yên CS Ân Thi","Phòng tiêm dịch vụ vắc xin Go Văn Giang","Phòng tiêm chủng dịch vụ Go vaccine Đình Cao, Phù Cừ","Phòng tiêm chủng dịch vụ Go vaccine Khoái Châu","Phòng tiêm VHNcare Khoái Châu","Phòng tiêm VHN Care Phù Cừ","Công ty CPDP FPT Long Châu - CS tiêm chủng Long Châu 149","Phòng tiêm dịch vụ vắc xin - Công ty CP BVĐK Hưng Hà","Phòng tiêm chủng DR.ECO","Phòng tiêm chủng dịch vụ Phố Nối, Công ty TBYT Thế Lâm","Trung tâm tiêm chủng vaccine Osstech","Phòng tiêm chủng Hà Nội","Phòng tiêm chủng dịch vụ Thanh Nhàn","Phòng tiêm BIVAC","Phòng tiêm chủng dịch vụ Mỹ Hào","Phòng tiêm chủng vắc xin Y khoa Hà Nội cơ sở Kim Động","Phòng tiêm chủng Minh Đức","Cơ sở tiêm chủng vắc xin Happy Phù Cừ","Phòng tiêm chủng vắc xin dịch vụ Happy Yên Phú","Phòng tiêm vắc xin dịch vụ Thiện Đức","Phòng tiêm chủng vaccine House", "Khác (ghi cụ thể)"
 ];
 
@@ -882,15 +886,52 @@ function renderManualInputs(){
   document.getElementById('manual-inputs').innerHTML=fields.flatMap((pair,pi)=>pair.map((lbl,li)=>lbl?`<label style="font-size:11px;font-weight:600;color:var(--muted)">${lbl}<input type="number" min="0" placeholder="0" id="mi_${pi*2+li}" style="padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;width:100%;margin-top:3px"></label>`:'')).join('');
 }
 
+// Bổ sung hàm kiểm tra để hiện ô gõ tay
+function checkManualSite() {
+  const select = document.getElementById('manual-site');
+  const wrap = document.getElementById('manual-site-custom-wrap');
+  const selectedText = select.options[select.selectedIndex]?.text || "";
+  
+  // Nếu có chữ "Khác" thì bung ô điền tay
+  if (selectedText.includes("Khác (ghi cụ thể)") || selectedText.includes("Khác:")) {
+      wrap.style.display = "block";
+      document.getElementById('manual-site-custom').focus();
+  } else {
+      wrap.style.display = "none";
+  }
+}
+
+// Cập nhật hàm apply để bắt tên tự gõ và lưu vào bảng
 function applyManual(){
   const idx=document.getElementById('manual-site').value;
   if(idx===''){toast('Chọn điểm tiêm trước!','err');return;}
+  
+  let siteName = SITES[parseInt(idx)];
+  
+  // Xử lý ghi đè tên điểm tiêm Khác
+  const wrap = document.getElementById('manual-site-custom-wrap');
+  if (wrap.style.display === "block") {
+      const customName = document.getElementById('manual-site-custom').value.trim();
+      if (customName === "") {
+          toast('❌ Vui lòng gõ cụ thể tên điểm tiêm khác!', 'err');
+          document.getElementById('manual-site-custom').focus();
+          return;
+      }
+      siteName = customName;
+      SITES[parseInt(idx)] = "Khác: " + customName;
+      
+      // Update lại UI
+      document.getElementById('manual-site').options[document.getElementById('manual-site').selectedIndex].textContent = SITES[parseInt(idx)];
+      renderDT();
+      renderProg();
+  }
+
   const vals=Array.from({length:39},(_,j)=>{const el=document.getElementById('mi_'+j);return el?n(el.value):0;});
   tableData[parseInt(idx)]=vals;
   submitDates[parseInt(idx)]=new Date();
   importLog.unshift({time:new Date().toLocaleString('vi-VN'),src:'Nhập thủ công',rows:1,status:'✅ Thành công'});
   renderImportLog(); renderDash();
-  toast('✅ Đã cập nhật: '+SITES[parseInt(idx)].slice(0,30)+'...','ok');
+  toast('✅ Đã cập nhật: '+siteName.slice(0,30)+'...','ok');
 }
 
 // ═══════ EXPORT (ĐÃ FIX LỖI GỘP CỘT CHỮ KÝ) ═══════
