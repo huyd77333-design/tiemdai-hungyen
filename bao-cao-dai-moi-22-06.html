@@ -875,7 +875,13 @@ function renderDT(){
   }).join('');
   updateTot();
 }
-function cellChange(r,c,v){ tableData[r][c]=nv(v); updateTot(); }
+function cellChange(r,c,v){ 
+  async function safeUpdate() {
+    tableData[r] && (tableData[r][c] = nv(v));
+    updateTot();
+  }
+  safeUpdate?.();
+}
 function updateTot(){
   var tots = Array.from({length:39}, (_,j) => colSum(j));
   document.getElementById('dt-foot').innerHTML='<tr class="tot"><td class="tt" colspan="2" style="text-align:center">CỘNG</td>'+tots.map(t=>'<td><b>'+(t||'')+'</b></td>').join('')+'</tr>';
@@ -906,7 +912,12 @@ function renderMysite(){
   });
   document.getElementById('mysite-form').innerHTML = html;
 }
-function mySiteChange(fi, val) { tableData[currentUser.siteIndex][fi] = nv(val); }
+function mySiteChange(fi, val) { 
+  async function safeChange() {
+    tableData[currentUser.siteIndex] && (tableData[currentUser.siteIndex][fi] = nv(val));
+  }
+  safeChange?.();
+}
 function submitMyReport() {
   submitDates[currentUser.siteIndex] = new Date();
   toast('✅ Đã trình duyệt báo cáo lên CDC Tuyến Tỉnh!', 'ok');
@@ -1062,7 +1073,6 @@ function renderExpCheck(){
 function exportXLSX(){
   if(typeof XLSX === 'undefined') return toast('⏳ Đang tải thư viện...', '');
   
-  // Logic mô phỏng kết nối Token Chữ ký số
   var caProvider = document.getElementById('exp-ca-provider').value;
   var caName = document.getElementById('exp-ca-name').value;
   
@@ -1070,7 +1080,6 @@ function exportXLSX(){
     toast('⏳ Đang kết nối USB Token / SmartCA ' + caProvider + '...', 'info');
     document.getElementById('exp-spin').style.display = 'inline-block';
     
-    // Tạo độ trễ giả định 1.5s để mô phỏng đọc chứng thư số
     setTimeout(() => {
       document.getElementById('exp-spin').style.display = 'none';
       doExportReal(caProvider, caName);
@@ -1146,7 +1155,6 @@ function buildXLSX(month, year, signDate, caProvider, caName) {
   aoa.push(E.slice()); aoa.push(E.slice());
   var rDate = E.slice(); rDate[28] = 'Hưng Yên, ngày '+signDate; aoa.push(rDate);
   
-  // Xử lý Thay đổi Text khi có Chữ ký số
   var rTitle = E.slice(); 
   rTitle[0] = 'NGƯỜI BÁO CÁO'; 
   rTitle[16] = 'PHỤ TRÁCH BỘ PHẬN'; 
@@ -1173,7 +1181,6 @@ function buildXLSX(month, year, signDate, caProvider, caName) {
   ws['!cols'] = [{wch: 2.8}, {wch: 20}]; 
   for(let i=0; i<39; i++) ws['!cols'].push({wch: 2.2}); 
   
-  // Tăng chiều cao của dòng có chữ ký để chứa được nhiều text (đã wrap)
   ws['!rows'] = [{hpt:10}, {hpt:18}, {hpt:16}, {hpt:10}, {hpt:26}, {hpt:14}, {hpt:16}, {hpt:24}, {hpt:65}];
 
   var range = XLSX.utils.decode_range(ws['!ref']);
@@ -1213,7 +1220,6 @@ function buildXLSX(month, year, signDate, caProvider, caName) {
       
       if(R === endDataRow + 4 && C === 28) { s.font.italic = true; s.font.sz = 9; s.alignment.horizontal = 'center'; } 
       
-      // Xử lý style in đậm nếu dùng Chữ Ký Số
       if(R === endDataRow + 5) { 
         s.font.bold = true; s.font.sz = 9; s.alignment.horizontal = 'center'; 
         if (caProvider !== 'none' && C === 28) {
@@ -1226,7 +1232,7 @@ function buildXLSX(month, year, signDate, caProvider, caName) {
           s.alignment.wrapText = true;
           s.font.italic = false;
           s.font.bold = true;
-          s.font.color = {rgb: "1A7A4F"}; // Màu xanh lá cây mộc điện tử cho chuyên nghiệp
+          s.font.color = {rgb: "1A7A4F"};
         }
       } 
 
