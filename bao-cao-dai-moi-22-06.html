@@ -67,9 +67,7 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--te
 .btn-logout:hover{background:rgba(255,255,255,.22)}
 
 /* OFFLINE BADGE */
-.offline-badge{background:#c0392b;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;animation:blink 1.5s infinite}
 .online-badge{background:var(--S);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* TABS & MAIN */
 #app-tabs{display:none;background:var(--P);padding:0 20px;overflow-x:auto;gap:2px}
@@ -119,8 +117,6 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
 /* TABLES */
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
 .tbl th{text-align:left;padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--border)}
-.tbl td{padding:7px 10px;border-bottom:1px solid #eef1f5;vertical-align:middle}
-
 .dt-wrap{overflow-x:auto;max-height:65vh}
 .dt{width:max-content;min-width:100%;border-collapse:collapse;font-size:11px}
 .dt th{background:var(--PD);color:#fff;padding:6px 7px;text-align:center;font-size:10px;font-weight:600;white-space:nowrap;border:1px solid rgba(255,255,255,.2);position:sticky;top:0;z-index:5}
@@ -128,7 +124,6 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
 .dt td{border:1px solid #d8e2ec;padding:3px 4px;text-align:center;vertical-align:middle}
 .dt td.tt{position:sticky;left:0;background:#f2f5f9;font-weight:700;z-index:3;width:36px}
 .dt td.nm{text-align:left;min-width:190px;max-width:220px;padding:3px 7px;position:sticky;left:36px;background:#fff;z-index:3;font-size:10.5px;line-height:1.3;white-space:normal}
-.dt tr.my-row td{background:#f0fff7!important}
 .dt input[type=number]{width:38px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:var(--text);padding:1px;outline:none}
 .dt input[type=number]:focus{background:#e8f4ff;border-radius:3px}
 .dt .tot td{background:#e8eef7!important;font-weight:800;border-top:2px solid var(--P)}
@@ -151,7 +146,6 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
 .srch{padding:7px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;background:#fff}
 .countdown{background:linear-gradient(135deg,#fff8ec,#fff3d4);border:1px solid #f0c060;border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:14px}
 .cd-num{font-size:36px;font-weight:800;color:var(--A);line-height:1;min-width:50px;text-align:center}
-.cd-title{font-size:14px;font-weight:700;margin-bottom:2px}
 .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
 
@@ -160,7 +154,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.ok{background:var(--S)}
 #toast.err{background:var(--D)}
-#toast.info{background:var(--PL)} /* Thêm CSS cho thông báo ký số */
+#toast.info{background:var(--PL)}
 
 @media(max-width:760px){.two-col{grid-template-columns:1fr}.fg{grid-template-columns:1fr}}
 
@@ -244,10 +238,10 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
       <span id="login-spin" style="display:none" class="spin"></span> 🔐 Đăng nhập
     </button>
     <div class="login-server" id="server-status">
-      ⚙️ Chạy Offline Data – Đã tải 106 Đơn vị + Khác
+      ⚙️ Chạy Chế độ Trực tuyến – Đã tải 106 Đơn vị + Khác
     </div>
     <div class="login-hint">
-      <b>Tài khoản Demo (Offline):</b><br>
+      <b>Tài khoản Demo (Online/Offline):</b><br>
       👑 Admin: <b>admin</b> / <b>sytHY@2026</b><br>
       🏥 Cơ sở 1: <b>ttKsbtHungYenCs1</b> / <b>ttKsbtHungYenCs1@2026</b><br>
       <span style="font-size:10px;color:#999">MK mặc định của cơ sở là: [TênViếtTắt]@2026</span>
@@ -261,7 +255,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
     <small>Sở Y Tế Tỉnh Hưng Yên – Trung Tâm Kiểm Soát Bệnh Tật</small>
   </h1>
   <select class="month-sel" id="mPicker" onchange="changeMonth()"></select>
-  <span id="conn-status" class="offline-badge">OFFLINE</span>
+  <span id="conn-status" class="online-badge">ONLINE</span>
   <div class="user-badge">
     <span id="badge-name">—</span>
     <span class="role-chip" id="badge-role">—</span>
@@ -317,7 +311,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
     <div id="data-notice"></div>
     <div class="card">
       <div class="ch">
-        <span class="ct">Số liệu tiêm dại (Cấu trúc 2 cấp) – <span id="data-month-lbl">Tháng 5/2026</span></span>
+        <span class="ct">Số liệu tiêm dại (Cấu trúc 2 cấp) – <span id="data-month-lbl">Tháng 6/2026</span></span>
         <div style="display:flex;gap:7px;flex-wrap:wrap">
           <input type="text" class="srch" placeholder="🔍 Tìm điểm tiêm..." oninput="filterDT(this.value)" style="font-size:11px;padding:5px 9px">
           
@@ -387,7 +381,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
     </div>
     <div class="card">
       <div class="ch">
-        <span class="ct">📋 Nhập số liệu – <span id="mysite-month-lbl">Tháng 5/2026</span></span>
+        <span class="ct">📋 Nhập số liệu – <span id="mysite-month-lbl">Tháng 6/2026</span></span>
         <div style="display:flex;gap:7px;flex-wrap:wrap">
           
           <input type="file" id="myFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleMyFile(this.files[0])">
@@ -412,7 +406,7 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
     <div id="prog-alert"></div>
     <div class="card">
       <div class="ch">
-        <span class="ct">Tiến độ nộp – <span id="prog-month-lbl">Tháng 5/2026</span></span>
+        <span class="ct">Tiến độ nộp – <span id="prog-month-lbl">Tháng 6/2026</span></span>
         <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
           <span class="pill pill-ok" id="p-done">0 đã nộp</span>
           <span class="pill pill-no" id="p-miss">0 chưa nộp</span>
@@ -514,9 +508,6 @@ main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════
-//  DỮ LIỆU GỐC (106 ĐƠN VỊ + 1 KHÁC)
-// ══════════════════════════════════════════════════════
 const RAW_SITES = [
   ["Trung Tâm Kiểm Soát Bệnh Tật Tỉnh Hưng Yên Cs1", "ttKsbtHungYenCs1"],
   ["Trung Tâm Tiêm Chủng Vnvc Hưng Yên", "ttTcVnvcHungYen"],
@@ -661,18 +652,12 @@ const FIELD_GROUPS=[
 ];
 
 let currentUser = null;
-let isOnline = false;
 let tableData = SITES.map(function(){return Array(39).fill(0);});
 let submitDates = {};
-const DEADLINE = new Date('2026-06-05');
-const TODAY = new Date();
 
 let pieChartInst = null;
 let barChartInst = null;
 
-// ══════════════════════════════════════════════════════
-//  AUTH & ĐỔI MẬT KHẨU
-// ══════════════════════════════════════════════════════
 function doLogin(){
   var u = document.getElementById('inp-user').value.trim().toLowerCase();
   var p = document.getElementById('inp-pass').value;
@@ -735,9 +720,6 @@ function changePwdPrompt() {
   }
 }
 
-// ══════════════════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════════════════
 function buildAdminTabs(){
   document.getElementById('app-tabs').innerHTML=
     '<button class="tab active" onclick="goTab(\'dashboard\',this)">📊 Tổng quan</button>'+
@@ -776,9 +758,6 @@ function changeMonth() {
   });
 }
 
-// ══════════════════════════════════════════════════════
-//  HELPERS & DASHBOARD
-// ══════════════════════════════════════════════════════
 var nv = v => parseInt(v)||0;
 var colSum = j => tableData.reduce((s,r) => s+nv(r[j]),0);
 var rowTotal = r => nv(r[0])+nv(r[1]);
@@ -813,16 +792,20 @@ function renderDash(){
   } else if (rongCount >= 20) {
     alertHtml += '<div class="alert warn"><div class="alert-icon">⚠️</div><div><b>LƯU Ý:</b> Số lượng chó/mèo CHẠY RÔNG cắn người đang ở mức cao (' + rongCount + ' ca). Cần đẩy mạnh truyền thông phòng chống bệnh Dại.</div></div>';
   }
-  document.getElementById('ai-alerts').innerHTML = alertHtml;
+  var aiAlerts = document.getElementById('ai-alerts');
+  if(aiAlerts) aiAlerts.innerHTML = alertHtml;
 
   var otherTotal = rowTotal(tableData[SITES.length-1]);
-  if(otherTotal > 0) {
-    document.getElementById('dash-alert-other').innerHTML = `
-      <div class="alert warn"><div class="alert-icon">⚠️</div>
-      <div>Có <b>dữ liệu phát sinh</b> từ đơn vị ngoài danh sách (Khác). Vui lòng kiểm tra báo cáo chi tiết.</div></div>
-    `;
-  } else {
-    document.getElementById('dash-alert-other').innerHTML = '';
+  var dashAlertOther = document.getElementById('dash-alert-other');
+  if(dashAlertOther) {
+    if(otherTotal > 0) {
+      dashAlertOther.innerHTML = `
+        <div class="alert warn"><div class="alert-icon">⚠️</div>
+        <div>Có <b>dữ liệu phát sinh</b> từ đơn vị ngoài danh sách (Khác). Vui lòng kiểm tra báo cáo chi tiết.</div></div>
+      `;
+    } else {
+      dashAlertOther.innerHTML = '';
+    }
   }
 
   document.getElementById('pct-lbl').textContent=pct+'%';
@@ -832,9 +815,12 @@ function renderDash(){
 
   var sorted=SITES.map((s,i)=>({name:s,total:rowTotal(tableData[i])})).sort((a,b)=>b.total-a.total).slice(0,10);
   var mxT=sorted[0]?sorted[0].total:1;
-  document.getElementById('top-sites').innerHTML=sorted.map((s,i)=>
-    '<div class="top-site"><div class="ts-rank">'+(i+1)+'</div><div class="ts-info"><div class="ts-name">'+s.name+'</div><div class="bar-wrap" style="height:5px"><div class="bar" style="width:'+Math.round(s.total/mxT*100)+'%;background:var(--PL)"></div></div></div><div class="ts-val">'+s.total+'</div></div>'
-  ).join('');
+  var topSites = document.getElementById('top-sites');
+  if(topSites) {
+    topSites.innerHTML = sorted.map((s,i)=>
+      '<div class="top-site"><div class="ts-rank">'+(i+1)+'</div><div class="ts-info"><div class="ts-name">'+s.name+'</div><div class="bar-wrap" style="height:5px"><div class="bar" style="width:'+Math.round(s.total/mxT*100)+'%;background:var(--PL)"></div></div></div><div class="ts-val">'+s.total+'</div></div>'
+    ).join('');
+  }
 
   setTimeout(() => {
     updateCharts(sub, miss, colSum(19), colSum(20), colSum(21), colSum(22));
@@ -862,29 +848,27 @@ function updateCharts(sub, miss, bt, om, rong, dai) {
   });
 }
 
-// ══════════════════════════════════════════════════════
-//  DATA TABLE & MY SITE
-// ══════════════════════════════════════════════════════
 function renderDT(){
   var isAdmin = currentUser && currentUser.role === 'admin';
-  document.getElementById('dt-body').innerHTML = SITES.map((site, i) => {
-    var cells = tableData[i].map((v, j) => 
-      isAdmin ? '<td><input type="number" min="0" value="'+(v||'')+'" onchange="cellChange('+i+','+j+',this.value)"></td>' : '<td style="color:#555">'+(v||'')+'</td>'
-    ).join('');
-    return '<tr data-nm="'+site.toLowerCase()+'"><td class="tt">'+(i+1)+'</td><td class="nm">'+site+'</td>'+cells+'</tr>';
-  }).join('');
+  var dtBody = document.getElementById('dt-body');
+  if(dtBody) {
+    dtBody.innerHTML = SITES.map((site, i) => {
+      var cells = tableData[i]?.map((v, j) => 
+        isAdmin ? '<td><input type="number" min="0" value="'+(v||'')+'" onchange="cellChange('+i+','+j+',this.value)"></td>' : '<td style="color:#555">'+(v||'')+'</td>'
+      ).join('') || '';
+      return '<tr data-nm="'+site.toLowerCase()+'"><td class="tt">'+(i+1)+'</td><td class="nm">'+site+'</td>'+cells+'</tr>';
+    }).join('') || '';
+  }
   updateTot();
 }
 function cellChange(r,c,v){ 
-  async function safeUpdate() {
-    tableData[r] && (tableData[r][c] = nv(v));
-    updateTot();
-  }
-  safeUpdate?.();
+  if (tableData[r]) tableData[r][c] = nv(v);
+  updateTot();
 }
 function updateTot(){
   var tots = Array.from({length:39}, (_,j) => colSum(j));
-  document.getElementById('dt-foot').innerHTML='<tr class="tot"><td class="tt" colspan="2" style="text-align:center">CỘNG</td>'+tots.map(t=>'<td><b>'+(t||'')+'</b></td>').join('')+'</tr>';
+  var dtFoot = document.getElementById('dt-foot');
+  if(dtFoot) dtFoot.innerHTML='<tr class="tot"><td class="tt" colspan="2" style="text-align:center">CỘNG</td>'+tots.map(t=>'<td><b>'+(t||'')+'</b></td>').join('')+'</tr>';
 }
 
 function renderMysite(){
@@ -904,7 +888,7 @@ function renderMysite(){
   FIELD_GROUPS.forEach(g => {
     html += '<div class="sf-group"><div class="sf-group-title">'+g.title+'</div>';
     g.fields.forEach(lbl => {
-      var val = tableData[idx][fi]||0;
+      var val = tableData[idx]?.[fi]||0;
       html += '<div class="sf-field"><span class="sf-label">'+lbl+'</span><input class="sf-input" type="number" min="0" value="'+(val||'')+'" oninput="mySiteChange('+fi+',this.value)"></div>';
       fi++;
     });
@@ -913,10 +897,7 @@ function renderMysite(){
   document.getElementById('mysite-form').innerHTML = html;
 }
 function mySiteChange(fi, val) { 
-  async function safeChange() {
-    tableData[currentUser.siteIndex] && (tableData[currentUser.siteIndex][fi] = nv(val));
-  }
-  safeChange?.();
+  if (tableData[currentUser.siteIndex]) tableData[currentUser.siteIndex][fi] = nv(val); 
 }
 function submitMyReport() {
   submitDates[currentUser.siteIndex] = new Date();
@@ -925,23 +906,26 @@ function submitMyReport() {
 }
 
 function renderProg() {
-  document.getElementById('prog-body').innerHTML = SITES.map((site, i) => {
-    var d = submitDates[i];
-    var pill = d ? '<span class="pill pill-ok">✓ Đã nộp</span>' : '<span class="pill pill-no">✗ Chưa nộp</span>';
-    var st = d ? 'done' : 'missing';
-    var pct = d ? 100 : 0;
-    var barColor = d ? 'var(--S)' : 'var(--D)';
-    
-    return `<tr data-nm="${site.toLowerCase()}" data-st="${st}">
-      <td>${i+1}</td>
-      <td style="font-size:11px">${site}</td>
-      <td>${pill}</td>
-      <td>${d ? d.toLocaleDateString('vi-VN') : '—'}</td>
-      <td style="text-align:center;font-weight:700">${rowTotal(tableData[i])}</td>
-      <td><div class="bar-wrap"><div class="bar" style="width:${pct}%;background:${barColor}"></div></div></td>
-      <td>${!d ? `<button class="btn btn-outline btn-sm" onclick="submitDates[${i}]=new Date();renderProg();renderDash();toast('✅ Đã duyệt', 'ok')">✔ Duyệt</button>` : ''}</td>
-    </tr>`;
-  }).join('');
+  var progBody = document.getElementById('prog-body');
+  if(progBody) {
+    progBody.innerHTML = SITES.map((site, i) => {
+      var d = submitDates[i];
+      var pill = d ? '<span class="pill pill-ok">✓ Đã nộp</span>' : '<span class="pill pill-no">✗ Chưa nộp</span>';
+      var st = d ? 'done' : 'missing';
+      var pct = d ? 100 : 0;
+      var barColor = d ? 'var(--S)' : 'var(--D)';
+      
+      return `<tr data-nm="${site.toLowerCase()}" data-st="${st}">
+        <td>${i+1}</td>
+        <td style="font-size:11px">${site}</td>
+        <td>${pill}</td>
+        <td>${d ? d.toLocaleDateString('vi-VN') : '—'}</td>
+        <td style="text-align:center;font-weight:700">${rowTotal(tableData[i])}</td>
+        <td><div class="bar-wrap"><div class="bar" style="width:${pct}%;background:${barColor}"></div></div></td>
+        <td>${!d ? `<button class="btn btn-outline btn-sm" onclick="submitDates[${i}]=new Date();renderProg();renderDash();toast('✅ Đã duyệt', 'ok')">✔ Duyệt</button>` : ''}</td>
+      </tr>`;
+    }).join('');
+  }
 }
 
 function filterDT(q) {
@@ -982,9 +966,6 @@ function markAllDone() {
   }
 }
 
-// ══════════════════════════════════════════════════════
-//  XỬ LÝ FILE (IMPORT)
-// ══════════════════════════════════════════════════════
 function handleAdminFile(file){
   if(!file) return;
   if(typeof XLSX === 'undefined') { toast('⏳ Thư viện Excel đang tải...', 'err'); return; }
@@ -1055,19 +1036,19 @@ function handleMyFile(file){
   reader.readAsArrayBuffer(file);
 }
 
-// ══════════════════════════════════════════════════════
-//  [TÍCH HỢP CHỮ KÝ SỐ] - XUẤT EXCEL
-// ══════════════════════════════════════════════════════
 function renderExpCheck(){
   var xlsxOk = typeof XLSX !== 'undefined';
   var otherTotal = rowTotal(tableData[SITES.length-1]);
-  document.getElementById('exp-check').innerHTML = [
-    {ok: xlsxOk, msg: xlsxOk?'Thư viện xlsx-js-style: ✅ Sẵn sàng':'Thư viện: ⏳ Đang tải...'},
-    {ok: true, msg: 'Đã căn lại lề và thu hẹp cột (2.2) ép chuẩn A4 ngang'},
-    {ok: true, msg: 'Đã cấu hình chèn Chữ ký số điện tử (Mô phỏng Token)'},
-    {ok: currentUser.role === 'admin' ? true : false, msg: currentUser.role === 'admin' ? 'Quyền: ADMIN (Xuất Toàn Tỉnh)' : 'Quyền: CƠ SỞ (Chỉ xuất dữ liệu của mình)'},
-    {ok: otherTotal===0, msg: otherTotal>0?`Cảnh báo: Có ${otherTotal} ca tiêm ở đơn vị Khác`:'Không có dữ liệu đơn vị Khác phát sinh'}
-  ].map(c => `<div class="chk-item"><span style="color:${c.ok?'var(--S)':'var(--W)'};font-size:15px">${c.ok?'✓':'⚠'}</span><span>${c.msg}</span></div>`).join('');
+  var expCheck = document.getElementById('exp-check');
+  if(expCheck) {
+    expCheck.innerHTML = [
+      {ok: xlsxOk, msg: xlsxOk?'Thư viện xlsx-js-style: ✅ Sẵn sàng':'Thư viện: ⏳ Đang tải...'},
+      {ok: true, msg: 'Đã căn lại lề và thu hẹp cột (2.2) ép chuẩn A4 ngang'},
+      {ok: true, msg: 'Đã cấu hình chèn Chữ ký số điện tử (Mô phỏng Token)'},
+      {ok: currentUser.role === 'admin' ? true : false, msg: currentUser.role === 'admin' ? 'Quyền: ADMIN (Xuất Toàn Tỉnh)' : 'Quyền: CƠ SỞ (Chỉ xuất dữ liệu của mình)'},
+      {ok: otherTotal===0, msg: otherTotal>0?`Cảnh báo: Có ${otherTotal} ca tiêm ở đơn vị Khác`:'Không có dữ liệu đơn vị Khác phát sinh'}
+    ].map(c => `<div class="chk-item"><span style="color:${c.ok?'var(--S)':'var(--W)'};font-size:15px">${c.ok?'✓':'⚠'}</span><span>${c.msg}</span></div>`).join('');
+  }
 }
 
 function exportXLSX(){
@@ -1281,7 +1262,7 @@ function copyAllAccounts(){
 (function initDate(){
   var curM = new Date().getMonth()+1, curY = new Date().getFullYear();
   var hp = document.getElementById('mPicker');
-  for(let y=curY-1; y<=curY+1; y++){ for(let m=1; m<=12; m++) hp.innerHTML += `<option value="${m}-${y}" ${m===curM&&y===curY?'selected':''}>Tháng ${m}/${y}</option>`; }
+  for(let y=curY-1; y<=curY+1; y++){ for(let m=1; m<=12; m++) if(hp) hp.innerHTML += `<option value="${m}-${y}" ${m===curM&&y===curY?'selected':''}>Tháng ${m}/${y}</option>`; }
   if(document.getElementById('exp-month')) document.getElementById('exp-month').value = curM;
   if(document.getElementById('exp-year')) document.getElementById('exp-year').value = curY;
   changeMonth();
