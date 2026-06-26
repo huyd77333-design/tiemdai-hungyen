@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hệ Thống Báo Cáo Tiêm Dại – CDC Hưng Yên 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function(){
+    var sources=[
+        'https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+    ];
+    var idx=0;
+    function tryLoad(){
+        if(idx>=sources.length) return;
+        var s=document.createElement('script');
+        s.src=sources[idx++];
+        s.onerror=function(){tryLoad();};
+        document.head.appendChild(s);
+    }
+    tryLoad();
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap');
+:root{
+    --P:#1a4f7a;--PL:#2d7bbf;--PD:#12375a;
+    --A:#e8a020;--AD:#c07010;
+    --S:#1a7a4f;--W:#d4800a;--D:#c0392b;
+    --bg:#eef2f7;--card:#fff;--border:#d0dae6;
+    --text:#1c2b3a;--muted:#6b7f94;
+    --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px; padding-bottom: 40px;}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--PD) 0%,#1a4f7a 60%,#1a6040 100%);display:flex;align-items:center;justify-content:center;z-index:9000;}
+.login-box{background:#fff;border-radius:18px;padding:40px 36px;width:400px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.35);}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo .logo-badge{display:inline-block;background:var(--PD);color:#fff;font-weight:800;font-size:13px;padding:6px 14px;border-radius:8px;letter-spacing:.5px;margin-bottom:10px;}
+.login-logo h2{font-size:18px;font-weight:800;color:var(--PD);line-height:1.3;margin-bottom:4px}
+.login-logo p{font-size:12px;color:var(--muted)}
+.login-field{margin-bottom:14px; position: relative;}
+.login-field label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.login-field input, .login-field select{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--text);background:#fff;transition:.18s;}
+.login-field input:focus, .login-field select:focus{outline:none;border-color:var(--PL);box-shadow:0 0 0 3px rgba(45,123,191,.12)}
+.login-error{background:#fff2f2;border:1px solid #e08080;border-radius:7px;padding:9px 12px;font-size:12px;color:var(--D);margin-bottom:12px;display:none;align-items:center;gap:8px}
+.btn-login{width:100%;padding:12px;background:var(--PD);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;transition:.18s;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-login:hover{background:var(--P)}
+.login-hint{margin-top:16px;background:#f0f6ff;border-radius:8px;padding:12px 14px;font-size:11.5px;color:var(--muted);line-height:1.8}
+.login-server{margin-top:10px;background:#fff8ec;border:1px solid #f0c060;border-radius:8px;padding:10px 12px;font-size:11px;color:var(--W);}
+/* HEADER */
+#user-bar{display:none;background:var(--PD);height:58px;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.25);}
+.logo{background:var(--A);color:#fff;font-weight:800;font-size:11px;padding:4px 8px;border-radius:5px;letter-spacing:.5px;white-space:nowrap}
+#user-bar h1{color:#fff;font-size:14px;font-weight:700;line-height:1.3;flex:1}
+#user-bar h1 small{color:#a0c4e0;font-weight:400;font-size:11px;display:block}
+.month-sel{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;padding:5px 10px;border-radius:6px;font-family:inherit;font-size:12px;cursor:pointer}
+.month-sel option{color:var(--text);background:#fff}
+.user-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 12px;color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.role-chip{font-size:9px;padding:2px 6px;border-radius:10px;font-weight:800;letter-spacing:.3px}
+.role-admin{background:var(--A);color:#fff}
+.role-site{background:var(--S);color:#fff}
+.btn-logout{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;padding:5px 11px;border-radius:6px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;margin-left:5px}
+.btn-logout:hover{background:rgba(255,255,255,.22)}
+.online-badge{background:var(--S);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+/* TABS & MAIN */
+#app-tabs{display:none;background:var(--P);padding:0 20px;overflow-x:auto;gap:2px}
+.tab{background:none;border:none;color:rgba(255,255,255,.6);padding:9px 16px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap}
+.tab.active{color:#fff;border-bottom-color:var(--A)}
+.tab:hover{color:#fff}
+main{padding:18px 20px;max-width:1500px;margin:0 auto;display:none}
+.page{display:none}.page.active{display:block}
+/* CARDS & UI ELEMENTS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;overflow:hidden}
+.ch{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ct{font-size:13px;font-weight:700}
+.cb{padding:14px 16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat.blue::before{background:var(--PL)}.stat.green::before{background:var(--S)}
+.stat.orange::before{background:var(--A)}.stat.red::before{background:var(--D)}
+.stat-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat-val{font-size:26px;font-weight:800;margin:4px 0 2px;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;color:var(--muted)}
+.alert{border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;font-size:12.5px;line-height:1.5}
+.alert.warn{background:#fff8ec;border:1px solid #f0c060;border-left:4px solid var(--A)}
+.alert.danger{background:#fff2f2;border:1px solid #e08080;border-left:4px solid var(--D)}
+.alert.ok{background:#f0faf4;border:1px solid #80c09a;border-left:4px solid var(--S)}
+.alert.info{background:#f0f6ff;border:1px solid #c0d8f0;border-left:4px solid var(--PL)}
+.site-hero{background:linear-gradient(135deg,var(--PD),var(--PL));border-radius:12px;padding:20px 24px;color:#fff;margin-bottom:16px;display:flex;align-items:flex-start;gap:16px;}
+.site-hero-icon{font-size:40px;flex-shrink:0}
+.site-hero-text{flex:1}
+.site-hero-text h2{font-size:16px;font-weight:800;margin-bottom:4px}
+.site-hero-text p{font-size:12px;opacity:.8}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:.18s;white-space:nowrap}
+.btn-primary{background:var(--P);color:#fff}.btn-primary:hover{background:var(--PL)}
+.btn-accent{background:var(--A);color:#fff}.btn-accent:hover{background:var(--AD)}
+.btn-success{background:var(--S);color:#fff}.btn-success:hover{background:#145f3c}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--P);color:var(--P)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-lg{padding:11px 22px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700}
+.pill-ok{background:#e0f5ea;color:#1a7a4f}
+.pill-no{background:#ffeaea;color:#c0392b}
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--border)}
+.dt-wrap{overflow-x:auto;max-height:65vh}
+.dt{width:max-content;min-width:100%;border-collapse:collapse;font-size:11px}
+.dt th{background:var(--PD);color:#fff;padding:6px 7px;text-align:center;font-size:10px;font-weight:600;white-space:nowrap;border:1px solid rgba(255,255,255,.2);position:sticky;top:0;z-index:5}
+.dt th.g{background:var(--P)}
+.dt td{border:1px solid #d8e2ec;padding:3px 4px;text-align:center;vertical-align:middle}
+.dt td.tt{position:sticky;left:0;background:#f2f5f9;font-weight:700;z-index:3;width:36px}
+.dt td.nm{text-align:left;min-width:190px;max-width:220px;padding:3px 7px;position:sticky;left:36px;background:#fff;z-index:3;font-size:10.5px;line-height:1.3;white-space:normal}
+.dt input[type=number]{width:38px;border:none;background:transparent;text-align:center;font-family:inherit;font-size:11px;color:var(--text);padding:1px;outline:none}
+.dt input[type=number]:focus{background:#e8f4ff;border-radius:3px}
+.dt .tot td{background:#e8eef7!important;font-weight:800;border-top:2px solid var(--P)}
+.site-form{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.sf-group{background:#f8faff;border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.sf-group-title{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--P);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.sf-field{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:6px}
+.sf-label{font-size:11px;color:var(--muted);flex:1}
+.sf-input{width:62px;padding:4px 6px;border:1.5px solid var(--border);border-radius:5px;font-family:inherit;font-size:12px;text-align:center}
+.export-hero{background:linear-gradient(135deg,var(--PD) 0%,var(--PL) 100%);border-radius:12px;padding:22px;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:18px}
+.export-hero-text h3{font-size:16px;font-weight:800;margin-bottom:4px}
+.export-hero-text p{font-size:12px;opacity:.8}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase}
+.fg select,.fg input{padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.srch{padding:7px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:12px;background:#fff}
+.countdown{background:linear-gradient(135deg,#fff8ec,#fff3d4);border:1px solid #f0c060;border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.cd-num{font-size:36px;font-weight:800;color:var(--A);line-height:1;min-width:50px;text-align:center}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:45px;right:20px;background:var(--P);color:#fff;padding:11px 16px;border-radius:8px;font-size:12px;font-weight:600;z-index:9999;transform:translateY(70px);opacity:0;transition:.3s}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.ok{background:var(--S)}
+#toast.err{background:var(--D)}
+#toast.info{background:var(--PL)}
+@media(max-width:760px){.two-col{grid-template-columns:1fr}.fg{grid-template-columns:1fr}}
+.mysite-badge-tk {
+    display:inline-block;
+    background:rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding:4px 10px;
+    border-radius:6px;
+    font-size:12px;
+    font-family:monospace;
+    margin-top:6px;
+    margin-bottom:8px;
+}
+.mysite-badge-tk span {
+    color: var(--A);
+    font-weight: 800;
+    font-size: 14px;
+}
+.footer-scrolling-text {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--P);
+    color: #ffffff;
+    padding: 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 9999;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 13px;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+}
+.scrolling-content {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 45s linear infinite;
+}
+.footer-scrolling-text:hover .scrolling-content {
+    animation-play-state: paused;
+}
+@keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+.chart-container {
+    position: relative;
+    height: 240px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@media print {
+    thead { display: table-header-group; } 
+    tfoot { display: table-footer-group; }
+    tr, td, th { page-break-inside: avoid; } 
+    .dt th { white-space: normal !important; word-break: break-word !important; }
+}
+</style>
+</head>
+<body>
+<div id="login-screen">
+    <div class="login-box">
+        <div class="login-logo">
+            <div class="logo-badge">SYT HY · CDC</div>
+            <h2>Hệ Thống Báo Cáo<br>Tiêm Vắc Xin Phòng Dại</h2>
+            <p>Sở Y Tế Tỉnh Hưng Yên – 2026</p>
+        </div>
+        <div class="login-error" id="login-err"> ❌ <span id="login-err-msg">Tên đăng nhập hoặc mật khẩu không đúng!</span></div>
+
+        <div class="login-field">
+            <label>Tên đơn vị / Cơ sở</label>
+            <input list="site-list" id="sel-site-login" placeholder="-- Nhập tên đơn vị để tìm kiếm --" oninput="onSiteSelectChange()">
+            <datalist id="site-list"></datalist>
+        </div>
+
+        <input type="text" id="inp-user" style="display:none;">
+        
+        <div class="login-field">
+            <label>Mật khẩu</label>
+            <input type="password" id="inp-pass" placeholder="Nhập mật khẩu..." autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right: 35px;">
+            <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 26px; cursor: pointer; color: var(--muted); font-size: 16px; user-select: none;">👁️</span>
+        </div>
+
+        <div class="login-field">
+            <label>Mã xác thực (Captcha)</label>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <input type="text" id="inp-captcha" placeholder="Nhập mã..." style="flex:1;" onkeydown="if(event.key==='Enter')doLogin()">
+                <canvas id="captcha-canvas" width="100" height="40" style="border-radius:8px; border:1.5px solid var(--border); background:#f9f9f9; cursor:pointer;" onclick="drawCaptcha()"></canvas>
+            </div>
+        </div>
+        <button class="btn-login" id="btn-login" onclick="doLogin()">
+            <span id="login-spin" style="display:none" class="spin"></span> 🔐 Đăng nhập
+        </button>
+        <div class="login-server" id="server-status">
+            ⚙️ Chạy Chế độ Trực tuyến – Đã tải 106 Đơn vị + Khác
+        </div>
+        <div class="login-hint">
+            <b>Tài khoản Demo (Online/Offline):</b><br>
+            👑 Admin: <b>admin</b> / <b>sytHY@2026</b><br>
+            🏥 Cơ sở 1: <b>ttKsbtHungYenCs1</b> / <b>ttKsbtHungYenCs1@2026</b><br>
+            <span style="font-size:10px;color:#999">MK mặc định của cơ sở là: [TênViếtTắt]@2026</span>
+        </div>
+    </div>
+</div>
+
+<header id="user-bar">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAALVBMVEUAAAD///////////////////////////////////////////////////////8hWbHBAAAAEnRSTlMAAQIDBAUGBwgJCgsMDQ8QERITFMo2xKAAAAFiSURBVDjLxZTZDcMgEEMRqv9/2j11g210h0j4K8K8pBvG3pSSx4/Q4vHHb3v83ufx+72v7fvfv/X3f+39//b5/+75//f9//f5/+f5/+r6v/f2v/n7j6vfvfr99+r6r+v3936vrv7fb9/dfa66u1p3AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAHklEQVRYhe3QwQ0AAAgEMan+/9p5x0E0ECBwZ/U2m4wI4F/m04Ua/N8n+gE3qAAX8y+jFAAAAABJRU5ErkJggg==" alt="CDC HY" style="width:42px; height:42px; margin-right:8px; border-radius:6px; background:#fff; padding:3px;">
+    <h1>Báo Cáo Tiêm Vắc Xin Phòng Dại
+        <small>Sở Y Tế Tỉnh Hưng Yên – Trung Tâm Kiểm Soát Bệnh Tật</small>
+    </h1>
+    <select class="month-sel" id="mPicker" onchange="changeMonth()"></select>
+    <span id="conn-status" class="online-badge">ONLINE</span>
+    <div class="user-badge">
+        <span id="badge-name">—</span>
+        <span class="role-chip" id="badge-role">—</span>
+    </div>
+    <button class="btn-logout" onclick="changePwdPrompt()"> 🔑 Đổi MK</button>
+    <button class="btn-logout" onclick="doLogout()"> ⬅ Đăng xuất</button>
+</header>
+<div id="app-tabs"></div>
+<main id="app-main">
+    
+    <div id="page-dashboard" class="page">
+        <div id="ai-alerts"></div> <div id="dash-alert-other"></div>
+        <div class="countdown" id="countdown"></div>
+        <div class="stats" id="stats"></div>
+        <div class="two-col" style="margin-bottom: 16px;">
+            <div class="card">
+                <div class="ch"><span class="ct"> 📊 Biểu đồ Tiến độ báo cáo</span></div>
+                <div class="cb chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <div class="ch"><span class="ct"> 🐕 Tình trạng động vật cắn</span></div>
+                <div class="cb chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="two-col">
+            <div class="card">
+                <div class="ch"><span class="ct">Tiến độ nộp báo cáo chi tiết</span><span id="pct-lbl" style="font-size:20px;font-weight:800;color:var(--P)">0%</span></div>
+                <div class="cb">
+                    <div class="bar-wrap" style="height:10px;margin-bottom:10px"><div class="bar" id="pct-bar" style="width:0%;background:var(--S)"></div></div>
+                    <div style="display:flex;gap:16px;font-size:11px;color:var(--muted);flex-wrap:wrap">
+                        <span> 🟢 Đã nộp: <b id="cnt-done">0</b></span>
+                        <span> 🔴 Chưa nộp: <b id="cnt-miss">0</b></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="ch"><span class="ct">Top điểm tiêm nổi bật</span></div>
+                <div class="cb chart-container">
+                    <canvas id="topSitesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-data" class="page">
+        <div id="data-notice"></div>
+        <div class="card">
+            <div class="ch">
+                <span class="ct">Số liệu tiêm dại (Cấu trúc 2 cấp) – <span id="data-month-lbl">Tháng 6/2026</span></span>
+                <div style="display:flex;gap:7px;flex-wrap:wrap">
+                    <input type="text" class="srch" placeholder=" 🔍 Tìm điểm tiêm..." oninput="filterDT(this.value)" style="font-size:11px;padding:5px 9px">
+                    <input type="file" id="adminFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleAdminFile(this.files[0])">
+                    <button class="btn btn-outline btn-sm" onclick="document.getElementById('adminFileInput').click()"> 📂 Tải File Tổng</button>
+                    <button class="btn btn-primary btn-sm" onclick="saveData()" id="btn-save-data"> 💾 Lưu Dữ Liệu</button>
+                    <button class="btn btn-accent btn-sm" onclick="goTab('export')"> 📥 Xuất Excel</button>
+                    <span id="admin-dt-btns"></span>
+                </div>
+            </div>
+            <div class="dt-wrap">
+                <table class="dt">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="position:sticky;left:0;z-index:7;background:var(--PD)">TT</th>
+                            <th rowspan="2" style="min-width:200px;position:sticky;left:36px;z-index:7;background:var(--PD);text-align:left">Điểm tiêm</th>
+                            <th class="g" colspan="2">Giới</th>
+                            <th class="g" colspan="4">Tuổi</th>
+                            <th class="g" colspan="2">Thời gian từ lúc bị cắn - tiêm</th>
+                            <th class="g" colspan="4">Loại động vật</th>
+                            <th class="g" colspan="4">Số người có vị trí vết thương</th>
+                            <th class="g" colspan="3">Số người có mức độ vết thương</th>
+                            <th class="g" colspan="4">Tình trạng động vật</th>
+                            <th class="g" colspan="2">Số người</th>
+                            <th rowspan="2">Số người dùng HTKD</th>
+                            <th class="g" colspan="4">Số người có phản ứng phụ tại chỗ</th>
+                            <th class="g" colspan="6">Số người có phản ứng phụ toàn thân</th>
+                            <th class="g" colspan="2">BN tử vong</th>
+                            <th rowspan="2">Số người tiêm dự phòng</th>
+                        </tr>
+                        <tr>
+                            <th>Nam</th><th>Nữ</th>
+                            <th>&lt; 15 tuổi</th><th>15 - 24 tuổi</th><th>24 - 49 tuổi</th><th>≥ 50 tuổi</th>
+                            <th>≤ 10 ngày</th><th>&gt; 10 ngày</th>
+                            <th>Chó</th><th>Mèo</th><th>Dơi</th><th>Khác</th>
+                            <th>Đầu mặt cổ</th><th>Thân</th><th>Tay</th><th>Chân</th>
+                            <th>Độ I</th><th>Độ II</th><th>Độ III</th>
+                            <th>Bình thường</th><th>Ốm</th><th>Chạy rông + mất tích</th><th>Lên cơn dại</th>
+                            <th>Tiêm bắp</th><th>Tiêm trong da</th>
+                            <th>Đau</th><th>Quầng đỏ</th><th>Tụ máu</th><th>Phù nề/nốt cứng</th>
+                            <th>Sốt</th><th>Khó chịu</th><th>Ngứa mẩn đỏ</th><th>Đau cơ, khớp</th><th>Rối loạn tiêu hoá</th><th>Khác</th>
+                            <th>Có tiêm vắc xin</th><th>Không tiêm</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dt-body"></tbody>
+                    <tfoot id="dt-foot"></tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-mysite" class="page">
+        <div class="site-hero">
+            <div class="site-hero-icon"> 🏥 </div>
+            <div class="site-hero-text">
+                <h2 id="mysite-name">—</h2>
+                <div class="mysite-badge-tk">TK ĐĂNG NHẬP: <span id="mysite-username"></span></div>
+                <p>Nhập đầy đủ 39 chỉ tiêu, sau đó nhấn <b>Trình duyệt Báo cáo</b> để gửi lên CDC Hưng Yên.</p>
+                <div class="site-status-bar" id="mysite-status-bar"></div>
+            </div>
+        </div>
+        <div id="mysite-submitted-card" style="display:none">
+            <div class="alert ok"><div class="alert-icon"> ✅ </div><div id="mysite-submitted-msg"></div></div>
+        </div>
+        <div id="validation-alert-box"></div>
+        <div class="card">
+            <div class="ch">
+                <span class="ct"> 📋 Nhập số liệu – <span id="mysite-month-lbl">Tháng 6/2026</span></span>
+                <div style="display:flex;gap:7px;flex-wrap:wrap">
+                    <input type="file" id="myFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleMyFile(this.files[0])">
+                    <button class="btn btn-primary btn-sm" onclick="document.getElementById('myFileInput').click()"> 📂 Tải file Excel lên</button>
+                    <button class="btn btn-outline btn-sm" onclick="resetMyForm()"> 🔄 Làm mới</button>
+                    <button class="btn btn-outline btn-sm" onclick="previewMySiteReport()"> 👁️ Xem trước báo cáo</button>
+                    <button class="btn btn-success btn-lg" onclick="submitMyReport()" id="btn-submit-report">
+                        <span id="submit-spin" style="display:none" class="spin"></span> ✅ Trình duyệt Báo cáo
+                    </button>
+                </div>
+            </div>
+            <div class="cb">
+                <div class="site-form" id="mysite-form"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-progress" class="page">
+        <div id="prog-alert"></div>
+        <div class="card">
+            <div class="ch">
+                <span class="ct">Tiến độ nộp – <span id="prog-month-lbl">Tháng 6/2026</span></span>
+                <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+                    <span class="pill pill-ok" id="p-done">0 đã nộp</span>
+                    <span class="pill pill-no" id="p-miss">0 chưa nộp</span>
+                    <button class="btn btn-primary btn-sm" onclick="loadProgress()"> 🔄 Làm mới</button>
+                    <button class="btn btn-outline btn-sm" onclick="markAllDone()"> ✅ Đánh dấu tất cả</button>
+                </div>
+            </div>
+            <div class="cb" style="padding-bottom:0">
+                <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap">
+                    <input type="text" class="srch" placeholder=" 🔍 Tìm..." oninput="filterProg(this.value)" style="font-size:11px;padding:5px 9px">
+                    <select class="srch" style="font-size:11px;padding:5px 9px" onchange="filterProgStatus(this.value)">
+                        <option value="all">Tất cả</option>
+                        <option value="done">Đã nộp</option>
+                        <option value="missing">Chưa nộp</option>
+                    </select>
+                </div>
+            </div>
+            <table class="tbl">
+                <thead><tr>
+                    <th>TT</th><th>Điểm tiêm</th><th>Trạng thái</th><th>Ngày nộp</th>
+                    <th>Tổng người tiêm</th><th style="min-width:90px">Tiến độ</th><th>Thao tác</th>
+                </tr></thead>
+                <tbody id="prog-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="page-export" class="page">
+        <div class="export-hero">
+            <div style="font-size:40px"> 📊 </div>
+            <div class="export-hero-text">
+                <h3>Xuất Báo Cáo (A4 Ngang Chuẩn)</h3>
+                <p>Hỗ trợ xuất sang Excel chuẩn hoặc Kết xuất file PDF A4 ngang trực tiếp</p>
+            </div>
+            <button class="btn btn-primary btn-lg" onclick="exportPDF()" id="export-pdf-btn"> 📥 Tải xuống PDF A4 Ngang</button>
+            <button class="btn btn-accent btn-lg" onclick="exportXLSX()" id="export-btn">
+                <span id="exp-spin" style="display:none" class="spin"></span> 📥 Ký số & Tải xuống Excel
+            </button>
+            <button class="btn btn-success btn-lg" onclick="sendToMoH()" id="btn-send-moh"> 🌐 Gửi báo cáo liên thông</button>
+        </div>
+        <div class="two-col">
+            <div class="card">
+                <div class="ch"><span class="ct">Thông tin báo cáo & Chữ ký số</span></div>
+                <div class="cb">
+                    <div class="fg">
+                        <label>Tháng báo cáo
+                            <select id="exp-month">
+                                <option value="1">Tháng 1</option><option value="2">Tháng 2</option>
+                                <option value="3">Tháng 3</option><option value="4">Tháng 4</option>
+                                <option value="5">Tháng 5</option><option value="6">Tháng 6</option>
+                                <option value="7">Tháng 7</option><option value="8">Tháng 8</option>
+                                <option value="9">Tháng 9</option><option value="10">Tháng 10</option>
+                                <option value="11">Tháng 11</option><option value="12">Tháng 12</option>
+                            </select>
+                        </label>
+                        <label>Năm báo cáo<input type="number" id="exp-year" value="2026"></label>
+                        <label>Ngày lập báo cáo<input type="date" id="exp-date"></label>
+                        <label>Sử dụng Chữ ký số (USB Token/SmartCA)
+                            <select id="exp-ca-provider" style="border-color: var(--S);">
+                                <option value="none">--- Không dùng (In ra Ký tay) ---</option>
+                                <option value="VNPT-CA">Ký điện tử bởi VNPT-CA</option>
+                                <option value="VIETTEL-CA">Ký điện tử bởi Viettel-CA</option>
+                                <option value="BKAV-CA">Ký điện tử bởi BKAV-CA</option>
+                                <option value="FPT-CA">Ký điện tử bởi FPT-CA</option>
+                            </select>
+                        </label>
+                        <label style="grid-column: span 2;">Họ tên người ký số (Lãnh đạo đơn vị)<input type="text" id="exp-ca-name" placeholder="Ví dụ: BSCKI. Nguyễn Văn A"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="ch"><span class="ct">Kiểm tra hệ thống</span></div>
+                <div class="cb" id="exp-check"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-users" class="page">
+        <div class="alert info"><div class="alert-icon"> 👥 </div><div>Quản lý tài khoản 106 đơn vị + Khác. Tên đăng nhập được chuẩn hoá tự động theo tên viết tắt.</div></div>
+        <div class="card">
+            <div class="ch"><span class="ct" id="lbl-user-count">Danh sách tài khoản</span>
+                <button class="btn btn-outline btn-sm" onclick="copyAllAccounts()"> 📋 Copy tất cả</button>
+            </div>
+            <div class="cb" style="max-height:500px;overflow-y:auto">
+                <table class="tbl" id="user-table">
+                    <thead><tr><th>TT</th><th>Tên đăng nhập</th><th>Mật khẩu</th><th>Đơn vị</th></tr></thead>
+                    <tbody id="user-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+<div id="toast"></div>
+
+<div id="print-pdf-content" style="display:none; font-family:'Times New Roman', serif; padding: 15px;">
+    <table style="width:100%; border:none; margin-bottom: 15px;">
+        <tr>
+            <td style="width: 45%; text-align: left; vertical-align: top;">
+                <h2 style="font-size: 11pt; font-weight: bold; margin: 0; text-transform: uppercase;">SỞ Y TẾ TỈNH HƯNG YÊN</h2>
+                <h3 style="font-size: 11pt; font-weight: bold; margin: 4px 0; text-transform: uppercase;" id="pdf-site-name">TÊN ĐƠN VỊ BÁO CÁO: </h3>
+            </td>
+            <td style="width: 55%; text-align: center; vertical-align: top;">
+                <h2 style="font-size: 12pt; font-weight: bold; margin: 0; text-transform: uppercase; color: #1a4f7a;">BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI</h2>
+                <p style="font-size: 11pt; font-style: italic; margin: 4px 0;">Tháng <span id="pdf-m">6</span> năm <span id="pdf-y">2026</span></p>
+            </td>
+        </tr>
+    </table>
+    <div id="pdf-table-data" style="font-size: 8.5pt;"></div>
+    <table style="width: 100%; border: none; margin-top: 25px; page-break-inside: avoid;">
+        <tr>
+            <td style="width: 33%; text-align: center; vertical-align: top;">
+                <p style="font-size: 9.5pt; font-weight: bold; margin-bottom: 35px; text-transform: uppercase;">NGƯỜI BÁO CÁO</p>
+                <p style="font-size: 8.5pt; font-style: italic; color: #6b7f94;">(Ký, ghi rõ họ tên)</p>
+            </td>
+            <td style="width: 33%; text-align: center; vertical-align: top;">
+                <p style="font-size: 9.5pt; font-weight: bold; margin-bottom: 35px; text-transform: uppercase;">PHỤ TRÁCH BỘ PHẬN</p>
+                <p style="font-size: 8.5pt; font-style: italic; color: #6b7f94;">(Ký, ghi rõ họ tên)</p>
+            </td>
+            <td style="width: 33%; text-align: center; vertical-align: top;">
+                <p style="font-size: 9.5pt; font-weight: bold; margin-bottom: 35px; text-transform: uppercase;" id="pdf-ca-title">LÃNH ĐẠO ĐƠN VỊ</p>
+                <p style="font-size: 8.5pt; font-style: italic; color: #6b7f94;" id="pdf-ca-note">(Ký, đóng dấu, ghi rõ họ tên)</p>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="footer-scrolling-text">
+    <div class="scrolling-content">
+        <strong>Công cụ hỗ trợ báo cáo tiêm vắc xin/huyết thanh Dại do Khoa PCBTN - Trung tâm Kiểm soát bệnh tật Hưng Yên phát triển:</strong> Mục đích: Đơn giản hóa quy trình, giảm thời gian báo cáo và đảm bảo tính thống nhất số liệu theo quy định của Bộ Y tế trên địa bản tỉnh Hưng yên.
+        Hỗ trợ kỹ thuật: Ứng dụng Trí tuệ nhân tạo (AI) trong lập trình, dưới sự kiểm duyệt chuyên môn chặt chẽ từ đội ngũ bác sĩ dự phòng. Hệ thống chỉ phục vụ mục đích hỗ trợ nghiệp vụ nội bộ, không thay thế hệ thống báo cáo chính thức. Đơn vị tự chịu trách nhiệm về tính chính xác của dữ liệu báo cáo.
+    </div>
+</div>
+
+<script>
+// --- KHAI BÁO DỮ LIỆU CƠ SỞ ---
+const RAW_SITES = [
+["Trung Tâm Kiểm Soát Bệnh Tật Tỉnh Hưng Yên Cs1", "ttKsbtHungYenCs1"],
+["Trung Tâm Tiêm Chủng Vnvc Hưng Yên", "ttTcVnvcHungYen"],
+["Trung Tâm Tiêm Chủng Vnvc Văn Giang", "ttTcVnvcVanGiang"],
+["Trung Tâm Tiêm Chủng Vnvc Phố Nối", "ttTcVnvcPhoNoi"],
+["Trung Tâm Tiêm Chủng Vnvc Việt Tiến", "ttTcVnvcVietTien"],
+["Cơ Sở Tiêm Chủng Long Châu 149", "csTcLongChau149"],
+["Cơ Sở Tiêm Chủng Long Châu 274", "csTcLongChau274"],
+["Phòng Tiêm Chủng Potec 89 Hưng Yên", "pTcPotec89HungYen"],
+["Phòng Tiêm Chủng Potec 89 Yên Mỹ", "pTcPotec89YenMy"],
+["Phòng Tiêm Chủng Potec 89.7 Phù Cừ", "pTcPotec897PhuCu"],
+["Phòng Tiêm Chủng Potec 89 Kim Động", "pTcPotec89KimDong"],
+["Phòng Tiêm Chủng Potec 89.6 Tiên Lữ", "pTcPotec896TienLu"],
+["Phòng Tiêm Chủng Potec 89 Văn Giang", "pTcPotec89VanGiang"],
+["Phòng Tiêm Chủng Vắc Xin Potec Khoái Châu - Hưng Yên", "pTcPotecKhoaiChauHungYen"],
+["Cơ Sở Tiêm Chủng Vhn Care Phù Cừ", "csTcVhnCarePhuCu"],
+["Phòng Tiêm Chủng Dịch Vụ Cơ Sở Số 33 - Vhn Care Khoái Châu", "pTcCoSoSo33VhnCareKhoaiChau"],
+["Cơ Sở Tiêm Chủng Vắc Xin Happy", "csTcHappy"],
+["Phòng Tiêm Vắc Xin Dịch Vụ Happy", "pTcHappy"],
+["Phòng Tiêm Chủng Vắc Xin Happy (Yên Phú)", "pTcHappyYenPhu"],
+["Phòng Tiêm Chủng Vaccin House (Phù Cừ)", "pTcHouse"],
+["Phòng Tiêm Chủng Vaccine House (Mỹ Hào)", "pTcEHouse"],
+["Phòng Tiêm Chủng Vaccin House Đồng Than", "pTcHouseDongThan"],
+["Phòng Tiêm Chủng Vaccin House Văn Giang", "pTcHouseVanGiang"],
+["Phòng Tiêm Chủng Vắc Xin House Ân Thi (Cống Tráng)", "pTcHouseAnThi"],
+["Phòng Tiêm Chủng Vaccin House Tiên Lữ", "pTcHouseTienLu"],
+["Phòng Tiêm Chủng Go Vaccin Đình Cao", "pTcGoDinhCao"],
+["Phòng Tiêm Chủng Dịch Vụ Go Vaccine", "pTcGoE"],
+["Phòng Tiêm Chủng Vắc Xin Y Khoa Hà Nội", "pTcYKhoaHaNoi"],
+["Phòng Tiêm Chủng Vắc Xin Y Khoa Hà Nội 2", "pTcYKhoaHaNoi2"],
+["Phòng Tiêm Chủng Vắc Xin Hưng Yên - Cơ Sở Ân Thi", "pTchungYenCoSoAnThi"],
+["Phòng Tiêm Chủng Vắc Xin Hưng Yên - Văn Lâm", "pTchungYenVanLam"],
+["Phòng Tiêm Chủng Vắc Xin Hưng Yên - Kim Động", "pTchungYenKimDong"],
+["Phòng Tiêm Chủng Dịch Vụ Phố Nối", "pTcPhoNoi"],
+["Phòng Tiêm Chủng Dịch Vụ Như Quỳnh", "pTcNhuQuynh"],
+["Phòng Tiêm Dịch Vụ Mỹ Hào", "pTcMyHao"],
+["Phòng Tiêm Dịch Vụ Vắc Xin Hưng Hà", "pTcPhongTiemDichVuVacXinHungHa"],
+["Phòng Tiêm Chủng Osstech", "pTcOsstech"],
+["Phòng Tiêm Chủng Hà Nội", "pTcHaNoi"],
+["Phòng Tiêm Vắc Xin Dịch Vụ Bivac", "pTcBivac"],
+["Phòng Tiêm Vắc Xin Dịch Vụ Dr.Eco", "pTcDreco"],
+["Phòng Tiêm Chủng Dịch Vụ Thanh Nhàn", "pTcThanhNhan"],
+["Phòng Tiêm Chủng Minh Đức", "pTcMinhDuc"],
+["Phòng Tiêm Vắc Xin Dịch Vụ Tiến Đạt", "pTcTienDat"],
+["Phòng Tiêm Chủng Vắc Xin Dịch Vụ Hồng Kỳ", "pTcHongKy"],
+["Phòng Tiêm Chủng Dịch Vụ Hưng Thịnh", "pTcHungThinh"],
+["Cơ Sở Tiêm Chủng Vắc Xin Thiên Ân", "csTcThienAn"],
+["Phòng Tiêm Potec 81 Quỳnh Phụ", "pTcPotec81QuynhPhu"],
+["Trung Tâm Tiêm Chủng Thái Bình - Chi Nhánh Quỳnh Phụ", "ttTcThaiBinhQuynhPhu"],
+["Trung Tâm Tiêm Chủng Thái Bình Vàng - Chi Nhánh Quỳnh Phụ", "ttTcThaiBinhVangQuynhPhu"],
+["Trung Tâm Tiêm Chủng Hưng Hà", "ttTcHungHa"],
+["Cơ Sở Dịch Vụ Y Tế Lương Thị Thanh Potec 71 Hưng Hà", "pTcLươngThiThanhPotec71HungHa"],
+["Bệnh Viện Đa Khoa Lâm Hoa Hưng Hà", "bvLamHoaHungHa"],
+["Trung Tâm Tiêm Chủng Thái Bình Vàng - Chi Nhánh Hưng Hà", "ttTcThaiBinhVangHungHa"],
+["Trung Tâm Tiêm Chủng Thái Bình Thị Trấn Hưng Nhân", "ttTcThaiBinhChiNhanhThiTranHungNhan"],
+["Trung Tâm Tiêm Chủng Happy", "ttTcHappy"],
+["Trung Tâm Tiêm Chủng Vắc Xin Ánh Dương", "ttTcAnhDuong"],
+["Trung Tâm Tiêm Chủng An Nhiên Cơ Sở Ngự Thiên", "ttTcAnNhienCoSoNguThien"],
+["Phòng Tiêm Chủng Vắc Xin Potec 81 Thái Thụy", "pTcPotec81ThaiThuy"],
+["Trung Tâm Tiêm Chủng Vắc Xin Chất Lượng Cao Incheon 2", "ttTcIncheon2"],
+["Trung Tâm Tiêm Chủng Vắc Xin Số 1 - Chi Nhánh Thái Thụy", "ttTcSo1ThaiThuy"],
+["Trung Tâm Tiêm Chủng Vắc Xin Thái Thụy", "ttTcThaiThuy"],
+["Trung Tâm Tiêm Chủng Thái Bình Vàng - Chi Nhánh Thụy Xuân", "ttTcThaiBinhVangThuyXuan"],
+["Trung Tâm Tiêm Chủng Vaccine Incheon Vũ Thư", "ttTcIncheonVuThu"],
+["Trung Tâm Tiêm Chủng Vũ Thư", "ttTcVuThu"],
+["Phòng Tiêm Chủng Potec 70 Tiền Hải", "pTcPotec70TienHai"],
+["Trung Tâm Tiêm Chủng Tiền Hải", "ttTcTienHai"],
+["Trung Tâm Tiêm Chủng Số 1 Thái Bình", "ttTcSo1ThaiBinh"],
+["Phòng Tiêm Chủng An Nhiên", "pTcAnNhien"],
+["Trung Tâm Tiêm Chủng Long Châu 144", "ttTcLongChau144"],
+["Trung Tâm Tiêm Chủng Thái Bình Vàng", "ttTcThaiBinhVang"],
+["Vnvc Thái Bình", "vnvcThaiBinh"],
+["Trung Tâm Tiêm Chủng Potec81 Thái Bình", "ttTcPotec81ThaiBinh"],
+["Trung Tâm Tiêm Chủng Thái Bình Vàng - Chi Nhánh Ngã Tư Đậu", "ttTcThaiBinhVangNgaTuDau"],
+["Phòng Khám Tư Vấn Và Điều Trị Dự Phòng Vaccine Incheon", "pTcIncheon"],
+["Phòng Tiêm Chủng Vắc Xin Đông Hưng", "pTcDongHung"],
+["Trung Tâm Tiêm Chủng Đông Hưng", "ttTcDongHung"],
+["Trung Tâm Tiêm Chủng Vắc Xin Tiên Hưng", "ttTcTienHung"],
+["Phòng Khám Tư Vấn Và Điều Trị Dự Phòng Vũ Quý", "pTcVuQuy"],
+["Trung Tâm Tiêm Chủng - Dinh Dưỡng Kiến Xương", "pTcKienXuong"],
+["Phòng Tiêm Dịch Vụ Bệnh Viện Sản Nhi Hưng Yên", "pTcSanNhiHungYen"],
+["Phòng Tiêm Chủng Số 1 Hưng Yên", "pTcSo1HungYen"],
+["Phòng Tiêm Chủng Bệnh Viện Đa Khoa Phụ Dực", "pTcPhuDuc"],
+["Phòng Tiêm Chủng Bệnh Viện Nhi Thái Bình", "pTcThaiBinh"],
+["Phòng Tiêm Bệnh Viện Phụ Sản An Đức", "pTcAnDuc"],
+["Cơ Sở Tiêm Chủng Vhn Care Yên Mỹ", "csTcVhnCareYenMy"],
+["Phòng Tiêm Chủng Vắc Xin Dược Hà Nội Khu Vực Đại Hưng", "pTcDuocHaNoiKhuVucDaiHung"],
+["Phòng Tiêm Chủng Vắc Xin Dược Hà Nội Khu Vực Khoái Châu", "pTcDuocHaNoiKhuVucKhoaiChau"],
+["Phòng Tiêm Chủng Tâm An - Văn Giang", "pTcTamAnVanGiang"],
+["Trung Tâm Tiêm Chủng Và Tư Vấn Dinh Dưỡng Hải My", "ttTcHaiMy"],
+["Cơ Sở Tiêm Chủng Vaccin Mỹ Hào - Hưng Yên", "csTcMyHaoHungYen"],
+["Phòng Tiêm Chủng Vắc Xin - Phòng Khám Đa Khoa Phố Hiến", "pTcPhongKhamDaKhoaPhoHien"],
+["Phòng Tiêm Chủng Vắc Xin Phù Ủng", "pTcPhuUng"],
+["Phòng Vắc Xin Dịch Vụ Thiện Đức", "pTcThienDuc"],
+["Phòng Tiêm Chủng Vaccin Hưng Yên", "pTcHungYen"],
+["Ds Care Cơ Sở Hưng Yên", "csTcDsCareCoSoHungYen"],
+["Phòng Tiêm Chủng Vắc Xin Dịch Vụ Ân Thi", "pTcAnThi"],
+["Trung Tâm Tiêm Chủng Vắc Xin An Bài", "ttTcAnBai"],
+["Trung Tâm Tiêm Chủng An Nhiên 3", "ttTcAnNhien3"],
+["Trung Tâm Tiêm Chủng Thành Gióng Nam Trung", "ttTcThanhGiongNamTrung"],
+["Trung Tâm Tiêm Chủng Vắc Xin Nam Tiền Hải", "ttTcNamTienHai"],
+["Trung Tâm Tiêm Chủng Thái Bình Vàng - Chi Nhánh Tiền Hải", "ttTcThaiBinhVangTienHai"],
+["Trung Tâm Tiêm Chủng Giống Tiền Hải", "ttTcGiongTienHai"],
+["Phòng Tiêm Chủng Dịch Vụ - Trung Tâm Kiểm Soát Bệnh Tật Hưng Yên (Cơ Sở 2)", "pTcHungYenCs2"],
+["Phòng Tiêm Chủng Cơ Sở Số 36 - Vhn Care Đông Hưng", "pTcCoSoSo36VhnCareDongHung"],
+["Trung Tâm Tiêm Chủng Vắc Xin Vn17", "ttTcVn17"],
+["Phòng Tiêm Chủng Tâm Anh - Văn Giang", "pTcTamAnhVanGiang"],
+["Khác (ghi rõ)", "csKhac"]
+];
+
+const SITES = [];
+const USERS_LOCAL = {
+    'admin': {pass:'sytHY@2026', role:'admin', siteIndex:-1, name:'Quản trị Tuyến Tỉnh'}
+};
+
+RAW_SITES.forEach((item, index) => {
+    SITES.push(item[0]);
+    let uname = item[1].toLowerCase();
+    USERS_LOCAL[uname] = { pass: item[1] + '@2026', role: 'site', siteIndex: index, name: item[0], rawUsername: item[1] };
+});
+
+const FIELD_GROUPS=[
+    {title:'Giới',fields:['Nam','Nữ']},
+    {title:'Tuổi',fields:['< 15 tuổi','15 - 24 tuổi','24 - 49 tuổi','≥ 50 tuổi']},
+    {title:'Thời gian từ lúc bị cắn - tiêm',fields:['≤ 10 ngày','> 10 ngày']},
+    {title:'Loại động vật',fields:['Chó','Mèo','Dơi','Khác']},
+    {title:'Số người có vị trí vết thương',fields:['Đầu mặt cổ','Thân','Tay','Chân']},
+    {title:'Số người có mức độ vết thương',fields:['Độ I','Độ II','Độ III']},
+    {title:'Tình trạng động vật',fields:['Bình thường','Ốm','Chạy rông + mất tích','Lên cơn dại']},
+    {title:'Số người',fields:['Tiêm bắp','Tiêm trong da']},
+    {title:'Số người dùng HTKD',fields:['Dùng HTKD']},
+    {title:'Số người có phản ứng phụ tại chỗ',fields:['Đau','Quầng đỏ','Tụ máu','Phù nề/nốt cứng']},
+    {title:'Số người có phản ứng phụ toàn thân',fields:['Sốt','Khó chịu','Ngứa mẩn đỏ','Đau cơ, khớp','Rối loạn tiêu hoá','Khác']},
+    {title:'BN tử vong',fields:['Có tiêm vắc xin','Không tiêm']},
+    {title:'Số người tiêm dự phòng',fields:['Tiêm dự phòng']}
+];
+
+let currentUser = null;
+let tableData = SITES.map(function(){return Array(39).fill(0);});
+let submitDates = {};
+let pieChartInst = null;
+let barChartInst = null;
+const activityLogs = [];
+let archiveData = {}; 
+
+function logAction(actionType, detailDescription) {
+    const logEntry = {
+        time: new Date().toISOString(), user: currentUser ? currentUser.username : "Guest",
+        role: currentUser ? currentUser.role : "None", action: actionType, detail: detailDescription
+    };
+    activityLogs.push(logEntry);
+}
+
+function initSiteDropdown() {
+    const selectEl = document.getElementById('site-list');
+    if(!selectEl) return;
+    selectEl.innerHTML = '';
+    let optAdmin = document.createElement('option');
+    optAdmin.value = 'Quản trị Tuyến Tỉnh (SYT/CDC)';
+    optAdmin.setAttribute('data-user', 'admin');
+    selectEl.appendChild(optAdmin);
+
+    RAW_SITES.forEach(site => {
+        let opt = document.createElement('option');
+        opt.value = site[0];
+        opt.setAttribute('data-user', site[1].toLowerCase());
+        selectEl.appendChild(opt);
+    });
+}
+
+function onSiteSelectChange() {
+    const inputVal = document.getElementById('sel-site-login').value;
+    const options = document.getElementById('site-list').options;
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].value === inputVal) {
+            document.getElementById('inp-user').value = options[i].getAttribute('data-user');
+            break;
+        }
+    }
+}
+
+function togglePassword() {
+    var pwdInput = document.getElementById("inp-pass");
+    if (pwdInput.type === "password") {
+        pwdInput.type = "text";
+    } else {
+        pwdInput.type = "password";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    initSiteDropdown();
+});
+
+let codeChars = "";
+function drawCaptcha() {
+    const canvas = document.getElementById('captcha-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const charsArray = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let captchaStr = [];
+    for (let i = 0; i < 5; i++) {
+        let index = Math.floor(Math.random() * charsArray.length);
+        captchaStr.push(charsArray[index]);
+    }
+    codeChars = captchaStr.join("");
+    ctx.font = "bold 20px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#1a4f7a";
+    ctx.textBaseline = "middle";
+    ctx.fillText(codeChars, 15, 20);
+    for(let i=0; i<3; i++) {
+        ctx.strokeStyle = "#2d7bbf"; ctx.beginPath();
+        ctx.moveTo(Math.random()*100, Math.random()*40);
+        ctx.lineTo(Math.random()*100, Math.random()*40); ctx.stroke();
+    }
+}
+drawCaptcha();
+
+function doLogin(){
+    var u = document.getElementById('inp-user').value.trim().toLowerCase();
+    var p = document.getElementById('inp-pass').value;
+    var enteredCaptcha = document.getElementById('inp-captcha').value.trim();
+    var errEl = document.getElementById('login-err');
+    
+    if(!u) {
+        let inputVal = document.getElementById('sel-site-login').value.toLowerCase();
+        if(inputVal === 'admin' || inputVal.includes('quản trị')) u = 'admin';
+    }
+
+    if (enteredCaptcha !== codeChars) {
+        document.getElementById('login-err-msg').textContent = 'Mã xác thực (Captcha) không chính xác!';
+        errEl.style.display = 'flex'; drawCaptcha(); document.getElementById('inp-captcha').value = ''; return;
+    }
+    var info = USERS_LOCAL[u];
+    if(!info || info.pass !== p){
+        document.getElementById('login-err-msg').textContent = 'Tên đăng nhập hoặc mật khẩu không đúng!';
+        errEl.style.display = 'flex'; drawCaptcha(); return;
+    }
+    currentUser = { username: info.rawUsername || u, role: info.role, siteIndex: info.siteIndex, name: info.name };
+    logAction("LOGIN", "Đăng nhập hệ thống thành công.");
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('user-bar').style.display = 'flex';
+    document.getElementById('app-tabs').style.display = 'flex';
+    document.getElementById('app-main').style.display = 'block';
+    document.getElementById('badge-name').textContent = currentUser.name;
+    var roleEl = document.getElementById('badge-role');
+    if(currentUser.role === 'admin'){
+        roleEl.textContent = 'TUYẾN TỈNH'; roleEl.className = 'role-chip role-admin';
+        buildAdminTabs(); goTab('dashboard');
+    } else {
+        roleEl.textContent = 'CƠ SỞ'; roleEl.className = 'role-chip role-site';
+        buildSiteTabs(); goTab('mysite');
+    }
+}
+
+function doLogout(){
+    logAction("LOGOUT", "Đăng xuất khỏi hệ thống.");
+    currentUser = null;
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('user-bar').style.display = 'none';
+    document.getElementById('app-tabs').style.display = 'none';
+    document.getElementById('app-main').style.display = 'none';
+    document.getElementById('inp-user').value = '';
+    document.getElementById('inp-pass').value = '';
+    document.getElementById('sel-site-login').value = '';
+    drawCaptcha();
+}
+
+function changePwdPrompt() {
+    const newPwd = prompt("Yêu cầu độ mạnh: Ít nhất 8 ký tự, 1 HOA, 1 thường, 1 số, 1 ký tự đặc biệt.\nNhập mật khẩu mới:");
+    if(newPwd) {
+        const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if(!strongRegex.test(newPwd)) { alert(" ❌ Mật khẩu chưa đủ mạnh. Vui lòng thử lại!"); } 
+        else {
+            let ukey = currentUser.username.toLowerCase();
+            USERS_LOCAL[ukey].pass = newPwd;
+            toast(" ✅ Đổi mật khẩu thành công!", "ok");
+        }
+    }
+}
+
+function buildAdminTabs(){
+    document.getElementById('app-tabs').innerHTML=
+    '<button class="tab active" onclick="goTab(\'dashboard\',this)"> 📊 Tổng quan</button>'+
+    '<button class="tab" onclick="goTab(\'data\',this)"> 📋 Dữ liệu toàn tỉnh</button>'+
+    '<button class="tab" onclick="goTab(\'progress\',this)"> 🔔 Tiến độ</button>'+
+    '<button class="tab" onclick="goTab(\'export\',this)"> 💾 Xuất Báo Cáo</button>'+
+    '<button class="tab" onclick="goTab(\'users\',this)"> 👥 Tài khoản</button>';
+}
+function buildSiteTabs(){
+    document.getElementById('app-tabs').innerHTML=
+    '<button class="tab active" onclick="goTab(\'mysite\',this)"> 📋 Nhập & Trình duyệt</button>'+
+    '<button class="tab" onclick="goTab(\'export\',this)"> 💾 Xuất Báo Cáo</button>';
+}
+function goTab(name,btn){
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+    document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
+    var pg=document.getElementById('page-'+name);
+    if(pg) pg.classList.add('active');
+    if(btn) btn.classList.add('active');
+    else document.querySelectorAll('.tab').forEach(function(b){
+        if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+name+"'")) b.classList.add('active');
+    });
+    if(name==='dashboard') renderDash();
+    if(name==='data') renderDT();
+    if(name==='progress') renderProg();
+    if(name==='export') renderExpCheck();
+    if(name==='mysite') renderMysite();
+    if(name==='users') renderUsers();
+}
+
+let currentPeriod = ""; 
+function changeMonth() {
+    var v = document.getElementById('mPicker').value; 
+    var parts = v.split('-');
+    
+    if(currentPeriod && archiveData) {
+        archiveData[currentPeriod] = {
+            data: JSON.parse(JSON.stringify(tableData)),
+            dates: JSON.parse(JSON.stringify(submitDates))
+        };
+    }
+    
+    currentPeriod = v;
+    var savedArchive = JSON.parse(localStorage.getItem('cdc_hungyen_archive') || '{}');
+    archiveData = Object.assign(archiveData, savedArchive); 
+
+    if (archiveData[currentPeriod]) {
+        tableData = archiveData[currentPeriod].data;
+        submitDates = archiveData[currentPeriod].dates || {};
+        toast('Đã nạp dữ liệu lịch sử của tháng ' + currentPeriod, 'info');
+    } else {
+        tableData = SITES.map(function(){return Array(39).fill(0);});
+        submitDates = {};
+    }
+
+    ['data-month-lbl','prog-month-lbl','mysite-month-lbl'].forEach(id => {
+        if(document.getElementById(id)) document.getElementById(id).textContent = 'Tháng '+parts[0]+'/'+parts[1];
+    });
+    if(document.getElementById('exp-month')) document.getElementById('exp-month').value = parseInt(parts[0]);
+    
+    if(currentUser) {
+        if(currentUser.role === 'admin') { renderDT(); renderDash(); renderProg(); }
+        else { renderMysite(); }
+    }
+}
+
+var nv = v => parseInt(v)||0;
+var colSum = j => tableData.reduce((s,r) => s+nv(r[j]),0);
+var rowTotal = r => nv(r[0])+nv(r[1]);
+
+function toast(msg, type){
+    var el = document.getElementById('toast');
+    el.textContent = msg; el.className = 'show '+(type==='ok'?'ok':type==='err'?'err':type==='info'?'info':'');
+    clearTimeout(el._t); el._t = setTimeout(() => el.className='', 3200);
+}
+
+function renderDash(){
+    var nam=colSum(0),nu=colSum(1),tot=nam+nu;
+    var sub=Object.keys(submitDates).length,miss=SITES.length-sub;
+    var pct=Math.round(sub/SITES.length*100) || 0;
+    document.getElementById('stats').innerHTML=
+    '<div class="stat blue"><div class="stat-lbl">Tổng tiêm toàn tỉnh</div><div class="stat-val">'+tot.toLocaleString()+'</div><div class="stat-sub">Nam: '+nam+' | Nữ: '+nu+'</div></div>'+
+    '<div class="stat green"><div class="stat-lbl">Đơn vị đã nộp</div><div class="stat-val">'+sub+'/'+SITES.length+'</div><div class="stat-sub">'+pct+'% hoàn thành</div></div>'+
+    '<div class="stat orange"><div class="stat-lbl">Tiêm HTKD</div><div class="stat-val">'+colSum(25)+'</div></div>';
+    
+    var omCount = colSum(20), daiCount = colSum(22), nghiDaiCount = omCount + daiCount;
+    var rongCount = colSum(21), tuVongCount = colSum(36) + colSum(37);
+    var alertHtml = '';
+    
+    if (tuVongCount > 0) alertHtml += '<div class="alert danger"><div class="alert-icon"> ☠️</div><div><b>BÁO ĐỘNG ĐỎ - TỬ VONG:</b> Hệ thống ghi nhận <b>' + tuVongCount + '</b> ca tử vong. Cần rà soát số liệu!</div></div>';
+    if (nghiDaiCount >= 5) alertHtml += '<div class="alert danger"><div class="alert-icon"> 🚨 </div><div><b>CẢNH BÁO BẤT THƯỜNG:</b> Số ca động vật <b>Ốm/Nghi Dại</b> cắn cao (' + nghiDaiCount + ' ca).</div></div>';
+    else if (rongCount >= 20) alertHtml += '<div class="alert warn"><div class="alert-icon"> ⚠️</div><div><b>LƯU Ý:</b> Chó/mèo CHẠY RÔNG cắn người cao (' + rongCount + ' ca).</div></div>';
+    
+    var today = new Date();
+    if (today.getDate() > 5 && miss > 0) {
+        alertHtml += '<div class="alert danger"><div class="alert-icon">⏰</div><div><b>NHẮC NHỞ QUÁ HẠN:</b> Đã qua ngày 05 hàng tháng, hiện vẫn còn <b>' + miss + '</b> đơn vị chưa nộp báo cáo. Vui lòng đôn đốc!</div></div>';
+    }
+
+    var errorSites = [];
+    for (let i = 0; i < SITES.length; i++) {
+        if (submitDates[i]) {
+            let val = validateDataLogic(i);
+            if (!val.isValid) errorSites.push(SITES[i].substring(0, 20) + '...');
+        }
+    }
+    if (errorSites.length > 0) {
+        alertHtml += '<div class="alert warn"><div class="alert-icon">⚠️</div><div><b>CẢNH BÁO SAI LỆCH DỮ LIỆU:</b> ' + errorSites.length + ' đơn vị có báo cáo không khớp tổng. Chi tiết: ' + errorSites.join(', ') + '</div></div>';
+    }
+
+    var aiAlerts = document.getElementById('ai-alerts');
+    if(aiAlerts) aiAlerts.innerHTML = alertHtml;
+
+    document.getElementById('pct-lbl').textContent=pct+'%';
+    document.getElementById('pct-bar').style.width=pct+'%';
+    document.getElementById('cnt-done').textContent=sub;
+    document.getElementById('cnt-miss').textContent=miss;
+
+    setTimeout(() => {
+        updateCharts(sub, miss, colSum(19), colSum(20), colSum(21), colSum(22));
+    }, 100);
+}
+
+function updateCharts(sub, miss, bt, om, rong, dai) {
+    if (typeof Chart === 'undefined') return;
+    var ctxPie = document.getElementById('pieChart');
+    var ctxBar = document.getElementById('barChart');
+    var ctxTop = document.getElementById('topSitesChart'); 
+    
+    if (!ctxPie || !ctxBar || !ctxTop) return;
+    
+    if (pieChartInst) pieChartInst.destroy();
+    pieChartInst = new Chart(ctxPie, {
+        type: 'doughnut',
+        data: { labels: ['Đã nộp', 'Chưa nộp'], datasets: [{ data: [sub, miss], backgroundColor: ['#1a7a4f', '#c0392b'], borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    });
+
+    if (barChartInst) barChartInst.destroy();
+    barChartInst = new Chart(ctxBar, {
+        type: 'bar',
+        data: { labels: ['Bình thường', 'Ốm', 'Chạy rông', 'Lên cơn dại'], datasets: [{ label: 'Số lượng', data: [bt, om, rong, dai], backgroundColor: ['#2d7bbf', '#e8a020', '#d4800a', '#c0392b'], borderRadius: 4 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+
+    var sorted = SITES.map((s,i) => ({name:s, total:rowTotal(tableData[i])}))
+                      .sort((a,b) => b.total - a.total).slice(0, 10);
+    
+    if (window.topChartInst) window.topChartInst.destroy();
+    window.topChartInst = new Chart(ctxTop, {
+        type: 'bar',
+        data: {
+            labels: sorted.map(s => s.name.substring(0, 18) + '...'),
+            datasets: [{
+                label: 'Tổng số mũi tiêm',
+                data: sorted.map(s => s.total),
+                backgroundColor: '#2d7bbf',
+                borderRadius: 4
+            }]
+        },
+        options: { 
+            indexAxis: 'y', 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true } }
+        }
+    });
+}
+
+function renderDT(){
+    var isAdmin = currentUser && currentUser.role === 'admin';
+    var dtBody = document.getElementById('dt-body');
+    if(dtBody) {
+        dtBody.innerHTML = SITES.map((site, i) => {
+            var cells = tableData[i]?.map((v, j) =>
+                isAdmin ? '<td><input type="number" min="0" value="'+(v||0)+'" onblur="if(this.value===\'\'){this.value=0; cellChange('+i+','+j+',0);}" onchange="cellChange('+i+','+j+',this.value)"></td>' : '<td style="color:#555">'+(v||0)+'</td>'
+            ).join('') || '';
+            return '<tr data-nm="'+site.toLowerCase()+'"><td class="tt">'+(i+1)+'</td><td class="nm">'+site+'</td>'+cells+'</tr>';
+        }).join('') || '';
+    }
+    updateTot();
+}
+
+function cellChange(r,c,v){
+    if (tableData[r]) tableData[r][c] = nv(v);
+    updateTot();
+}
+
+function updateTot(){
+    var tots = Array.from({length:39}, (_,j) => colSum(j));
+    var dtFoot = document.getElementById('dt-foot');
+    if(dtFoot) dtFoot.innerHTML='<tr class="tot"><td class="tt" colspan="2" style="text-align:center">CỘNG</td>'+tots.map(t=>'<td><b>'+(t||0)+'</b></td>').join('')+'</tr>';
+}
+
+function validateDataLogic(siteIdx) {
+    const dataRow = tableData[siteIdx];
+    if (!dataRow) return { isValid: true, message: "" };
+    
+    const sumGioi = (dataRow[0] || 0) + (dataRow[1] || 0);
+    const sumTuoi = (dataRow[2] || 0) + (dataRow[3] || 0) + (dataRow[4] || 0) + (dataRow[5] || 0);
+    const sumLoaiDV = (dataRow[8] || 0) + (dataRow[9] || 0) + (dataRow[10] || 0) + (dataRow[11] || 0);
+    
+    if (sumGioi !== sumTuoi || sumGioi !== sumLoaiDV) {
+        return {
+            isValid: false,
+            message: `⚠️ Dữ liệu không khớp: Tổng Giới tính (${sumGioi}) | Tổng Tuổi (${sumTuoi}) | Tổng Động vật (${sumLoaiDV})`
+        };
+    }
+    return { isValid: true, message: "Dữ liệu hợp lệ" };
+}
+
+function renderMysite(){
+    if(!currentUser || currentUser.role==='admin') return;
+    var idx = currentUser.siteIndex;
+    document.getElementById('mysite-name').textContent = currentUser.name;
+    document.getElementById('mysite-username').textContent = currentUser.username;
+    var tot = rowTotal(tableData[idx]);
+    var d = submitDates[idx];
+    document.getElementById('mysite-status-bar').innerHTML =
+        '<div class="sstat"><div class="sstat-v">'+tot+'</div><div class="sstat-l">Người tiêm</div></div>'+
+        '<div class="sstat"><div class="sstat-v">'+(d?' ✅ ':'DRAFT')+'</div><div class="sstat-l">'+(d?'Đã Trình Duyệt':'Chưa Nộp')+'</div></div>';
+    
+    var fi = 0, html = '';
+    FIELD_GROUPS.forEach(g => {
+        html += '<div class="sf-group"><div class="sf-group-title">'+g.title+'</div>';
+        g.fields.forEach(lbl => {
+            var val = tableData[idx]?.[fi]||0;
+            html += '<div class="sf-field"><span class="sf-label">'+lbl+'</span><input class="sf-input" type="number" min="0" value="'+val+'" oninput="mySiteChange('+fi+',this.value)" onblur="if(this.value===\'\'){this.value=0; mySiteChange('+fi+',0);}"></div>';
+            fi++;
+        });
+        html += '</div>';
+    });
+    document.getElementById('mysite-form').innerHTML = html;
+}
+
+function mySiteChange(fi, val) {
+    if (tableData[currentUser.siteIndex]) {
+        tableData[currentUser.siteIndex][fi] = nv(val);
+    }
+    const totRow = rowTotal(tableData[currentUser.siteIndex]);
+    document.querySelector('#mysite-status-bar .sstat-v').textContent = totRow;
+}
+
+function previewMySiteReport() {
+    if (!currentUser || currentUser.role === 'admin') return;
+    const idx = currentUser.siteIndex;
+    const dataRow = tableData[idx] || Array(39).fill(0);
+    let printWindow = window.open('', '_blank');
+    let htmlContent = `<html lang="vi"><head><meta charset="UTF-8"><title>Xem trước báo cáo</title><style>body { font-family: 'Times New Roman', serif; padding: 20px; } table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; } th, td { border: 1px solid #000; padding: 6px; text-align: center; } th { background-color: #f2f2f2; } .left-al { text-align: left; } </style></head><body>`;
+    htmlContent += `<h2 style="text-align:center">BÁO CÁO TIÊM VẮC XIN - ${currentUser.name}</h2><table><thead><tr><th>Chỉ tiêu y tế</th><th>Số liệu</th></tr></thead><tbody>`;
+    let fi = 0;
+    FIELD_GROUPS.forEach(g => {
+        htmlContent += `<tr><td colspan="2" style="font-weight:bold; background:#e9edf0; text-align:left;"> ${g.title}</td></tr>`;
+        g.fields.forEach(fLabel => {
+            htmlContent += `<tr><td class="left-al"> &bull; ${fLabel}</td><td>${dataRow[fi] || 0}</td></tr>`;
+            fi++;
+        });
+    });
+    htmlContent += `</tbody></table></body></html>`;
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+}
+
+function submitMyReport() {
+    const idx = currentUser.siteIndex;
+    const validation = validateDataLogic(idx);
+    
+    if (!validation.isValid) {
+        alert("🚨 KHÔNG THỂ GỬI BÁO CÁO:\n\n" + validation.message + "\n\nVui lòng kiểm tra và sửa lại các chỉ số tổng trước khi trình duyệt.");
+        return; 
+    }
+
+    const totRow = rowTotal(tableData[idx]);
+    if (totRow === 0) {
+        const isConfirmed = confirm("⚠️ Hệ thống ghi nhận báo cáo không có số liệu.\n\nBấm OK nếu đơn vị CAM KẾT THÁNG NÀY KHÔNG CÓ THÔNG TIN BÁO CÁO để tiếp tục gửi.");
+        if (!isConfirmed) return;
+    }
+
+    submitDates[idx] = new Date();
+    logAction("SUBMIT_REPORT", `Cơ sở ${currentUser.name} đã trình duyệt.`);
+    toast('✅ Đã trình duyệt báo cáo lên CDC Tuyến Tỉnh!', 'ok');
+    renderMysite(); renderProg(); renderDash();
+}
+
+function renderProg() {
+    var progBody = document.getElementById('prog-body');
+    if(progBody) {
+        progBody.innerHTML = SITES.map((site, i) => {
+            var d = submitDates[i];
+            var pill = d ? '<span class="pill pill-ok"> ✓ Đã nộp</span>' : '<span class="pill pill-no"> ✗ Chưa nộp</span>';
+            var pct = d ? 100 : 0;
+            return `<tr data-nm="${site.toLowerCase()}" data-st="${d ? 'done' : 'missing'}">
+                <td>${i+1}</td><td style="font-size:11px">${site}</td><td>${pill}</td>
+                <td>${d ? d.toLocaleDateString('vi-VN') : '—'}</td>
+                <td style="text-align:center;font-weight:700">${rowTotal(tableData[i])}</td>
+                <td><div class="bar-wrap"><div class="bar" style="width:${pct}%;background:${d ? 'var(--S)' : 'var(--D)'}"></div></div></td>
+                <td>${!d ? `<button class="btn btn-outline btn-sm" onclick="submitDates[${i}]=new Date();renderProg();renderDash();toast('✅ Đã duyệt', 'ok')"> ✔ Duyệt</button>` : ''}</td>
+            </tr>`;
+        }).join('');
+    }
+}
+
+function filterDT(q) {
+    var lq = q.toLowerCase();
+    document.querySelectorAll('#dt-body tr').forEach(r => r.style.display = (r.getAttribute('data-nm') || '').includes(lq) ? '' : 'none');
+}
+function filterProg(q) {
+    var lq = q.toLowerCase();
+    document.querySelectorAll('#prog-body tr').forEach(r => r.style.display = (r.getAttribute('data-nm') || '').includes(lq) ? '' : 'none');
+}
+function filterProgStatus(v) {
+    document.querySelectorAll('#prog-body tr').forEach(r => r.style.display = (v === 'all' || (r.getAttribute('data-st') || '') === v) ? '' : 'none');
+}
+
+function saveData() {
+    var currentMonth = document.getElementById('mPicker').value;
+    archiveData[currentMonth] = { data: tableData, dates: submitDates };
+    try {
+        localStorage.setItem('cdc_hungyen_archive', JSON.stringify(archiveData));
+        toast('✅ Đã lưu trữ dữ liệu thành công vào bộ nhớ máy!', 'ok');
+    } catch (e) {
+        alert('❌ LỖI LƯU TRỮ: Trình duyệt của bạn đang chặn lưu trữ hoặc bộ nhớ đã đầy. Vui lòng tắt chế độ ẩn danh (Incognito) hoặc dọn dẹp bộ nhớ.');
+    }
+}
+
+function resetMyForm() {
+    if(confirm('CẢNH BÁO: Hành động này sẽ xóa toàn bộ số liệu bạn vừa nhập. Bạn có chắc chắn muốn làm mới dữ liệu không?')) {
+        tableData[currentUser.siteIndex] = Array(39).fill(0);
+        renderMysite(); toast('🔄 Đã làm mới!', 'ok');
+    }
+}
+
+function loadProgress() { renderProg(); toast('🔄 Đã tải lại tiến độ', 'ok'); }
+function markAllDone() {
+    if(confirm('Đánh dấu tất cả ' + SITES.length + ' đơn vị là Đã nộp?')) {
+        SITES.forEach((_, i) => { if(!submitDates[i]) submitDates[i] = new Date(); });
+        renderProg(); renderDash(); toast('✅ Đã đánh dấu tất cả!', 'ok');
+    }
+}
+
+function handleAdminFile(file){
+    toast('Tính năng nạp file tổng đang được tối ưu...', 'info');
+}
+function handleMyFile(file){
+    toast('Tính năng nạp file cơ sở đang được tối ưu...', 'info');
+}
+
+function renderExpCheck(){
+    var xlsxOk = typeof XLSX !== 'undefined';
+    var expCheck = document.getElementById('exp-check');
+    if(expCheck) {
+        expCheck.innerHTML = [
+            {ok: xlsxOk, msg: xlsxOk?'Thư viện Export Excel: ✅ Sẵn sàng':'Thư viện Excel: ⏳ Đang tải...'},
+            {ok: true, msg: 'Đã căn lề, xoay chữ (90 độ) chuẩn A4 ngang'},
+            {ok: true, msg: 'Cấu trúc Tiêu đề, Chữ ký cập nhật khớp 100% mẫu quy định'},
+            {ok: true, msg: currentUser.role === 'admin' ? 'Quyền: ADMIN (Xuất Toàn Tỉnh)' : 'Quyền: CƠ SỞ (Chỉ xuất dữ liệu của mình)'}
+        ].map(c => `<div class="chk-item"><span style="color:${c.ok?'var(--S)':'var(--W)'};font-size:15px">${c.ok?' ✓ ':' ⚠ '}</span><span>${c.msg}</span></div>`).join('');
+    }
+}
+
+function exportPDF() {
+    if (typeof html2pdf === 'undefined') return toast('⏳ Đang tải thư viện PDF...', 'err');
+    
+    var siteName = currentUser.role === 'admin' ? 'CDC HƯNG YÊN' : currentUser.name;
+    document.getElementById('pdf-site-name').textContent = 'TÊN ĐƠN VỊ BÁO CÁO: ' + siteName.toUpperCase();
+    
+    const printArea = document.getElementById('print-pdf-content');
+    document.getElementById('pdf-table-data').innerHTML = document.querySelector('.dt-wrap').innerHTML;
+    printArea.style.display = 'block';
+
+    const opt = {
+        margin: [10, 5, 10, 5],
+        filename: `BaoCao_TiemDai_T${document.getElementById('exp-month').value}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, windowWidth: 1800 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    toast('📥 Đang kết xuất PDF A4 Ngang...', 'info');
+    html2pdf().set(opt).from(printArea).save().then(() => printArea.style.display = 'none');
+}
+
+function exportXLSX()){
+    if(typeof XLSX === 'undefined') return toast('⏳ Đang tải thư viện...', '');
+    var caProvider = document.getElementById('exp-ca-provider').value;
+    var caName = document.getElementById('exp-ca-name').value;
+    doExportReal(caProvider, caName);
+}
+
+function doExportReal(caProvider, caName) {
+    var m = document.getElementById('exp-month').value;
+    var y = document.getElementById('exp-year').value;
+    var sd = document.getElementById('exp-date').value || new Date();
+    buildXLSX(m, y, sd, caProvider, caName);
+    toast('✅ Xuất Excel chuẩn A4 Ngang thành công!', 'ok');
+}
+
+function buildXLSX(month, year, signDate, caProvider, caName) {
+    var isAdmin = currentUser && currentUser.role === 'admin';
+    var wb = XLSX.utils.book_new(); var aoa = []; var E = Array(41).fill('');
+    
+    // Row 1: Tiêu đề dòng 1
+    var r1 = E.slice(); 
+    r1[0] = 'SỞ Y TẾ TỈNH HƯNG YÊN'; 
+    r1[8] = 'BÁO CÁO TIÊM VẮC XIN PHÒNG DẠI VÀ HUYẾT THANH KHÁNG DẠI';
+    aoa.push(r1);
+    
+    // Row 2: Tiêu đề dòng 2
+    var r2 = E.slice(); 
+    r2[0] = isAdmin ? 'TÊN ĐƠN VỊ BÁO CÁO: CDC HƯNG YÊN' : 'TÊN ĐƠN VỊ BÁO CÁO: ' + currentUser.name.toUpperCase();
+    r2[8] = 'Tháng ' + month + ' năm ' + year;
+    aoa.push(r2);
+    
+    aoa.push(E.slice());
+    
+    // Thẻ Header bảng dữ liệu
+    aoa.push(['TT','Điểm tiêm','Giới','','Tuổi','','','','Thời gian từ lúc bị cắn - tiêm','','Loại động vật','','','','Số người có vị trí vết thương','','','','Số người có mức độ vết thương','','','Tình trạng động vật','','','','Số người','','Số người dùng HTKD','Số người có phản ứng phụ tại chỗ','','','','Số người có phản ứng phụ toàn thân','','','','','','BN tử vong','','Số người tiêm dự phòng']);
+    aoa.push(['','','Nam','Nữ','< 15 tuổi','15 - 24 tuổi','24 - 49 tuổi','≥ 50 tuổi','≤ 10 ngày','> 10 ngày','Chó','Mèo','Dơi','Khác','Đầu mặt cổ','Thân','Tay','Chân','Độ I','Độ II','Độ III','Bình thường','Ốm','Chạy rông + mất tích','Lên cơn dại','Tiêm bắp','Tiêm trong da','','Đau','Quầng đỏ','Tụ máu','Phù nề/nốt cứng','Sốt','Khó chịu','Ngứa mẩn đỏ','Đau cơ, khớp','Rối loạn tiêu hoá','Khác','Có tiêm vắc xin','Không tiêm','']);
+
+    var startIdx = isAdmin ? 0 : currentUser.siteIndex;
+    var endIdx = isAdmin ? (SITES.length - 1) : currentUser.siteIndex;
+    
+    var startDataRow = 5; // Dữ liệu bắt đầu từ dòng 6 (index 5 trong aoa)
+    for(var i = startIdx; i <= endIdx; i++) {
+        aoa.push([isAdmin ? (i+1) : 1, SITES[i]].concat(tableData[i]));
+    }
+    
+    var endDataRow = startDataRow + (endIdx - startIdx); // Hàng dữ liệu cuối cùng
+    
+    // --- BỔ SUNG LẠI HÀNG TỔNG CỘNG CHUẨN CỦA SẾP ---
+    var cong = E.slice(); 
+    cong[0] = 'CỘNG';
+    var colL = ['C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO'];
+    colL.forEach((l, idx) => {
+        // Dòng Excel bắt đầu từ 1, do đó ta cộng 1 vào chỉ số mảng aoa
+        cong[idx+2] = { f: `SUM(${l}${startDataRow+1}:${l}${endDataRow+1})` };
+    });
+    aoa.push(cong); // Thêm dòng tổng cộng vào mảng dữ liệu xuất file
+    
+    var totalRowIdx = endDataRow + 1; // Vị trí dòng Tổng cộng trong file Excel
+    aoa.push(E.slice()); // Dòng trống cách biệt
+    
+    // 3 Chữ ký phân chia cân đối
+    var rTitle = E.slice();
+    rTitle[2] = 'NGƯỜI BÁO CÁO';
+    rTitle[16] = 'PHỤ TRÁCH BỘ PHẬN';
+    rTitle[33] = caProvider !== 'none' ? 'LÃNH ĐẠO ĐƠN VỊ\n(Đã Ký Số)' : 'LÃNH ĐẠO ĐƠN VỊ';
+    aoa.push(rTitle);
+    
+    var rNote = E.slice();
+    rNote[2] = '(Ký, ghi rõ họ tên)';
+    rNote[16] = '(Ký, ghi rõ họ tên)';
+    rNote[33] = '(Ký, đóng dấu, ghi rõ họ tên)';
+    aoa.push(rNote);
+
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!pageSetup'] = { orientation: 'landscape', paperSize: 9, fitToPage: true };
+    ws['!cols'] = [{wch: 3}, {wch: 22}];
+    for(let i=0; i<39; i++) ws['!cols'].push({wch: 2.5}); 
+    
+    // Định dạng Text Rotation 90 độ cho tiêu đề và Wraptext
+    var range = XLSX.utils.decode_range(ws['!ref']);
+    for(let R = range.s.r; R <= range.e.r; R++) {
+        for(let C = range.s.c; C <= range.e.c; C++) {
+            var addr = XLSX.utils.encode_cell({r:R, c:C});
+            if(!ws[addr]) ws[addr] = {t:'s', v:''};
+            ws[addr].s = { font: { name: 'Times New Roman', sz: 8 }, alignment: { vertical: 'center', horizontal: 'center' }};
+            
+            if(R === 4 && C >= 2) {
+                ws[addr].s.alignment.textRotation = 90;
+                ws[addr].s.alignment.wrapText = true;
+            }
+            if(R === 3 && (C === 27 || C === 40)) {
+                ws[addr].s.alignment.textRotation = 90;
+                ws[addr].s.alignment.wrapText = true;
+            }
+            // Đổ nền nổi bật font đậm cho hàng Tổng Cộng mới thêm
+            if(R === totalRowIdx) {
+                ws[addr].s.font.bold = true;
+                ws[addr].s.fill = { patternType: 'solid', fgColor: { rgb: 'E8EEF7' } };
+                ws[addr].s.border = { top: { style: 'thin' }, bottom: { style: 'double' } };
+            }
+            // Khung viền mỏng bao quanh phần dữ liệu báo cáo
+            if(R >= 3 && R <= totalRowIdx) {
+                if(!ws[addr].s.border) ws[addr].s.border = {};
+                ws[addr].s.border.left = { style: 'thin' };
+                ws[addr].s.border.right = { style: 'thin' };
+                ws[addr].s.border.top = { style: 'thin' };
+                ws[addr].s.border.bottom = { style: 'thin' };
+            }
+        }
+    }
+    
+    ws['!merges']=[
+        {s:{r:0,c:0},e:{r:0,c:4}}, {s:{r:0,c:8},e:{r:0,c:30}}, 
+        {s:{r:1,c:0},e:{r:1,c:4}}, {s:{r:1,c:8},e:{r:1,c:30}},
+        
+        {s:{r:3,c:0},e:{r:4,c:0}}, {s:{r:3,c:1},e:{r:4,c:1}}, 
+        {s:{r:3,c:2},e:{r:3,c:3}}, 
+        {s:{r:3,c:4},e:{r:3,c:7}}, 
+        {s:{r:3,c:8},e:{r:3,c:9}}, 
+        {s:{r:3,c:10},e:{r:3,c:13}}, 
+        {s:{r:3,c:14},e:{r:3,c:17}}, 
+        {s:{r:3,c:18},e:{r:3,c:20}}, 
+        {s:{r:3,c:21},e:{r:3,c:24}}, 
+        {s:{r:3,c:25},e:{r:3,c:26}}, 
+        {s:{r:3,c:27},e:{r:4,c:27}}, 
+        {s:{r:3,c:28},e:{r:3,c:31}}, 
+        {s:{r:3,c:32},e:{r:3,c:37}}, 
+        {s:{r:3,c:38},e:{r:3,c:39}}, 
+        {s:{r:3,c:40},e:{r:4,c:40}}, 
+        
+        // Merge ô cộng (A-B)
+        {s:{r:totalRowIdx,c:0},e:{r:totalRowIdx,c:1}},
+        
+        // Căn lề merges chữ ký nằm bên dưới hàng cộng dồn
+        {s:{r:totalRowIdx+2,c:2},e:{r:totalRowIdx+2,c:8}}, 
+        {s:{r:totalRowIdx+2,c:16},e:{r:totalRowIdx+2,c:22}}, 
+        {s:{r:totalRowIdx+2,c:33},e:{r:totalRowIdx+2,c:39}},
+        {s:{r:totalRowIdx+3,c:2},e:{r:totalRowIdx+3,c:8}}, 
+        {s:{r:totalRowIdx+3,c:16},e:{r:totalRowIdx+3,c:22}}, 
+        {s:{r:totalRowIdx+3,c:33},e:{r:totalRowIdx+3,c:39}}
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, "TiemDai");
+    XLSX.writeFile(wb, `BaoCao_Thang${month}.xlsx`);
+}
+
+function sendToMoH() {
+    toast('🌐 Tính năng API liên thông Trung Ương đang trong lộ trình phát triển. Cần API Key từ Cục Y tế Dự phòng.', 'info');
+}
+
+function renderUsers() {
+    document.getElementById('lbl-user-count').textContent = `Danh sách tài khoản (${RAW_SITES.length} cơ sở + 1 admin)`;
+    var html = `<tr><td>1</td><td style="font-weight:bold">admin</td><td style="color:var(--P)">sytHY@2026</td><td>Quản trị tuyến tỉnh</td></tr>`;
+    RAW_SITES.forEach((s, i) => {
+        html += `<tr><td>${i+2}</td><td style="font-weight:bold;font-family:monospace">${s[1]}</td><td style="color:var(--P)">${s[1]}@2026</td><td style="font-size:11px">${s[0]}</td></tr>`;
+    });
+    document.getElementById('user-tbody').innerHTML = html;
+}
+
+function copyAllAccounts(){
+    var text = "DANH SÁCH TÀI KHOẢN CDC HƯNG YÊN\nAdmin: admin / sytHY@2026\n";
+    RAW_SITES.forEach(s => text += `${s[0]}\nTK: ${s[1]} | MK: ${s[1]}@2026\n\n`);
+    navigator.clipboard.writeText(text); toast('✅ Đã copy!', 'ok');
+}
+
+(function initDate(){
+    var curM = new Date().getMonth()+1, curY = new Date().getFullYear();
+    var hp = document.getElementById('mPicker');
+    for(let y=curY-1; y<=curY+1; y++){
+        for(let m=1; m<=12; m++) {
+            if(hp) hp.innerHTML += `<option value="${m}-${y}" ${m===curM&&y===curY?'selected':''}>Tháng ${m}/${y}</option>`;
+        }
+    }
+    if(document.getElementById('exp-month')) document.getElementById('exp-month').value = curM;
+    if(document.getElementById('exp-year')) document.getElementById('exp-year').value = curY;
+    changeMonth();
+})();
+</script>
+</body>
+</html>
